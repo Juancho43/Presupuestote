@@ -2,44 +2,39 @@
 
 namespace App\Models;
 
-use App\Enums\BudgetStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Budget extends Model
+class Invoice extends Model
 {
     use HasFactory;
     use SoftDeletes;
     protected $fillable = [
-        'made_date',
-        'description',
-        'dead_line',
-        'status',
-        'cost',
+        'date',
     ];
     protected $casts = [
-        'made_date' => 'date',
-        'description' => 'string',
-        'dead_line' => 'date',
-        'status' => BudgetStatus::class,
-        'cost' => 'decimal:2'
+        'date' => 'date',
     ];
 
-    public function client() : BelongsTo
+     public function materials(): BelongsToMany
+     {
+         return $this->belongsToMany(Material::class)
+                     ->withPivot(['quantity', 'unit_price'])
+                     ->withTimestamps();
+     }
+
+    public function supplier():Belongsto
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Supplier::class);
     }
+
     public function payments(): MorphMany
     {
         return $this->morphMany(Payment::class, 'payable');
-    }
-
-    public function work() : HasMany
-    {
-        return $this->hasMany(Work::class);
     }
 }
