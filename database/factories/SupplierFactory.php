@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Person;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Supplier>
+ */
+class SupplierFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'person_id' => Person::factory(),
+            'balance' => $this->faker->randomFloat(2, 0, 10000),
+            'notes' => $this->faker->text(200),
+        ];
+    }
+}

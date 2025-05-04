@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('dead_line');
             $table->decimal('cost', 10, 2);
             $table->foreignId('budget_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled']);
+            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->timestamps();
             $table->softDeletes();
         });
