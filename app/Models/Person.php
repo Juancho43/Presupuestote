@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Person extends Model
@@ -32,17 +33,17 @@ class Person extends Model
         'cuit' => 'string',
     ];
 
-    public function employee() : BelongsTo
+    public function employee() : HasOne
     {
-        return $this->belongsTo(Employee::class);
+        return $this->hasOne(Employee::class);
     }
-    public function supplier() : BelongsTo
+    public function supplier() : HasOne
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->hasOne(Supplier::class);
     }
-    public function client() : BelongsTo
+    public function client() : HasOne
     {
-        return $this->belongsTo(Client::class);
+        return $this->hasOne(Client::class);
     }
     public function users(): HasMany
     {
