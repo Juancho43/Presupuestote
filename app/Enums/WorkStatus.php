@@ -3,7 +3,10 @@ namespace App\Enums;
 
 enum WorkStatus: string
 {
-    case PENDING = 'pending';
-    case APPROVED = 'approved';
-    case REJECTED = 'rejected';
+    case PRESUPUESTADO = 'Presupuestado';
+    case PENDIENTE_DE_APROBACION = 'Pendiente de aprobación';
+    case APROBADO = 'Aprobado';
+    case EN_PROCESO = 'En proceso';
+    case ENTREGADO = 'Entregado';
+    case CANCELADO = 'Cancelado';
 }

@@ -17,7 +17,7 @@ class PersonFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->firstName(),
+            'name' => $this->faker->word(),
             'last_name' => $this->faker->lastName(),
             'address' => $this->faker->address(),
             'phone_number' => $this->faker->phoneNumber(),

@@ -16,7 +16,7 @@
                 $table->date('made_date');
                 $table->text('description');
                 $table->date('dead_line');
-                $table->enum('status', ['pending', 'approved', 'rejected']);
+                $table->enum('status', ['Presupuestado', 'Aprobado', 'Rechazado', 'En proceso', 'Entregado', 'Cancelado']);
                 $table->decimal('cost', 10, 2);
                 $table->foreignId('client_id')->constrained()->onDelete('cascade');
                 $table->timestamps();

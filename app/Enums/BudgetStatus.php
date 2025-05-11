@@ -4,7 +4,11 @@ namespace App\Enums;
 
 enum BudgetStatus: string
 {
-    case PENDING = 'pending';
-    case APPROVED = 'approved';
-    case REJECTED = 'rejected';
+
+    case PRESUPUESTADO = 'Presupuestado';
+    case APROBADO = 'Aprobado';
+    case RECHAZADO = 'Rechazado';
+    case EN_PROCESO = 'En proceso';
+    case ENTREGADO = 'Entregado';
+    case CANCELADO = 'Cancelado';
 }

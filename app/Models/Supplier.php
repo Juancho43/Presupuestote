@@ -18,7 +18,7 @@ class Supplier extends Model
     ];
     protected $casts = [
         'balance' => 'decimal:2',
-        'notes' => 'String',
+        'notes' => 'string',
     ];
     public function person() : HasOne
     {
