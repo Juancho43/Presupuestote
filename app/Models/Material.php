@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Material extends Model
@@ -28,9 +29,9 @@ class Material extends Model
         'brand' => 'string',
     ];
 
-    public function subcategory():BelongsTo
+    public function subcategory():HasOne
     {
-        return $this->belongsTo(Subcategory::class);
+        return $this->HasOne(Subcategory::class);
     }
 
     public function work():BelongsToMany
@@ -50,9 +51,9 @@ class Material extends Model
         return $this->hasMany(Stock::class);
     }
 
-    public function measure() : BelongsTo
+    public function measure() : HasOne
     {
-        return $this->belongsTo(Measure::class);
+        return $this->hasOne(Measure::class);
     }
 
 }

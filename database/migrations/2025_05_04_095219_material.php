@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->foreignId('measure_id')->constrained()->onDelete('cascade');
-            $table->foreignId('subcategory_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

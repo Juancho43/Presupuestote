@@ -20,7 +20,7 @@ class MaterialFactory extends Factory
         'name' => $this->faker->word(),
         'description' => $this->faker->sentence(),
         'measure_id' => \App\Models\Measure::factory(),
-        'subcategory_id' => \App\Models\Subcategory::factory(),
+        'sub_category_id' => \App\Models\SubCategory::factory(),
     ];
 
     }
