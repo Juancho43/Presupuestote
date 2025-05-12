@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\V1\Api\ClientController;
-
+use App\Http\Controllers\V1\ClientController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
