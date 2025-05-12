@@ -3,7 +3,7 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Models\Person;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -11,35 +11,35 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class PersonRepository
+ * Class CategoryRepository
  *
- * Repository class for handling Person CRUD operations
+ * Repository class for handling Category CRUD operations
  * Implements IRepository interface and uses ApiResponseTrait
  */
-class PersonRepository implements IRepository
+class CategoryRepository implements IRepository
 {
     use ApiResponseTrait;
 
     /**
-     * Get all Persons
+     * Get all Categorys
      *
-     * @return Collection Collection of Person models
+     * @return Collection Collection of Category models
      */
     public function all(): Collection
     {
-        return Person::all();
+        return Category::all();
     }
 
     /**
-     * Find a Person by ID
+     * Find a Category by ID
      *
-     * @param int $id Person ID to find
-     * @return Person|JsonResponse Found Person model or error response
-     * @throws Exception When Person is not found
+     * @param int $id Category ID to find
+     * @return Category|JsonResponse Found Category model or error response
+     * @throws Exception When Category is not found
      */
-    public function find(int $id): Person|JsonResponse
+    public function find(int $id): Category|JsonResponse
     {
-        $model = Person::where('id', $id)->first();
+        $model = Category::where('id', $id)->first();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }
@@ -47,26 +47,26 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Create a new Person
+     * Create a new Category
      *
-     * @param FormRequest $data Request containing Person data
-     * @return Person Newly created Person model
+     * @param FormRequest $data Request containing Category data
+     * @return Category Newly created Category model
      */
-    public function create(FormRequest $data): Person
+    public function create(FormRequest $data): Category
     {
         $data->validated();
-        $model = Person::create($data->all());
+        $model = Category::create($data->all());
         return $model;
     }
 
     /**
-     * Update an existing Person
+     * Update an existing Category
      *
-     * @param int $id Person ID to update
-     * @param FormRequest $data Request containing updated Person data
-     * @return Person|JsonResponse
+     * @param int $id Category ID to update
+     * @param FormRequest $data Request containing updated Category data
+     * @return Category|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Person|JsonResponse
+    public function update(int $id, FormRequest $data): Category|JsonResponse
     {
         try {
             $data->validated();
@@ -81,9 +81,9 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Delete a Person
+     * Delete a Category
      *
-     * @param int $id Person ID to delete
+     * @param int $id Category ID to delete
      * @return bool|JsonResponse True if deleted successfully, error response otherwise
      */
     public function delete(int $id): bool|JsonResponse

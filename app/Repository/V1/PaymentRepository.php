@@ -3,7 +3,7 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Models\Person;
+use App\Models\Payment;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -11,35 +11,35 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class PersonRepository
+ * Class PaymentRepository
  *
- * Repository class for handling Person CRUD operations
+ * Repository class for handling Payment CRUD operations
  * Implements IRepository interface and uses ApiResponseTrait
  */
-class PersonRepository implements IRepository
+class PaymentRepository implements IRepository
 {
     use ApiResponseTrait;
 
     /**
-     * Get all Persons
+     * Get all Payments
      *
-     * @return Collection Collection of Person models
+     * @return Collection Collection of Payment models
      */
     public function all(): Collection
     {
-        return Person::all();
+        return Payment::all();
     }
 
     /**
-     * Find a Person by ID
+     * Find a Payment by ID
      *
-     * @param int $id Person ID to find
-     * @return Person|JsonResponse Found Person model or error response
-     * @throws Exception When Person is not found
+     * @param int $id Payment ID to find
+     * @return Payment|JsonResponse Found Payment model or error response
+     * @throws Exception When Payment is not found
      */
-    public function find(int $id): Person|JsonResponse
+    public function find(int $id): Payment|JsonResponse
     {
-        $model = Person::where('id', $id)->first();
+        $model = Payment::where('id', $id)->first();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }
@@ -47,26 +47,26 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Create a new Person
+     * Create a new Payment
      *
-     * @param FormRequest $data Request containing Person data
-     * @return Person Newly created Person model
+     * @param FormRequest $data Request containing Payment data
+     * @return Payment Newly created Payment model
      */
-    public function create(FormRequest $data): Person
+    public function create(FormRequest $data): Payment
     {
         $data->validated();
-        $model = Person::create($data->all());
+        $model = Payment::create($data->all());
         return $model;
     }
 
     /**
-     * Update an existing Person
+     * Update an existing Payment
      *
-     * @param int $id Person ID to update
-     * @param FormRequest $data Request containing updated Person data
-     * @return Person|JsonResponse
+     * @param int $id Payment ID to update
+     * @param FormRequest $data Request containing updated Payment data
+     * @return Payment|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Person|JsonResponse
+    public function update(int $id, FormRequest $data): Payment|JsonResponse
     {
         try {
             $data->validated();
@@ -81,9 +81,9 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Delete a Person
+     * Delete a Payment
      *
-     * @param int $id Person ID to delete
+     * @param int $id Payment ID to delete
      * @return bool|JsonResponse True if deleted successfully, error response otherwise
      */
     public function delete(int $id): bool|JsonResponse

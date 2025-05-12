@@ -3,7 +3,7 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Models\Person;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -11,35 +11,35 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class PersonRepository
+ * Class UserRepository
  *
- * Repository class for handling Person CRUD operations
+ * Repository class for handling User CRUD operations
  * Implements IRepository interface and uses ApiResponseTrait
  */
-class PersonRepository implements IRepository
+class UserRepository implements IRepository
 {
     use ApiResponseTrait;
 
     /**
-     * Get all Persons
+     * Get all Users
      *
-     * @return Collection Collection of Person models
+     * @return Collection Collection of User models
      */
     public function all(): Collection
     {
-        return Person::all();
+        return User::all();
     }
 
     /**
-     * Find a Person by ID
+     * Find a User by ID
      *
-     * @param int $id Person ID to find
-     * @return Person|JsonResponse Found Person model or error response
-     * @throws Exception When Person is not found
+     * @param int $id User ID to find
+     * @return User|JsonResponse Found User model or error response
+     * @throws Exception When User is not found
      */
-    public function find(int $id): Person|JsonResponse
+    public function find(int $id): User|JsonResponse
     {
-        $model = Person::where('id', $id)->first();
+        $model = User::where('id', $id)->first();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }
@@ -47,26 +47,26 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Create a new Person
+     * Create a new User
      *
-     * @param FormRequest $data Request containing Person data
-     * @return Person Newly created Person model
+     * @param FormRequest $data Request containing User data
+     * @return User Newly created User model
      */
-    public function create(FormRequest $data): Person
+    public function create(FormRequest $data): User
     {
         $data->validated();
-        $model = Person::create($data->all());
+        $model = User::create($data->all());
         return $model;
     }
 
     /**
-     * Update an existing Person
+     * Update an existing User
      *
-     * @param int $id Person ID to update
-     * @param FormRequest $data Request containing updated Person data
-     * @return Person|JsonResponse
+     * @param int $id User ID to update
+     * @param FormRequest $data Request containing updated User data
+     * @return User|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Person|JsonResponse
+    public function update(int $id, FormRequest $data): User|JsonResponse
     {
         try {
             $data->validated();
@@ -81,9 +81,9 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Delete a Person
+     * Delete a User
      *
-     * @param int $id Person ID to delete
+     * @param int $id User ID to delete
      * @return bool|JsonResponse True if deleted successfully, error response otherwise
      */
     public function delete(int $id): bool|JsonResponse

@@ -3,7 +3,7 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Models\Person;
+use App\Models\Budget;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -11,35 +11,35 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class PersonRepository
+ * Class BudgetRepository
  *
- * Repository class for handling Person CRUD operations
+ * Repository class for handling Budget CRUD operations
  * Implements IRepository interface and uses ApiResponseTrait
  */
-class PersonRepository implements IRepository
+class BudgetRepository implements IRepository
 {
     use ApiResponseTrait;
 
     /**
-     * Get all Persons
+     * Get all Budgets
      *
-     * @return Collection Collection of Person models
+     * @return Collection Collection of Budget models
      */
     public function all(): Collection
     {
-        return Person::all();
+        return Budget::all();
     }
 
     /**
-     * Find a Person by ID
+     * Find a Budget by ID
      *
-     * @param int $id Person ID to find
-     * @return Person|JsonResponse Found Person model or error response
-     * @throws Exception When Person is not found
+     * @param int $id Budget ID to find
+     * @return Budget|JsonResponse Found Budget model or error response
+     * @throws Exception When Budget is not found
      */
-    public function find(int $id): Person|JsonResponse
+    public function find(int $id): Budget|JsonResponse
     {
-        $model = Person::where('id', $id)->first();
+        $model = Budget::where('id', $id)->first();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }
@@ -47,26 +47,26 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Create a new Person
+     * Create a new Budget
      *
-     * @param FormRequest $data Request containing Person data
-     * @return Person Newly created Person model
+     * @param FormRequest $data Request containing Budget data
+     * @return Budget Newly created Budget model
      */
-    public function create(FormRequest $data): Person
+    public function create(FormRequest $data): Budget
     {
         $data->validated();
-        $model = Person::create($data->all());
+        $model = Budget::create($data->all());
         return $model;
     }
 
     /**
-     * Update an existing Person
+     * Update an existing Budget
      *
-     * @param int $id Person ID to update
-     * @param FormRequest $data Request containing updated Person data
-     * @return Person|JsonResponse
+     * @param int $id Budget ID to update
+     * @param FormRequest $data Request containing updated Budget data
+     * @return Budget|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Person|JsonResponse
+    public function update(int $id, FormRequest $data): Budget|JsonResponse
     {
         try {
             $data->validated();
@@ -81,9 +81,9 @@ class PersonRepository implements IRepository
     }
 
     /**
-     * Delete a Person
+     * Delete a Budget
      *
-     * @param int $id Person ID to delete
+     * @param int $id Budget ID to delete
      * @return bool|JsonResponse True if deleted successfully, error response otherwise
      */
     public function delete(int $id): bool|JsonResponse
