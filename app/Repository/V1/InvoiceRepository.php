@@ -39,7 +39,8 @@ class InvoiceRepository implements IRepository
      */
     public function find(int $id): Invoice|JsonResponse
     {
-        $model = Invoice::where('id', $id)->first();
+        $model = Invoice::with(['materials' => function ($query) {$query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'invoice_material.quantity'); }])->find($id);
+
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

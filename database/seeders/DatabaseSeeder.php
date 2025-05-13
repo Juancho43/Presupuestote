@@ -40,7 +40,8 @@ class DatabaseSeeder extends Seeder
         \App\Models\Measure::factory(10)->create();
 
         \App\Models\Material::factory(10)->create();
-$this->call([ClientNestedDataSeeder::class]);
+        $this->call([ClientNestedDataSeeder::class, SupplierNestedDataSeeder::class, EmployeeNestedDataSeeder::class]);
+
     }
 
 

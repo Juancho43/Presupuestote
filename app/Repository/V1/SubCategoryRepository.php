@@ -27,7 +27,7 @@ class SubCategoryRepository implements IRepository
      */
     public function all(): Collection
     {
-        return SubCategory::all();
+        return SubCategory::with('category')->get();
     }
 
     /**
@@ -39,7 +39,7 @@ class SubCategoryRepository implements IRepository
      */
     public function find(int $id): SubCategory|JsonResponse
     {
-        $model = SubCategory::where('id', $id)->first();
+        $model = SubCategory::with('category')->find($id);
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }
