@@ -19,8 +19,10 @@ class MaterialFactory extends Factory
     return [
         'name' => $this->faker->word(),
         'description' => $this->faker->sentence(),
+        'color' => $this->faker->colorName(),
+        'brand' => $this->faker->company(),
         'measure_id' => \App\Models\Measure::factory(),
-        'sub_category_id' => \App\Models\SubCategory::factory(),
+        'subcategory_id' => \App\Models\SubCategory::factory(),
     ];
 
     }

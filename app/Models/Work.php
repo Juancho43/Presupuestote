@@ -41,8 +41,10 @@ class Work extends Model
         return $this->belongsTo(Budget::class);
     }
 
-   public function materials() : BelongsToMany
-   {
-       return $this->belongsToMany(Material::class)->withPivot('quantity')->withTimestamps();
-   }
+    public function materials(): BelongsToMany
+    {
+        return $this->belongsToMany(Material::class, 'material_work')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
 }

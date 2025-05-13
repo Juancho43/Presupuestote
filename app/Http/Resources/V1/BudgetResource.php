@@ -22,7 +22,7 @@
                 'status' => $this->status->value,
                 'cost' => $this->cost,
                 'payments' => PaymentResource::collection($this->whenLoaded('payments')),
-                'works' => WorkResource::collection($this->whenLoaded('work')),
+                'works' => WorkResource::collection($this->whenLoaded('works')),
                 'created_at' => $this->created_at?->toDateTimeString(),
                 'updated_at' => $this->updated_at?->toDateTimeString(),
                 'deleted_at' => $this->deleted_at?->toDateTimeString()

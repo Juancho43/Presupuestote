@@ -38,7 +38,7 @@ class Budget extends Model
         return $this->morphMany(Payment::class, 'payable');
     }
 
-    public function work() : HasMany
+    public function works() : HasMany
     {
         return $this->hasMany(Work::class);
     }

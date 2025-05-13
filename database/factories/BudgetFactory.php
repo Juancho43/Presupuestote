@@ -26,6 +26,5 @@ class BudgetFactory extends Factory
         'cost' => $this->faker->randomFloat(2, 100, 10000),
         'client_id' => Client::factory(),
         ];
-
     }
 }

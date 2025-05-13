@@ -25,10 +25,16 @@ class MaterialRepository implements IRepository
      *
      * @return Collection Collection of Material models
      */
-    public function all(): Collection
-    {
-        return Material::all();
-    }
+  public function all(): Collection
+  {
+    return Material::with([
+        'measure',
+        'subcategory',
+        'prices',
+        'stocks'
+    ])->get();
+
+  }
 
     /**
      * Find a Material by ID
@@ -39,7 +45,23 @@ class MaterialRepository implements IRepository
      */
     public function find(int $id): Material|JsonResponse
     {
-        $model = Material::where('id', $id)->first();
+        $model = Material::with([
+            'prices' => function($query) {
+                $query->select('id', 'material_id', 'price', 'date');
+            },
+            'stocks' => function($query) {
+                $query->select('id', 'material_id', 'stock', 'date');
+            },
+            'measure' => function($query) {
+                $query->select('id', 'name');
+            },
+            'subcategory' => function($query) {
+                $query->select('id', 'name', 'category_id')
+                    ->with(['category' => function($query) {
+                        $query->select('id', 'name');
+                    }]);
+            }
+        ])->findOrFail($id);
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

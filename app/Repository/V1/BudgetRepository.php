@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Repository class for handling Budget CRUD operations
  * Implements IRepository interface and uses ApiResponseTrait
- */
+material */
 class BudgetRepository implements IRepository
 {
     use ApiResponseTrait;
@@ -39,11 +39,20 @@ class BudgetRepository implements IRepository
      */
     public function find(int $id): Budget|JsonResponse
     {
-        $model = Budget::where('id', $id)->first();
-        if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+        try {
+            $model = Budget::with([
+                'works' => function ($query) {
+                    $query->with(['materials' => function ($query) {
+                        $query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'material_work.quantity');
+                    }]);
+                },
+                'payments'
+            ])->findOrFail($id);
+
+            return $model;
+        } catch (Exception $e) {
+            return $this->errorResponse('Error retrieving data', $e->getMessage(), Response::HTTP_NOT_FOUND);
         }
-        return $model;
     }
 
     /**

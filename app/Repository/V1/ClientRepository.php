@@ -39,7 +39,7 @@ class ClientRepository implements IRepository
      */
     public function find(int $id): Client|JsonResponse
     {
-        $model = Client::where('id', $id)->first();
+        $model = Client::with(['budgets', 'person'])->where('id', $id)->first();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

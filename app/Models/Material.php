@@ -29,14 +29,14 @@ class Material extends Model
         'brand' => 'string',
     ];
 
-    public function subcategory():HasOne
+    public function subcategory():BelongsTo
     {
-        return $this->HasOne(Subcategory::class);
+        return $this->belongsTo(SubCategory::class);
     }
 
-    public function work():BelongsToMany
+    public function works():BelongsToMany
     {
-        return $this->BelongsToMany(Work::class);
+        return $this->BelongsToMany(Work::class,'material_work');
     }
     public function invoice() : BelongsToMany
     {
@@ -51,9 +51,9 @@ class Material extends Model
         return $this->hasMany(Stock::class);
     }
 
-    public function measure() : HasOne
+    public function measure() : BelongsTo
     {
-        return $this->hasOne(Measure::class);
+        return $this->belongsTo(Measure::class);
     }
 
 }
