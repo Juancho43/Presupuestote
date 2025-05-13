@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Http\Resources;
 
-use App\Http\Resources\InvoiceResource;
+use App\Http\Resources\V1\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;

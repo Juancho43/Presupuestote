@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
+use App\Http\Requests\V1\SubCategoryRequest;
 use App\Models\Category;
-use App\Http\Requests\SubCategoryRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class SubCategoryRequestTest extends TestCase
 {

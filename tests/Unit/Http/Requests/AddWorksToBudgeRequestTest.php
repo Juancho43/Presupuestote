@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
-use App\Models\Work;
-use App\Models\Budget;
 use App\Enums\WorkStatus;
-use App\Http\Requests\AddWorksToBudgeRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\V1\AddWorksToBudgeRequest;
+use App\Models\Budget;
+use App\Models\Work;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class AddWorksToBudgeRequestTest extends TestCase
 {

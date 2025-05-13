@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
+use App\Http\Requests\V1\PersonRequest;
 use App\Models\Person;
-use App\Http\Requests\PersonRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class PersonRequestTest extends TestCase
 {

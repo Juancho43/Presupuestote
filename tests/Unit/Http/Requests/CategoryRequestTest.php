@@ -2,11 +2,10 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
-use App\Models\Category;
-use App\Http\Requests\CategoryRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\V1\CategoryRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class CategoryRequestTest extends TestCase
 {

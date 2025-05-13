@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
+use App\Http\Requests\V1\PriceRequest;
 use App\Models\Material;
-use App\Http\Requests\PriceRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class PriceRequestTest extends TestCase
 {

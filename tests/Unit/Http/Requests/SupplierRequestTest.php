@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
+use App\Http\Requests\V1\SupplierRequest;
 use App\Models\Person;
-use App\Http\Requests\SupplierRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class SupplierRequestTest extends TestCase
 {

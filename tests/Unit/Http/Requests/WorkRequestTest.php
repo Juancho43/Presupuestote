@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
-use App\Models\Budget;
 use App\Enums\WorkStatus;
-use App\Http\Requests\WorkRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\V1\WorkRequest;
+use App\Models\Budget;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class WorkRequestTest extends TestCase
 {

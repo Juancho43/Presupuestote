@@ -3,7 +3,7 @@
      namespace Tests\Unit\Http\Resources;
 
      use App\Enums\BudgetStatus;
-     use App\Http\Resources\BudgetResource;
+     use App\Http\Resources\V1\BudgetResource;
      use App\Models\Budget;
      use Illuminate\Foundation\Testing\RefreshDatabase;
      use Tests\TestCase;

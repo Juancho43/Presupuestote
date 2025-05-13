@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
-use App\Models\Client;
 use App\Enums\BudgetStatus;
-use App\Http\Requests\BudgetRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\V1\BudgetRequest;
+use App\Models\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class BudgetRequestTest extends TestCase
 {

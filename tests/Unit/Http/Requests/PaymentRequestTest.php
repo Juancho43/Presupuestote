@@ -2,15 +2,15 @@
 
     namespace Tests\Unit\Http\Requests;
 
-    use Tests\TestCase;
+    use App\Http\Requests\V1\BudgetPaymentRequest;
+    use App\Http\Requests\V1\InvoicePaymentRequest;
+    use App\Http\Requests\V1\SalaryPaymentRequest;
     use App\Models\Budget;
     use App\Models\Invoice;
     use App\Models\Salary;
-    use App\Http\Requests\InvoicePaymentRequest;
-    use App\Http\Requests\BudgetPaymentRequest;
-    use App\Http\Requests\SalaryPaymentRequest;
-    use Illuminate\Support\Facades\Validator;
     use Illuminate\Foundation\Testing\RefreshDatabase;
+    use Illuminate\Support\Facades\Validator;
+    use Tests\TestCase;
 
     class PaymentRequestTest extends TestCase
     {

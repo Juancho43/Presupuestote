@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Http\Resources;
 
-use App\Models\SubCategory;
-use Tests\TestCase;
+use App\Http\Resources\V1\SubCategoryResource;
 use App\Models\Category;
-use App\Http\Resources\SubCategoryResource;
+use App\Models\SubCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SubCategoryResourceTest extends TestCase
 {

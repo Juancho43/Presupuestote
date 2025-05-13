@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Requests\V1;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class EmployeeRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'salary' => ['required', 'numeric', 'decimal:0,2', 'min:0'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['nullable', 'date', 'after:start_date'],
+            'is_active' => ['required', 'boolean'],
+            'person_id' => ['required_without:person', 'exists:people,id'],
+            'person' => ['required_without:person_id', 'array'],
+            'person.name' => ['required_with:person', 'string', 'max:255'],
+            'person.phone_number' => ['required_with:person', 'string', 'max:20'],
+            'person.last_name' => ['nullable', 'string', 'max:255'],
+            'person.address' => ['nullable', 'string', 'max:255'],
+            'person.mail' => ['nullable', 'email', 'max:255', 'unique:people,mail'],
+            'person.dni' => ['nullable', 'string', 'max:20', 'unique:people,dni'],
+            'person.cuit' => ['nullable', 'string', 'max:20', 'unique:people,cuit'],
+        ];
+    }
+}

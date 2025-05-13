@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
-use App\Http\Requests\MeasureRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\V1\MeasureRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class MeasureRequestTest extends TestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
 namespace Tests\Unit\Http\Resources;
-use App\Http\Resources\CategoryResource;
+use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CategoryResourceTest extends TestCase
 {

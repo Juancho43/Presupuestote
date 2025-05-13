@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use Tests\TestCase;
+use App\Http\Requests\V1\SalaryRequest;
 use App\Models\Employee;
-use App\Http\Requests\SalaryRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class SalaryRequestTest extends TestCase
 {
