@@ -20,7 +20,7 @@ class MaterialResource extends JsonResource
             'description' => $this->description,
             'color' => $this->color,
             'brand' => $this->brand,
-            'subcategory' => new SubcategoryResource($this->whenLoaded('subcategory')),
+            'subcategory' => new SubCategoryResource($this->whenLoaded('subcategory')),
             'prices' => new PriceResource($this->whenLoaded('prices')),
             'stocks' => new StockResource($this->whenLoaded('stocks')),
             'measure' => new MeasureResource($this->whenLoaded('measure')),
