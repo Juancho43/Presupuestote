@@ -22,7 +22,7 @@ class MaterialController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var MaterialRepository Repository for dummy data access
+     * @var MaterialRepository Repository for Material data access
      */
     protected MaterialRepository $repository;
 
@@ -37,9 +37,9 @@ class MaterialController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Material records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Material records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class MaterialController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Material record by ID
      *
      * @param int $id Material record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Material resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class MaterialController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Material record
      *
-     * @param MaterialRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param MaterialRequest $request Validated Material data
+     * @return JsonResponse Created Material resource
      * @throws Exception If creation fails
      */
     public function store(MaterialRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class MaterialController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Material record
      *
-     * @param MaterialRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param MaterialRequest $request Validated Material data
+     * @return JsonResponse Updated Material resource
      * @throws Exception If update fails
      */
     public function update(MaterialRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class MaterialController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Material record
      *
      * @param int $id Material record ID
      * @return JsonResponse Empty response on success

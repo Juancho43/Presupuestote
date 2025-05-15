@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Budget Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Budget records including CRUD operations
  * and tag-based filtering.
  */
 class BudgetController extends Controller
@@ -22,7 +22,7 @@ class BudgetController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var BudgetRepository Repository for dummy data access
+     * @var BudgetRepository Repository for Budget data access
      */
     protected BudgetRepository $repository;
 
@@ -37,9 +37,9 @@ class BudgetController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Budget records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Budget records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class BudgetController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Budget record by ID
      *
      * @param int $id Budget record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Budget resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class BudgetController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Budget record
      *
-     * @param BudgetRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param BudgetRequest $request Validated Budget data
+     * @return JsonResponse Created Budget resource
      * @throws Exception If creation fails
      */
     public function store(BudgetRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class BudgetController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Budget record
      *
-     * @param BudgetRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param BudgetRequest $request Validated Budget data
+     * @return JsonResponse Updated Budget resource
      * @throws Exception If update fails
      */
     public function update(BudgetRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class BudgetController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Budget record
      *
      * @param int $id Budget record ID
      * @return JsonResponse Empty response on success

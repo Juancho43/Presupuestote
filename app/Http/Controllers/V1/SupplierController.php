@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Supplier Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Supplier records including CRUD operations
  * and tag-based filtering.
  */
 class SupplierController extends Controller
@@ -22,7 +22,7 @@ class SupplierController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var SupplierRepository Repository for dummy data access
+     * @var SupplierRepository Repository for Supplier data access
      */
     protected SupplierRepository $repository;
 
@@ -37,9 +37,9 @@ class SupplierController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Supplier records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Supplier records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class SupplierController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Supplier record by ID
      *
      * @param int $id Supplier record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Supplier resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class SupplierController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Supplier record
      *
-     * @param SupplierRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param SupplierRequest $request Validated Supplier data
+     * @return JsonResponse Created Supplier resource
      * @throws Exception If creation fails
      */
     public function store(SupplierRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class SupplierController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Supplier record
      *
-     * @param SupplierRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param SupplierRequest $request Validated Supplier data
+     * @return JsonResponse Updated Supplier resource
      * @throws Exception If update fails
      */
     public function update(SupplierRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Supplier record
      *
      * @param int $id Supplier record ID
      * @return JsonResponse Empty response on success

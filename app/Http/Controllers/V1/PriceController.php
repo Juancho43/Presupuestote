@@ -37,9 +37,9 @@ class PriceController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Price records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Price records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class PriceController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Price record by ID
      *
      * @param int $id Price record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Price resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class PriceController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Price record
      *
-     * @param PriceRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param PriceRequest $request Validated Price data
+     * @return JsonResponse Created Price resource
      * @throws Exception If creation fails
      */
     public function store(PriceRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class PriceController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Price record
      *
-     * @param PriceRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param PriceRequest $request Validated Price data
+     * @return JsonResponse Updated Price resource
      * @throws Exception If update fails
      */
     public function update(PriceRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class PriceController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Price record
      *
      * @param int $id Price record ID
      * @return JsonResponse Empty response on success

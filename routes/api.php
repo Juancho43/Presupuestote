@@ -20,21 +20,28 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::group(['as' => 'public.'], function() {
 
-        Route::resource('clients', ClientController::class)->only(['index', 'show'])->names('clients');
-        Route::resource('people', PersonController::class)->only(['index', 'show'])->names('people');
-        Route::resource('suppliers', SupplierController::class)->only(['index', 'show'])->names('suppliers');
-        Route::resource('employees', EmployeeController::class)->only(['index', 'show'])->names('employees');
-        Route::resource('salaries', SalaryController::class)->only(['index', 'show'])->names('salaries');
-        Route::resource('invoices', InvoiceController::class)->only(['index', 'show'])->names('invoices');
-        Route::resource('budgets', BudgetController::class)->only(['index', 'show'])->names('budgets');
-        Route::resource('works', WorkController::class)->only(['index', 'show'])->names('works');
-        Route::resource('payments', PaymentController::class)->only(['index', 'show'])->names('payments');
-        Route::resource('materials', MaterialController::class)->only(['index', 'show'])->names('materials');
-        Route::resource('prices', PriceController::class)->only(['index', 'show'])->names('prices');
-        Route::resource('stocks', StockController::class)->only(['index', 'show'])->names('stocks');
-        Route::resource('categories', CategoryController::class)->only(['index', 'show'])->names('categories');
-        Route::resource('subcategories', SubCategoryController::class)->only(['index', 'show'])->names('subcategories');
-        Route::resource('measures', MeasureController::class)->only(['index', 'show'])->names('measures');
+        Route::resource('clients', ClientController::class)->names('clients');
+        Route::resource('people', PersonController::class)->names('people');
+        Route::resource('suppliers', SupplierController::class)->names('suppliers');
+        Route::resource('employees', EmployeeController::class)->names('employees');
+        Route::resource('salaries', SalaryController::class)->names('salaries');
+        Route::resource('invoices', InvoiceController::class)->names('invoices');
+        Route::resource('budgets', BudgetController::class)->names('budgets');
+        Route::resource('works', WorkController::class)->names('works');
+        Route::resource('payments', PaymentController::class)->names('payments');
+        Route::resource('materials', MaterialController::class)->names('materials');
+        Route::resource('prices', PriceController::class)->names('prices');
+        Route::resource('stocks', StockController::class)->names('stocks');
+        Route::resource('categories', CategoryController::class)->names('categories');
+        Route::resource('subcategories', SubCategoryController::class)->names('subcategories');
+        Route::resource('measures', MeasureController::class)->names('measures');
+
+        Route::get('payments/client/{id}', [PaymentController::class, 'allClientPayments'])->name('indexClient');
+        Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
+        Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
+
+
+
     });
 
 

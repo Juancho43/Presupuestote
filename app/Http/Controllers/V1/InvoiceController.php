@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Invoice Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Invoice records including CRUD operations
  * and tag-based filtering.
  */
 class InvoiceController extends Controller
@@ -22,7 +22,7 @@ class InvoiceController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var InvoiceRepository Repository for dummy data access
+     * @var InvoiceRepository Repository for Invoice data access
      */
     protected InvoiceRepository $repository;
 
@@ -37,9 +37,9 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Invoice records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Invoice records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Invoice record by ID
      *
      * @param int $id Invoice record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Invoice resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Invoice record
      *
-     * @param InvoiceRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param InvoiceRequest $request Validated Invoice data
+     * @return JsonResponse Created Invoice resource
      * @throws Exception If creation fails
      */
     public function store(InvoiceRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Invoice record
      *
-     * @param InvoiceRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param InvoiceRequest $request Validated Invoice data
+     * @return JsonResponse Updated Invoice resource
      * @throws Exception If update fails
      */
     public function update(InvoiceRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Invoice record
      *
      * @param int $id Invoice record ID
      * @return JsonResponse Empty response on success

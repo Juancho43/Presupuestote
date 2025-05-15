@@ -23,6 +23,7 @@ class WorkResource extends JsonResource
             'dead_line' => $this->dead_line?->toDateString(),
             'cost' => $this->cost,
             'status' => $this->status->value,
+            'budget' => new BudgetResource($this->whenLoaded('budget')),
             'materials' => MaterialResource::collection($this->whenLoaded('materials')),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

@@ -3,7 +3,10 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
+use App\Models\Budget;
+use App\Models\Invoice;
 use App\Models\Payment;
+use App\Models\Salary;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -93,5 +96,27 @@ class PaymentRepository implements IRepository
         } catch (Exception $e) {
             return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function allClientPayments(int $clientId): Collection
+    {
+        return
+            Payment::whereHasMorph('payable', [Budget::class], function ($query) use ($clientId) {
+                $query->where('client_id', $clientId)->select(['id', 'description']);
+            })->with('payable:id,description')->findOrFail($clientId);
+    }
+    public function allSupplierPayments(int $supplierId): Collection
+    {
+        return
+            Payment::whereHasMorph('payable', [Invoice::class], function ($query) use ($supplierId) {
+                $query->where('supplier_id', $supplierId)->select(['id', 'description']);
+            })->with('payable:id,date')->findOrFail($supplierId);
+    }
+
+    public function allEmployeePayments(int $employeeId): Collection
+    {
+        return Payment::whereHasMorph('payable', [Salary::class], function ($query) use ($employeeId) {
+            $query->where('employee_id', $employeeId)->select(['id', 'description']);
+        })->with('payable:id,date')->findOrFail($employeeId);
     }
 }

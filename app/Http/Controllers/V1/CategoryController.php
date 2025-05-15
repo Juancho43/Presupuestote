@@ -22,7 +22,7 @@ class CategoryController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var CategoryRepository Repository for dummy data access
+     * @var CategoryRepository Repository for Category data access
      */
     protected CategoryRepository $repository;
 
@@ -37,9 +37,9 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Category records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Category records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Category record by ID
      *
      * @param int $id Category record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Category resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class CategoryController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Category record
      *
-     * @param CategoryRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param CategoryRequest $request Validated Category data
+     * @return JsonResponse Created Category resource
      * @throws Exception If creation fails
      */
     public function store(CategoryRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class CategoryController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Category record
      *
-     * @param CategoryRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param CategoryRequest $request Validated Category data
+     * @return JsonResponse Updated Category resource
      * @throws Exception If update fails
      */
     public function update(CategoryRequest $request) : JsonResponse

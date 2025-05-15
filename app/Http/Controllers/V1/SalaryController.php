@@ -22,7 +22,7 @@ class SalaryController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var SalaryRepository Repository for dummy data access
+     * @var SalaryRepository Repository for Salary data access
      */
     protected SalaryRepository $repository;
 
@@ -37,9 +37,9 @@ class SalaryController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Salary records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Salary records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class SalaryController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Salary record by ID
      *
      * @param int $id Salary record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Salary resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class SalaryController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Salary record
      *
-     * @param SalaryRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param SalaryRequest $request Validated Salary data
+     * @return JsonResponse Created Salary resource
      * @throws Exception If creation fails
      */
     public function store(SalaryRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class SalaryController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Salary record
      *
-     * @param SalaryRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param SalaryRequest $request Validated Salary data
+     * @return JsonResponse Updated Salary resource
      * @throws Exception If update fails
      */
     public function update(SalaryRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class SalaryController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Salary record
      *
      * @param int $id Salary record ID
      * @return JsonResponse Empty response on success

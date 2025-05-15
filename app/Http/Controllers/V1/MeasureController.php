@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Measure Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Measure records including CRUD operations
  * and tag-based filtering.
  */
 class MeasureController extends Controller
@@ -22,7 +22,7 @@ class MeasureController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var MeasureRepository Repository for dummy data access
+     * @var MeasureRepository Repository for Measure data access
      */
     protected MeasureRepository $repository;
 
@@ -37,9 +37,9 @@ class MeasureController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Measure records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Measure records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class MeasureController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Measure record by ID
      *
      * @param int $id Measure record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Measure resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class MeasureController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Measure record
      *
-     * @param MeasureRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param MeasureRequest $request Validated Measure data
+     * @return JsonResponse Created Measure resource
      * @throws Exception If creation fails
      */
     public function store(MeasureRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class MeasureController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Measure record
      *
-     * @param MeasureRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param MeasureRequest $request Validated Measure data
+     * @return JsonResponse Updated Measure resource
      * @throws Exception If update fails
      */
     public function update(MeasureRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class MeasureController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Measure record
      *
      * @param int $id Measure record ID
      * @return JsonResponse Empty response on success

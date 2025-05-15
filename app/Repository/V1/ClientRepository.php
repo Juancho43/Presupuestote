@@ -27,7 +27,7 @@ class ClientRepository implements IRepository
      */
     public function all(): Collection
     {
-        return Client::all();
+        return Client::with('person')->get();
     }
 
     /**
@@ -94,4 +94,7 @@ class ClientRepository implements IRepository
             return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+
+
 }

@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Supplier extends Model
@@ -20,9 +20,9 @@ class Supplier extends Model
         'balance' => 'decimal:2',
         'notes' => 'string',
     ];
-    public function person() : HasOne
+    public function person() : BelongsTo
     {
-        return $this->hasOne(Person::class);
+        return $this->belongsTo(Person::class);
     }
     public function invoice() : HasMany
     {

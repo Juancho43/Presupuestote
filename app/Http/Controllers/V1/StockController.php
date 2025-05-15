@@ -37,9 +37,9 @@ class StockController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Stock records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Stock records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class StockController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Stock record by ID
      *
      * @param int $id Stock record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Stock resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class StockController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Stock record
      *
-     * @param StockRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param StockRequest $request Validated Stock data
+     * @return JsonResponse Created Stock resource
      * @throws Exception If creation fails
      */
     public function store(StockRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class StockController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Stock record
      *
-     * @param StockRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param StockRequest $request Validated Stock data
+     * @return JsonResponse Updated Stock resource
      * @throws Exception If update fails
      */
     public function update(StockRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class StockController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Stock record
      *
      * @param int $id Stock record ID
      * @return JsonResponse Empty response on success

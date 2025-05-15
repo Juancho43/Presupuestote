@@ -39,7 +39,7 @@ class SubCategoryRepository implements IRepository
      */
     public function find(int $id): SubCategory|JsonResponse
     {
-        $model = SubCategory::with('category')->find($id);
+        $model = SubCategory::with('category')->findOrFail($id);
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

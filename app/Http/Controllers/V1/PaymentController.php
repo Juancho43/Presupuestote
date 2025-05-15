@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Payment Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Payment records including CRUD operations
  * and tag-based filtering.
  */
 class PaymentController extends Controller
@@ -22,7 +22,7 @@ class PaymentController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var PaymentRepository Repository for dummy data access
+     * @var PaymentRepository Repository for Payment data access
      */
     protected PaymentRepository $repository;
 
@@ -37,9 +37,9 @@ class PaymentController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Payment records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Payment records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class PaymentController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Payment record by ID
      *
      * @param int $id Payment record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Payment resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class PaymentController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Payment record
      *
-     * @param PaymentRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param PaymentRequest $request Validated Payment data
+     * @return JsonResponse Created Payment resource
      * @throws Exception If creation fails
      */
     public function store(PaymentRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class PaymentController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Payment record
      *
-     * @param PaymentRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param PaymentRequest $request Validated Payment data
+     * @return JsonResponse Updated Payment resource
      * @throws Exception If update fails
      */
     public function update(PaymentRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Payment record
      *
      * @param int $id Payment record ID
      * @return JsonResponse Empty response on success
@@ -116,6 +116,33 @@ class PaymentController extends Controller
             return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
         }catch(Exception $e){
             return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function allClientPayments(int $id) : JsonResponse
+    {
+        try{
+            return $this->successResponse(new PaymentResourceCollection($this->repository->allClientPayments($id)), null, Response::HTTP_OK);
+        }catch(Exception $e){
+            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function allEmployeePayments(int $id) : JsonResponse
+    {
+        try{
+            return $this->successResponse(new PaymentResourceCollection($this->repository->allEmployeePayments($id)), null, Response::HTTP_OK);
+        }catch(Exception $e){
+            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function allSupplierPayments(int $id) : JsonResponse
+    {
+        try{
+            return $this->successResponse(new PaymentResourceCollection($this->repository->allSupplierPayments($id)), null, Response::HTTP_OK);
+        }catch(Exception $e){
+            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

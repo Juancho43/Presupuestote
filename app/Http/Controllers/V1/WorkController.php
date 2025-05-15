@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Work Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Work records including CRUD operations
  * and tag-based filtering.
  */
 class WorkController extends Controller
@@ -22,7 +22,7 @@ class WorkController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var WorkRepository Repository for dummy data access
+     * @var WorkRepository Repository for Work data access
      */
     protected WorkRepository $repository;
 
@@ -37,9 +37,9 @@ class WorkController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Work records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Work records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class WorkController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Work record by ID
      *
      * @param int $id Work record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Work resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class WorkController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Work record
      *
-     * @param WorkRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param WorkRequest $request Validated Work data
+     * @return JsonResponse Created Work resource
      * @throws Exception If creation fails
      */
     public function store(WorkRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class WorkController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Work record
      *
-     * @param WorkRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param WorkRequest $request Validated Work data
+     * @return JsonResponse Updated Work resource
      * @throws Exception If update fails
      */
     public function update(WorkRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class WorkController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Work record
      *
      * @param int $id Work record ID
      * @return JsonResponse Empty response on success

@@ -27,11 +27,11 @@ class InvoiceRepository implements IRepository
      */
     public function all(): Collection
     {
-        return Invoice::all();
+        return Invoice::with(['supplier.person'])->get();
     }
 
     /**
-     * Find a Invoice by ID
+     * Find am Invoice by ID
      *
      * @param int $id Invoice ID to find
      * @return Invoice|JsonResponse Found Invoice model or error response
@@ -39,7 +39,7 @@ class InvoiceRepository implements IRepository
      */
     public function find(int $id): Invoice|JsonResponse
     {
-        $model = Invoice::with(['materials' => function ($query) {$query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'invoice_material.quantity'); }])->find($id);
+        $model = Invoice::with(['materials' => function ($query) {$query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'invoice_material.quantity'); }])->findOrFail($id);
 
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);

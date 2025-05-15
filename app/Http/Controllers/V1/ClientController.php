@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Client Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Client records including CRUD operations
  * and tag-based filtering.
  */
 class ClientController extends Controller
@@ -37,9 +37,9 @@ class ClientController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Client records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Client records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class ClientController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Client record by ID
      *
      * @param int $id Client record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Client resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class ClientController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Client record
      *
-     * @param ClientRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param ClientRequest $request Validated Client data
+     * @return JsonResponse Created Client resource
      * @throws Exception If creation fails
      */
     public function store(ClientRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class ClientController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Client record
      *
-     * @param ClientRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param ClientRequest $request Validated Client data
+     * @return JsonResponse Updated Client resource
      * @throws Exception If update fails
      */
     public function update(ClientRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Client record
      *
      * @param int $id Client record ID
      * @return JsonResponse Empty response on success

@@ -27,7 +27,7 @@ class EmployeeRepository implements IRepository
      */
     public function all(): Collection
     {
-        return Employee::all();
+        return Employee::with('person')->get();
     }
 
     /**
@@ -39,7 +39,7 @@ class EmployeeRepository implements IRepository
      */
     public function find(int $id): Employee|JsonResponse
     {
-        $model = Employee::where('id', $id)->first();
+        $model = Employee::with(['person','invoices'])->where('id', $id)->first();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

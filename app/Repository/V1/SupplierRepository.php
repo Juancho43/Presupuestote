@@ -27,7 +27,7 @@ class SupplierRepository implements IRepository
      */
     public function all(): Collection
     {
-        return Supplier::all();
+        return Supplier::with('person')->get();
     }
 
     /**
@@ -39,7 +39,7 @@ class SupplierRepository implements IRepository
      */
     public function find(int $id): Supplier|JsonResponse
     {
-        $model = Supplier::where('id', $id)->first();
+        $model = Supplier::with(['person','invoice'])->findOrFail($id);
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

@@ -27,7 +27,7 @@ class SalaryRepository implements IRepository
      */
     public function all(): Collection
     {
-        return Salary::all();
+        return Salary::with(['employee.person'])->get();
     }
 
     /**
@@ -39,11 +39,15 @@ class SalaryRepository implements IRepository
      */
     public function find(int $id): Salary|JsonResponse
     {
-        $model = Salary::where('id', $id)->first();
-        if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+        try {
+            $model = Salary::with([
+                'payments'
+            ])->findOrFail($id);
+
+            return $model;
+        } catch (Exception $e) {
+            return $this->errorResponse('Error retrieving data', $e->getMessage(), Response::HTTP_NOT_FOUND);
         }
-        return $model;
     }
 
     /**

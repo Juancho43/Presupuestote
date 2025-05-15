@@ -37,9 +37,9 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all SubCategory records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of SubCategory records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single SubCategory record by ID
      *
      * @param int $id SubCategory record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single SubCategory resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new SubCategory record
      *
-     * @param SubCategoryRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param SubCategoryRequest $request Validated SubCategory data
+     * @return JsonResponse Created SubCategory resource
      * @throws Exception If creation fails
      */
     public function store(SubCategoryRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing SubCategory record
      *
-     * @param SubCategoryRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param SubCategoryRequest $request Validated SubCategory data
+     * @return JsonResponse Updated SubCategory resource
      * @throws Exception If update fails
      */
     public function update(SubCategoryRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete SubCategory record
      *
      * @param int $id SubCategory record ID
      * @return JsonResponse Empty response on success

@@ -21,6 +21,7 @@
                 'dead_line' => $this->dead_line?->toDateString(),
                 'status' => $this->status->value,
                 'cost' => $this->cost,
+                'client' => new ClientResource($this->whenLoaded('client')),
                 'payments' => PaymentResource::collection($this->whenLoaded('payments')),
                 'works' => WorkResource::collection($this->whenLoaded('works')),
                 'created_at' => $this->created_at?->toDateTimeString(),

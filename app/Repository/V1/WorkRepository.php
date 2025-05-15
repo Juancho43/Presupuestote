@@ -39,7 +39,7 @@ class WorkRepository implements IRepository
      */
     public function find(int $id): Work|JsonResponse
     {
-        $model = Work::where('id', $id)->first();
+        $model = Work::with(['materials','budget'])->where('id', $id)->firstOrFail();
         if (!$model) {
             throw new Exception('Error to find the resource with id: ' . $id);
         }

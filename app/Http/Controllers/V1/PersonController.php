@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Person Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Person records including CRUD operations
  * and tag-based filtering.
  */
 class PersonController extends Controller
@@ -22,7 +22,7 @@ class PersonController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var PersonRepository Repository for dummy data access
+     * @var PersonRepository Repository for Person data access
      */
     protected PersonRepository $repository;
 
@@ -37,9 +37,9 @@ class PersonController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Person records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Person records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class PersonController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Person record by ID
      *
      * @param int $id Person record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Person resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class PersonController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Person record
      *
-     * @param PersonRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param PersonRequest $request Validated Person data
+     * @return JsonResponse Created Person resource
      * @throws Exception If creation fails
      */
     public function store(PersonRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class PersonController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Person record
      *
-     * @param PersonRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param PersonRequest $request Validated Person data
+     * @return JsonResponse Updated Person resource
      * @throws Exception If update fails
      */
     public function update(PersonRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Person record
      *
      * @param int $id Person record ID
      * @return JsonResponse Empty response on success

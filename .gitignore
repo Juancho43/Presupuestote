@@ -21,3 +21,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+prueba.php
+/app/Http/Controllers/DummyController.php
+/app/Repository/DummyRepository.php
+/app/Http/Controllers/UserController.php
+/tests/Feature/Http/Controllers/UserControllerTest.php

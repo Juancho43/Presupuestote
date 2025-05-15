@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Employee Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
+ * Handles HTTP requests related to Employee records including CRUD operations
  * and tag-based filtering.
  */
 class EmployeeController extends Controller
@@ -22,7 +22,7 @@ class EmployeeController extends Controller
     use ApiResponseTrait;
 
     /**
-     * @var EmployeeRepository Repository for dummy data access
+     * @var EmployeeRepository Repository for Employee data access
      */
     protected EmployeeRepository $repository;
 
@@ -37,9 +37,9 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Get all dummy records
+     * Get all Employee records
      *
-     * @return JsonResponse Collection of dummy records
+     * @return JsonResponse Collection of Employee records
      * @throws Exception If error occurs retrieving data
      */
     public function index() : JsonResponse
@@ -53,10 +53,10 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Get single dummy record by ID
+     * Get single Employee record by ID
      *
      * @param int $id Employee record ID
-     * @return JsonResponse Single dummy resource
+     * @return JsonResponse Single Employee resource
      * @throws Exception If record not found or error occurs
      */
     public function show(int $id) : JsonResponse
@@ -69,10 +69,10 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Create new dummy record
+     * Create new Employee record
      *
-     * @param EmployeeRequest $request Validated dummy data
-     * @return JsonResponse Created dummy resource
+     * @param EmployeeRequest $request Validated Employee data
+     * @return JsonResponse Created Employee resource
      * @throws Exception If creation fails
      */
     public function store(EmployeeRequest $request) : JsonResponse
@@ -86,10 +86,10 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Update existing dummy record
+     * Update existing Employee record
      *
-     * @param EmployeeRequest $request Validated dummy data
-     * @return JsonResponse Updated dummy resource
+     * @param EmployeeRequest $request Validated Employee data
+     * @return JsonResponse Updated Employee resource
      * @throws Exception If update fails
      */
     public function update(EmployeeRequest $request) : JsonResponse
@@ -103,7 +103,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Delete dummy record
+     * Delete Employee record
      *
      * @param int $id Employee record ID
      * @return JsonResponse Empty response on success
