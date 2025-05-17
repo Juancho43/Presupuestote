@@ -3,6 +3,7 @@
     namespace Database\Seeders;
 
     use App\Enums\BudgetStatus;
+    use App\Enums\WorkStatus;
     use App\Models\Budget;
     use App\Models\Category;
     use App\Models\Client;
@@ -63,7 +64,9 @@
                 'stock' => 100,
                 'date' => now(),
             ]);
-
+            $cost = $price->price * 5; // Assuming 5 units of material
+            $profit = $cost * 0.2; // Assuming 20% profit
+            $budgetPrice = $cost + $profit;
             // Create a budget with works and payments
             $budget = Budget::factory()->create([
                 'client_id' => $client->id,
@@ -71,15 +74,20 @@
                 'description' => 'Kitchen renovation',
                 'dead_line' => now()->addDays(30),
                 'status' => BudgetStatus::PRESUPUESTADO,
-                'cost' => 5000.00,
+                'cost' => $cost,
+                'profit' => $profit,
+                'price' => $budgetPrice,
             ]);
+
 
             // Create work
             $work = Work::factory()->create([
                 'budget_id' => $budget->id,
                 'name' => 'Cabinet Installation',
                 'estimated_time' => '8',
-                'cost' => 1500.00,
+                'status' => WorkStatus::PRESUPUESTADO,
+                'order' => 1,
+                'cost' => $cost,
             ]);
 
             // Attach material to work with proper pivot data

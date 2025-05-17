@@ -37,12 +37,15 @@ class BudgetService
     private function calculateBudgetCost(Budget $budget) : float
     {
        float : $cost = 0;
-
        foreach ($budget->works as $work){
            $cost += $work->cost;
-           echo $cost;
        }
        return $cost;
+    }
+
+    private function calculateBudgetPrice(Budget $budget) : float
+    {
+        return $budget->cost + $budget->profit;
     }
 
 
@@ -53,10 +56,30 @@ class BudgetService
         return $budget;
     }
 
+    public function updateBudgetPrice(int $budgetId) : Budget
+    {
+        $budget = $this->repository->find($budgetId);
+        $budget = $this->updateBudgetCost($budget);
+        $budget->price = $this->calculateBudgetPrice($budget);
+
+        $budget->save();
+        echo $budget->price;
+        return $budget;
+    }
+
+
     public function updateBudget(BudgetRequest $data) : Budget | JsonResponse
     {
         $newBudget = $this->repository->update($data->id,$data);
-        $newBudget = $this->updateBudgetCost($newBudget);
+        $newBudget = $this->updateBudgetPrice($newBudget->id);
+        $newBudget->fresh();
+        return $newBudget;
+    }
+
+    public function createBudget(BudgetRequest $data) : Budget | JsonResponse
+    {
+        $newBudget = $this->repository->create($data);
+        $newBudget = $this->updateBudgetPrice($newBudget->id);
         $newBudget->fresh();
         return $newBudget;
     }

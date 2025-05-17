@@ -21,6 +21,8 @@
                 'dead_line' => $this->dead_line?->toDateString(),
                 'status' => $this->status->value,
                 'cost' => $this->cost,
+                'profit' => $this->profit,
+                'price' => $this->price,
                 'client' => new ClientResource($this->whenLoaded('client')),
                 'payments' => PaymentResource::collection($this->whenLoaded('payments')),
                 'works' => WorkResource::collection($this->whenLoaded('works')),

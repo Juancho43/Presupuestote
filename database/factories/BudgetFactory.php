@@ -17,13 +17,19 @@ class BudgetFactory extends Factory
      */
     public function definition(): array
     {
-        return [
+        $cost = $this->faker->randomFloat(2, 100, 10000);
 
+        $profitPercentage = $this->faker->numberBetween(10, 200); // Random profit percentage between 10% and 50%
+        $profit = $cost * ($profitPercentage / 100);
+        $price = $cost + $profit;
+        return [
         'made_date' => $this->faker->date(),
         'description' => $this->faker->text(),
         'dead_line' => $this->faker->date(),
         'status' => $this->faker->randomElement(['Presupuestado', 'Aprobado', 'Rechazado', 'En proceso', 'Entregado', 'Cancelado']),
-        'cost' => $this->faker->randomFloat(2, 100, 10000),
+        'cost' => $cost,
+        'profit' => $profit,
+        'price' => $price,
         'client_id' => Client::factory(),
         ];
     }

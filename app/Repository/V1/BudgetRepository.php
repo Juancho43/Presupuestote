@@ -70,6 +70,8 @@ class BudgetRepository implements IRepository
             'description' => $data->description,
             'dead_line' => $data->dead_line,
             'status' => $data->status,
+            'profit' => $data->profit ?? 0,
+            'price' => $data->price ?? 0,
             'cost' => $data->cost ?? 0,
             'client_id' => $data->client_id
         ]);
@@ -93,6 +95,8 @@ class BudgetRepository implements IRepository
                     'description' => $data->description,
                     'dead_line' => $data->dead_line,
                     'status' => $data->status,
+                    'profit' => $data->profit ?? 0,
+                    'price' => $data->price ?? 0,
                     'cost' => $data->cost ?? 0,
                     'client_id' => $data->client_id
                 ]
@@ -127,7 +131,7 @@ class BudgetRepository implements IRepository
            echo $budget->cost;
            Work::whereIn('id', $workIds)->update(['budget_id' => $budgetId]);
            return $budget->fresh('works');
-       }catch (\Exception $e ){
+       }catch (Exception $e ){
            return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
        }
 

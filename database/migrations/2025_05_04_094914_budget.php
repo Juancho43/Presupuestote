@@ -18,6 +18,8 @@
                 $table->date('dead_line');
                 $table->enum('status', ['Presupuestado', 'Aprobado', 'Rechazado', 'En proceso', 'Entregado', 'Cancelado']);
                 $table->decimal('cost', 10, 2);
+                $table->decimal('profit', 10, 2);
+                $table->decimal('price', 10, 2);
                 $table->foreignId('client_id')->constrained()->onDelete('cascade');
                 $table->timestamps();
                 $table->softDeletes();
