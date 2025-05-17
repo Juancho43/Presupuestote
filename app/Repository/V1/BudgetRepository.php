@@ -4,6 +4,7 @@ namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Budget;
+use App\Models\Work;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -64,7 +65,14 @@ class BudgetRepository implements IRepository
     public function create(FormRequest $data): Budget
     {
         $data->validated();
-        $model = Budget::create($data->all());
+        $model = Budget::create([
+            'made_date' => $data->made_date,
+            'description' => $data->description,
+            'dead_line' => $data->dead_line,
+            'status' => $data->status,
+            'cost' => $data->cost ?? 0,
+            'client_id' => $data->client_id
+        ]);
         return $model;
     }
 
@@ -80,7 +88,14 @@ class BudgetRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'made_date' => $data->made_date,
+                    'description' => $data->description,
+                    'dead_line' => $data->dead_line,
+                    'status' => $data->status,
+                    'cost' => $data->cost ?? 0,
+                    'client_id' => $data->client_id
+                ]
             );
             $model->fresh();
             return $model;
@@ -103,4 +118,18 @@ class BudgetRepository implements IRepository
             return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+   public function addWorks(int $budgetId, array $workIds): Budget | JsonResponse
+   {
+       try {
+
+           $budget = Budget::findOrFail($budgetId);
+           echo $budget->cost;
+           Work::whereIn('id', $workIds)->update(['budget_id' => $budgetId]);
+           return $budget->fresh('works');
+       }catch (\Exception $e ){
+           return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+       }
+
+   }
 }

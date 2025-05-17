@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Http\Requests\V1\AddMaterialsToWorksRequest;
 use App\Http\Requests\V1\WorkRequest;
 use App\Http\Resources\V1\WorkResource;
 use App\Http\Resources\V1\WorkResourceCollection;
 use App\Repository\V1\WorkRepository;
+use App\Services\V1\WorkService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use function PHPUnit\Framework\directoryExists;
 
 /**
  * Work Controller
@@ -26,13 +29,17 @@ class WorkController extends Controller
      */
     protected WorkRepository $repository;
 
+    protected WorkService $service;
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with Repository dependency
      *
      * @param WorkRepository $WorkRepository
      */
-    public function __construct(WorkRepository $WorkRepository)
+
+
+    public function __construct(WorkRepository $WorkRepository, WorkService $WorkService)
     {
+        $this->service = $WorkService;
         $this->repository = $WorkRepository;
     }
 
@@ -83,6 +90,7 @@ class WorkController extends Controller
         }catch(Exception $e){
             return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
     }
 
     /**
@@ -117,6 +125,17 @@ class WorkController extends Controller
         }catch(Exception $e){
             return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function addMaterials(AddMaterialsToWorksRequest $request) : JsonResponse
+    {
+        try {
+            $work = $this->service->addMaterialsToWork($request);
+            return $this->successResponse(new WorkResource($work), "Materials added successfully", Response::HTTP_CREATED);
+        }catch (Exception $e){
+            return $this->errorResponse("Error adding materials to work", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
     }
 
 }

@@ -40,16 +40,12 @@ Route::prefix('v1')->group(function () {
         Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
         Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
 
-
-
+        Route::post('budgets/works' , [BudgetController::class, 'addWorks'])->name('budgets.addWorks');
+        Route::get('budgets/updateCost/{id}', [BudgetController::class, 'updateBudgetCost'])->name('budgets.updateCost');
+        Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
     });
 
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::group(['as' => 'private.'], function(){
-            Route::resource('clients/private',ClientController::class)->only([ 'store', 'update', 'destroy']);
-        });
-    });
 
 });
 

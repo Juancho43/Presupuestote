@@ -24,6 +24,7 @@ class Work extends Model
         'dead_line',
         'cost',
         'status',
+        'budget_id',
     ];
 
     protected $casts = [
@@ -43,8 +44,7 @@ class Work extends Model
 
     public function materials(): BelongsToMany
     {
-        return $this->belongsToMany(Material::class, 'material_work')
-            ->withPivot('quantity')
-            ->withTimestamps();
+        return $this->belongsToMany(Material::class)
+            ->withPivot('quantity', 'price_id', 'stock_id');
     }
 }

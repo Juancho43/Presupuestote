@@ -61,26 +61,26 @@ class SupplierNestedDataSeeder extends Seeder
         ]);
 
         // Create prices for materials
-        Price::factory()->create([
+        $price1 = Price::factory()->create([
             'material_id' => $material1->id,
             'price' => 45.99,
             'date' => now(),
         ]);
 
-        Price::factory()->create([
+        $price2 = Price::factory()->create([
             'material_id' => $material2->id,
             'price' => 89.99,
             'date' => now(),
         ]);
 
         // Create stock records
-        Stock::factory()->create([
+        $stock1 = Stock::factory()->create([
             'material_id' => $material1->id,
             'stock' => 200,
             'date' => now(),
         ]);
 
-        Stock::factory()->create([
+        $stock2 = Stock::factory()->create([
             'material_id' => $material2->id,
             'stock' => 150,
             'date' => now(),
@@ -92,16 +92,17 @@ class SupplierNestedDataSeeder extends Seeder
             'date' => now(),
         ]);
 
-        // Attach materials to invoice with quantities and prices
-        $invoice->materials()->attach([
-            $material1->id => [
-                'quantity' => 50,
-                'unit_price' => 45.99,
-            ],
-            $material2->id => [
-                'quantity' => 30,
-                'unit_price' => 89.99,
-            ],
+        // Attach materials to invoice with proper pivot data including price_id and stock_id
+        $invoice->materials()->attach($material1->id, [
+            'price_id' => $price1->id,
+            'stock_id' => $stock1->id,
+            'quantity' => 50
+        ]);
+
+        $invoice->materials()->attach($material2->id, [
+            'price_id' => $price2->id,
+            'stock_id' => $stock2->id,
+            'quantity' => 30
         ]);
 
         // Create payments for the invoice

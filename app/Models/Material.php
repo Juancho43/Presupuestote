@@ -34,13 +34,16 @@ class Material extends Model
         return $this->belongsTo(SubCategory::class);
     }
 
-    public function works():BelongsToMany
+    public function works(): BelongsToMany
     {
-        return $this->BelongsToMany(Work::class,'material_work');
+        return $this->belongsToMany(Work::class)
+            ->withPivot('quantity', 'price_id', 'stock_id');
     }
-    public function invoice() : BelongsToMany
+
+    public function invoices(): BelongsToMany
     {
-        return $this->BelongsToMany(Invoice::class);
+        return $this->belongsToMany(Invoice::class)
+            ->withPivot('quantity', 'price_id', 'stock_id');
     }
     public function prices() : HasMany
     {

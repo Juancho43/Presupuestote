@@ -26,13 +26,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('material_work', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('work_id')->constrained()->onDelete('cascade');
-            $table->foreignId('material_id')->constrained()->onDelete('cascade');
-            $table->integer('quantity');
-            $table->timestamps();
-        });
+
     }
 
     /**
@@ -40,7 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('material_work');
         Schema::dropIfExists('works');
     }
 };

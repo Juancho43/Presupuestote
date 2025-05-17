@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Http\Requests\V1\AddWorksToBudgeRequest;
 use App\Http\Requests\V1\BudgetRequest;
 use App\Http\Resources\V1\BudgetResource;
 use App\Http\Resources\V1\BudgetResourceCollection;
 use App\Repository\V1\BudgetRepository;
+use App\Services\V1\BudgetService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -27,12 +29,18 @@ class BudgetController extends Controller
     protected BudgetRepository $repository;
 
     /**
+     * @var BudgetService Service for Budget business logic
+     */
+    protected BudgetService $service;
+
+    /**
      * Initialize controller with repository dependency
      *
      * @param BudgetRepository $BudgetRepository
      */
-    public function __construct(BudgetRepository $BudgetRepository)
+    public function __construct(BudgetRepository $BudgetRepository, BudgetService $service)
     {
+        $this->service = $service;
         $this->repository = $BudgetRepository;
     }
 
@@ -95,7 +103,7 @@ class BudgetController extends Controller
     public function update(BudgetRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->service->updateBudget($request);
             return $this->successResponse(new BudgetResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -119,4 +127,18 @@ class BudgetController extends Controller
         }
     }
 
+    public function addWorks(AddWorksToBudgeRequest $request) : JsonResponse
+    {
+        try {
+           $budget = $this->service->addWorksToBudget($request);
+            return $this->successResponse(new BudgetResource($budget), "Works added successfully", Response::HTTP_OK);
+        }catch (Exception $e) {
+            return $this->errorResponse("Error adding works to budget", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    public function updateBudgetCost(int $id) : JsonResponse
+    {
+       $budget= $this->service->updateBudgetCost($this->repository->find($id));
+        return $this->successResponse(new BudgetResource($budget), "Budget cost updated successfully", Response::HTTP_OK);
+    }
 }

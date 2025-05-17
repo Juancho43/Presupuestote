@@ -27,11 +27,15 @@ class MaterialRepository implements IRepository
      */
   public function all(): Collection
   {
-    return Material::with([
+     return Material::with([
         'measure',
         'subcategory',
-        'prices',
-        'stocks'
+        'prices' => function ($query) {
+            $query->latest('date')->limit(1);
+        },
+        'stocks' => function ($query) {
+            $query->latest('date')->limit(1);
+        }
     ])->get();
 
   }
