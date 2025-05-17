@@ -20,13 +20,17 @@ class Budget extends Model
         'dead_line',
         'status',
         'cost',
+        'profit',
+        'price',
     ];
     protected $casts = [
         'made_date' => 'date',
         'description' => 'string',
         'dead_line' => 'date',
         'status' => BudgetStatus::class,
-        'cost' => 'decimal:2'
+        'cost' => 'decimal:2',
+        'profit' => 'decimal:2',
+        'price' => 'decimal:2',
     ];
 
     public function client() : BelongsTo

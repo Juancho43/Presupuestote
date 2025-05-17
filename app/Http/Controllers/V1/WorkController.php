@@ -133,7 +133,7 @@ class WorkController extends Controller
             $work = $this->service->addMaterialsToWork($request);
             return $this->successResponse(new WorkResource($work), "Materials added successfully", Response::HTTP_CREATED);
         }catch (Exception $e){
-            return $this->errorResponse("Error adding materials to work", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->errorResponse("Controller Error: adding materials to work", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
     }

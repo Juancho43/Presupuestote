@@ -21,6 +21,7 @@ class BudgetRequest extends FormRequest
             'dead_line' => ['required', 'date', 'after:made_date'],
             'status' => ['required', new Enum(BudgetStatus::class)],
             'cost' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
+            'profit' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
             'client_id' => ['required_without_all:person.name,person.phone_number', 'exists:clients,id'],
             'person.name' => ['required_without:client_id', 'string', 'required_with:person.phone_number'],
             'person.phone_number' => ['required_without:client_id', 'string', 'required_with:person.name'],

@@ -16,6 +16,8 @@ use ApiResponseTrait;
     private static ?WorkService $instance = null;
     private BudgetService $budgetService;
 
+
+
     public static function getInstance(): WorkService
     {
         if (self::$instance === null) {
@@ -31,7 +33,6 @@ use ApiResponseTrait;
         $this->budgetService = BudgetService::getInstance();
         $this->repository = $repository;
     }
-
 
     public function calculateWorkCost(int $workId): float
     {
@@ -61,9 +62,10 @@ use ApiResponseTrait;
 
             // Calculate and update the work cost
             $work->cost = $this->calculateWorkCost($work->id);
-            $work->save();
 
-            return $work;
+            $work->save();
+            $this->budgetService->updateBudgetPrice($work->budget_id);
+            return $this->repository->find($work->id);
         } catch (Exception $e) {
             return $this->errorResponse("Service Error: adding materials to work failed", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -91,12 +93,13 @@ use ApiResponseTrait;
                 );
             }
 
-            $syncData[$materialData['id']] = [
+            $pivotData[$materialData['id']] = [
                 'quantity' => $materialData['quantity'],
                 'price_id' => $latestPrice->id,
                 'stock_id' => $latestStock->id
             ];
         }
+
         return $pivotData;
     }
 

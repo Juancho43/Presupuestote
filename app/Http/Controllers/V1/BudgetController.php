@@ -86,7 +86,7 @@ class BudgetController extends Controller
     public function store(BudgetRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->create($request);
+            $dummy = $this->service->createBudget($request);
             return $this->successResponse(new BudgetResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -136,9 +136,10 @@ class BudgetController extends Controller
             return $this->errorResponse("Error adding works to budget", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    public function updateBudgetCost(int $id) : JsonResponse
+    public function updateBudgetPrice(int $id) : JsonResponse
     {
-       $budget= $this->service->updateBudgetCost($this->repository->find($id));
+        $budget= $this->service->updateBudgetPrice($id);
         return $this->successResponse(new BudgetResource($budget), "Budget cost updated successfully", Response::HTTP_OK);
     }
+
 }

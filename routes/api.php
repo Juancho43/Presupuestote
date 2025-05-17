@@ -41,7 +41,7 @@ Route::prefix('v1')->group(function () {
         Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
 
         Route::post('budgets/works' , [BudgetController::class, 'addWorks'])->name('budgets.addWorks');
-        Route::get('budgets/updateCost/{id}', [BudgetController::class, 'updateBudgetCost'])->name('budgets.updateCost');
+        Route::get('budgets/updatePrice/{id}', [BudgetController::class, 'updateBudgetPrice'])->name('budgets.updatePrice');
         Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
     });
 
