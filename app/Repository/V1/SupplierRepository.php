@@ -67,10 +67,8 @@ class SupplierRepository implements IRepository
 
         // Create client with provided balance or default to 0
         $Employee = new Supplier([
-            'salary',
-            'start_date',
-            'end_date',
-            'is_active',
+            'notes'=>$data->notes,
+            'balance'=>$data->balance,
         ]);
 
         // Handle person relationship

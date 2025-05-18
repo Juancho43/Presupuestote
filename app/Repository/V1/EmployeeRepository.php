@@ -67,10 +67,10 @@ class EmployeeRepository implements IRepository
 
         // Create client with provided balance or default to 0
         $Employee = new Employee([
-            'salary',
-            'start_date',
-            'end_date',
-            'is_active',
+            'salary' => $data->salary,
+            'start_date' => $data->start_date,
+            'end_date' => $data->end_date,
+            'is_active' => $data->is_active,
         ]);
 
         // Handle person relationship
