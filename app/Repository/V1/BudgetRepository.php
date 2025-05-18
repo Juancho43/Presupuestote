@@ -29,7 +29,6 @@ class BudgetRepository implements IRepository
      */
     public function all(): Collection
     {
-        print(Budget::getStates());
         return Budget::with('client.person')->get();
     }
 
