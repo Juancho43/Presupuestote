@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\States\PaymentState\PaymentState;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,13 +17,15 @@ class Salary extends Model
     protected $fillable = [
       'amount',
       'date',
-      'active'
+      'active',
+      'payment_status',
     ];
 
     protected $casts = [
         'active' => 'boolean',
         'date' => 'date',
         'amount' => 'decimal:2',
+        'payment_status' => PaymentState::class
     ];
     public function employee(): BelongsTo
     {

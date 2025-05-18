@@ -16,6 +16,7 @@
                 $table->date('made_date');
                 $table->text('description');
                 $table->date('dead_line');
+                $table->string('payment_status')->default('Deuda');
                 $table->string('state')->default('Presupuestado');
                 $table->decimal('cost', 10, 2);
                 $table->decimal('profit', 10, 2);

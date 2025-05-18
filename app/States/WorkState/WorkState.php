@@ -5,7 +5,7 @@ namespace App\States\WorkState;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
 
-class WorkState extends State
+abstract class WorkState extends State
 {
     public static function config() : StateConfig
     {

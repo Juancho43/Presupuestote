@@ -5,7 +5,7 @@ namespace App\States\BudgetState;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
 
-class BudgetState extends State
+abstract class BudgetState extends State
 {
     public static function config() : StateConfig
     {

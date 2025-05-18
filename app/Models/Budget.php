@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\States\BudgetState\BudgetState;
+use App\States\PaymentState\PaymentState;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,12 +26,14 @@ class Budget extends Model
         'cost',
         'profit',
         'price',
+        'payment_status',
     ];
     protected $casts = [
         'made_date' => 'date',
         'description' => 'string',
         'dead_line' => 'date',
         'state' => BudgetState::class,
+        'payment_status' => PaymentState::class,
         'cost' => 'decimal:2',
         'profit' => 'decimal:2',
         'price' => 'decimal:2',

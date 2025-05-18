@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\States\PaymentState\PaymentState;
 use App\States\WorkState\WorkState;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ class Work extends Model
         'dead_line',
         'cost',
         'state',
+        'payment_status',
         'budget_id',
     ];
 
@@ -36,6 +38,7 @@ class Work extends Model
         'dead_line' => 'date',
         'cost' => 'decimal:2',
         'state' => WorkState::class,
+        'payment_status' => PaymentState::class,
     ];
 
     public function budget() : BelongsTo

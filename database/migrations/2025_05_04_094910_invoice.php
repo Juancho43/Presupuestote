@@ -15,6 +15,7 @@
                 $table->id();
                 $table->date('date');
                 $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
+                $table->string('payment_status')->default('Deuda');
                 $table->timestamps();
                 $table->softDeletes();
             });
