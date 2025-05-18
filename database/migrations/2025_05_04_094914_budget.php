@@ -16,7 +16,7 @@
                 $table->date('made_date');
                 $table->text('description');
                 $table->date('dead_line');
-                $table->enum('status', ['Presupuestado', 'Aprobado', 'Rechazado', 'En proceso', 'Entregado', 'Cancelado']);
+                $table->string('state')->default('Presupuestado');
                 $table->decimal('cost', 10, 2);
                 $table->decimal('profit', 10, 2);
                 $table->decimal('price', 10, 2);

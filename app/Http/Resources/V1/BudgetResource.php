@@ -19,7 +19,7 @@
                 'made_date' => $this->made_date?->toDateString(),
                 'description' => $this->description,
                 'dead_line' => $this->dead_line?->toDateString(),
-                'status' => $this->status->value,
+                'state' => $this->state,
                 'cost' => $this->cost,
                 'profit' => $this->profit,
                 'price' => $this->price,

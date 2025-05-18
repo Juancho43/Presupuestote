@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use App\Enums\WorkStatus;
+use App\States\WorkState\WorkState;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\ModelStates\HasStates;
 
 class Work extends Model
 {
 
     use HasFactory;
     use SoftDeletes;
+    use HasStates;
 
     protected $fillable = [
         'order',
@@ -23,7 +24,7 @@ class Work extends Model
         'estimated_time',
         'dead_line',
         'cost',
-        'status',
+        'state',
         'budget_id',
     ];
 
@@ -34,7 +35,7 @@ class Work extends Model
         'estimated_time' => 'integer',
         'dead_line' => 'date',
         'cost' => 'decimal:2',
-        'status' => WorkStatus::class,
+        'state' => WorkState::class,
     ];
 
     public function budget() : BelongsTo
