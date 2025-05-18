@@ -5,6 +5,7 @@ namespace App\Repository\V1;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Budget;
 use App\Models\Work;
+use App\States\BudgetState\Aprobado;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use Exception;
@@ -31,6 +32,7 @@ class BudgetRepository implements IRepository
         return Budget::with('client.person')->get();
     }
 
+
     /**
      * Find a Budget by ID
      *
@@ -49,7 +51,6 @@ class BudgetRepository implements IRepository
                 },
                 'payments'
             ])->findOrFail($id);
-
             return $model;
         } catch (Exception $e) {
             return $this->errorResponse('Error retrieving data', $e->getMessage(), Response::HTTP_NOT_FOUND);
@@ -69,7 +70,6 @@ class BudgetRepository implements IRepository
             'made_date' => $data->made_date,
             'description' => $data->description,
             'dead_line' => $data->dead_line,
-            'status' => $data->status,
             'profit' => $data->profit ?? 0,
             'price' => $data->price ?? 0,
             'cost' => $data->cost ?? 0,
@@ -94,7 +94,6 @@ class BudgetRepository implements IRepository
                     'made_date' => $data->made_date,
                     'description' => $data->description,
                     'dead_line' => $data->dead_line,
-                    'status' => $data->status,
                     'profit' => $data->profit ?? 0,
                     'price' => $data->price ?? 0,
                     'cost' => $data->cost ?? 0,

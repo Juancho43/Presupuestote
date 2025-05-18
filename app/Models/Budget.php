@@ -2,32 +2,38 @@
 
 namespace App\Models;
 
-use App\Enums\BudgetStatus;
+use App\States\BudgetState\BudgetState;
+use App\States\PaymentState\PaymentState;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\ModelStates\HasStates;
 
 class Budget extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasStates;
+
     protected $fillable = [
         'made_date',
         'description',
         'dead_line',
-        'status',
+        'state',
         'cost',
         'profit',
         'price',
+        'payment_status',
     ];
     protected $casts = [
         'made_date' => 'date',
         'description' => 'string',
         'dead_line' => 'date',
-        'status' => BudgetStatus::class,
+        'state' => BudgetState::class,
+        'payment_status' => PaymentState::class,
         'cost' => 'decimal:2',
         'profit' => 'decimal:2',
         'price' => 'decimal:2',

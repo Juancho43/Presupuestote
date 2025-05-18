@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('amount', 10, 2);
             $table->date('date');
+            $table->string('payment_status')->default('Deuda');
             $table->boolean('active')->default(true);
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
             $table->timestamps();

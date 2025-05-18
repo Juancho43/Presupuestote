@@ -73,7 +73,6 @@
                 'made_date' => now(),
                 'description' => 'Kitchen renovation',
                 'dead_line' => now()->addDays(30),
-                'status' => BudgetStatus::PRESUPUESTADO,
                 'cost' => $cost,
                 'profit' => $profit,
                 'price' => $budgetPrice,
@@ -85,7 +84,6 @@
                 'budget_id' => $budget->id,
                 'name' => 'Cabinet Installation',
                 'estimated_time' => '8',
-                'status' => WorkStatus::PRESUPUESTADO,
                 'order' => 1,
                 'cost' => $cost,
             ]);

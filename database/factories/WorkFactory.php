@@ -24,7 +24,7 @@ class WorkFactory extends Factory
             'dead_line' => $this->faker->date(),
             'cost' => $this->faker->randomFloat(2, 100, 10000),
             'budget_id' => \App\Models\Budget::factory(),
-            'status' => $this->faker->randomElement(['Presupuestado', 'Pendiente de aprobación', 'Aprobado', 'En proceso', 'Entregado', 'Cancelado']),
+            'state' => 'Presupuestado',
         ];
     }
 }

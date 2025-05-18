@@ -26,7 +26,7 @@ class BudgetFactory extends Factory
         'made_date' => $this->faker->date(),
         'description' => $this->faker->text(),
         'dead_line' => $this->faker->date(),
-        'status' => $this->faker->randomElement(['Presupuestado', 'Aprobado', 'Rechazado', 'En proceso', 'Entregado', 'Cancelado']),
+        'state' => 'Presupuestado',
         'cost' => $cost,
         'profit' => $profit,
         'price' => $price,

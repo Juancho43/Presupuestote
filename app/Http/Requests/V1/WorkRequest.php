@@ -22,7 +22,6 @@ class WorkRequest extends FormRequest
             'estimated_time' => ['required', 'integer', 'min:0'],
             'dead_line' => ['required', 'date'],
             'cost' => ['required', 'numeric', 'decimal:0,2', 'min:0'],
-            'status' => ['required', new Enum(WorkStatus::class)],
             'budget_id' => ['required', 'exists:budgets,id']
         ];
     }
@@ -41,7 +40,6 @@ class WorkRequest extends FormRequest
             'cost.required' => 'The cost is required',
             'cost.decimal' => 'The cost must have 2 decimal places',
             'cost.min' => 'The cost must be greater than or equal to 0',
-            'status.required' => 'The status is required',
             'budget_id.required' => 'The budget is required',
             'budget_id.exists' => 'The selected budget does not exist'
         ];

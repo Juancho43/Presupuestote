@@ -64,7 +64,6 @@ class WorkRepository implements IRepository
             'estimated_time' => $data->input('estimated_time'),
             'dead_line' => $data->input('dead_line'),
             'cost' => $data->input('cost', 0),
-            'status' => $data->input('status', WorkStatus::PRESUPUESTADO),
             'budget_id' => $data->input('budget_id')
         ]);
 
