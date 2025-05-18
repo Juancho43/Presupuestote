@@ -92,10 +92,10 @@ class PersonController extends Controller
      * @return JsonResponse Updated Person resource
      * @throws Exception If update fails
      */
-    public function update(PersonRequest $request) : JsonResponse
+    public function update(int $id, PersonRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new PersonResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

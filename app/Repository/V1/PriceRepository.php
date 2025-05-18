@@ -55,7 +55,11 @@ class PriceRepository implements IRepository
     public function create(FormRequest $data): Price
     {
         $data->validated();
-        $model = Price::create($data->all());
+        $model = Price::create([
+            'price' => $data->input('price'),
+            'date' => $data->input('date'),
+            'material_id' => $data->input('material_id'),
+        ]);
         return $model;
     }
 
@@ -71,7 +75,11 @@ class PriceRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'price' => $data->input('price'),
+                    'date' => $data->input('date'),
+                    'material_id' => $data->input('material_id'),
+                ]
             );
             $model->fresh();
             return $model;

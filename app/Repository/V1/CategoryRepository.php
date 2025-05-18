@@ -55,7 +55,9 @@ class CategoryRepository implements IRepository
     public function create(FormRequest $data): Category
     {
         $data->validated();
-        $model = Category::create($data->all());
+        $model = Category::create([
+            'name' => $data->name,
+        ]);
         return $model;
     }
 
@@ -71,7 +73,9 @@ class CategoryRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'name' => $data->name,
+                ]
             );
             $model->fresh();
             return $model;

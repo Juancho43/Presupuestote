@@ -92,10 +92,10 @@ class SupplierController extends Controller
      * @return JsonResponse Updated Supplier resource
      * @throws Exception If update fails
      */
-    public function update(SupplierRequest $request) : JsonResponse
+    public function update(int $id,SupplierRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new SupplierResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

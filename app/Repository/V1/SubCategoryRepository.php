@@ -55,7 +55,10 @@ class SubCategoryRepository implements IRepository
     public function create(FormRequest $data): SubCategory
     {
         $data->validated();
-        $model = SubCategory::create($data->all());
+        $model = SubCategory::create([
+            'name' => $data->input('name'),
+            'category_id' => $data->input('category_id'),
+        ]);
         return $model;
     }
 
@@ -71,7 +74,10 @@ class SubCategoryRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'name' => $data->input('name'),
+                    'category_id' => $data->input('category_id'),
+                ]
             );
             $model->fresh();
             return $model;

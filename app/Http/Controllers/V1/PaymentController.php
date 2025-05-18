@@ -92,10 +92,10 @@ class PaymentController extends Controller
      * @return JsonResponse Updated Payment resource
      * @throws Exception If update fails
      */
-    public function update(PaymentRequest $request) : JsonResponse
+    public function update(int $id, PaymentRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new PaymentResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

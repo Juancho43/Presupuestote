@@ -55,7 +55,11 @@ class StockRepository implements IRepository
     public function create(FormRequest $data): Stock
     {
         $data->validated();
-        $model = Stock::create($data->all());
+        $model = Stock::create([
+            'quantity' => $data->input('quantity'),
+            'date' => $data->input('date'),
+            'material_id' => $data->input('material_id'),
+        ]);
         return $model;
     }
 
@@ -71,7 +75,11 @@ class StockRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'quantity' => $data->input('quantity'),
+                    'date' => $data->input('date'),
+                    'material_id' => $data->input('material_id'),
+                ]
             );
             $model->fresh();
             return $model;

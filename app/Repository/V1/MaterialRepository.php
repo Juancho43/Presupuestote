@@ -81,7 +81,14 @@ class MaterialRepository implements IRepository
     public function create(FormRequest $data): Material
     {
         $data->validated();
-        $model = Material::create($data->all());
+        $model = Material::create([
+            'name' => $data->input('name'),
+            'description' => $data->input('description'),
+            'color' => $data->input('color'),
+            'brand' => $data->input('brand'),
+            'subcategory_id' => $data->input('subcategory_id'),
+            'measure_id' => $data->input('measure_id')
+        ]);
         return $model;
     }
 
@@ -97,7 +104,14 @@ class MaterialRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'name' => $data->input('name'),
+                    'description' => $data->input('description'),
+                    'color' => $data->input('color'),
+                    'brand' => $data->input('brand'),
+                    'subcategory_id' => $data->input('subcategory_id'),
+                    'measure_id' => $data->input('measure_id')
+                ]
             );
             $model->fresh();
             return $model;
