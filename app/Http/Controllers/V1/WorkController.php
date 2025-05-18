@@ -100,10 +100,10 @@ class WorkController extends Controller
      * @return JsonResponse Updated Work resource
      * @throws Exception If update fails
      */
-    public function update(WorkRequest $request) : JsonResponse
+    public function update(int $id, WorkRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new WorkResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

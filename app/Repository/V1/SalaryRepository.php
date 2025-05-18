@@ -59,7 +59,12 @@ class SalaryRepository implements IRepository
     public function create(FormRequest $data): Salary
     {
         $data->validated();
-        $model = Salary::create($data->all());
+        $model = Salary::create([
+            'amount' => $data->input('amount'),
+            'date' => $data->input('date'),
+            'active' => $data->input('active'),
+            'employee_id' => $data->input('employee_id'),
+        ]);
         return $model;
     }
 
@@ -75,7 +80,12 @@ class SalaryRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'amount' => $data->input('amount'),
+                    'date' => $data->input('date'),
+                    'active' => $data->input('active'),
+                    'employee_id' => $data->input('employee_id'),
+                ]
             );
             $model->fresh();
             return $model;

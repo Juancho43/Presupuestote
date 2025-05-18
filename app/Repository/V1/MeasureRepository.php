@@ -55,7 +55,12 @@ class MeasureRepository implements IRepository
     public function create(FormRequest $data): Measure
     {
         $data->validated();
-        $model = Measure::create($data->all());
+        $model = Measure::create([
+            'name' => $data->input('name'),
+            'abbreviation' => $data->input('abbreviation'),
+            'unit' => $data->input('unit'),
+
+        ]);
         return $model;
     }
 
@@ -71,7 +76,12 @@ class MeasureRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'name' => $data->input('name'),
+                    'abbreviation' => $data->input('abbreviation'),
+                    'unit' => $data->input('unit'),
+
+                ]
             );
             $model->fresh();
             return $model;

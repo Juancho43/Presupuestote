@@ -56,7 +56,10 @@ class InvoiceRepository implements IRepository
     public function create(FormRequest $data): Invoice
     {
         $data->validated();
-        $model = Invoice::create($data->all());
+        $model = Invoice::create([
+            'supplier_id' => $data->input('supplier_id'),
+            'date' => $data->input('date'),
+        ]);
         return $model;
     }
 
@@ -72,7 +75,10 @@ class InvoiceRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'supplier_id' => $data->input('supplier_id'),
+                    'date' => $data->input('date'),
+                ]
             );
             $model->fresh();
             return $model;

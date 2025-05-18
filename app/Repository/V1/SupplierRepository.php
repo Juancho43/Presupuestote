@@ -3,6 +3,7 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
+use App\Http\Requests\V1\PersonRequest;
 use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,7 +20,15 @@ use Symfony\Component\HttpFoundation\Response;
 class SupplierRepository implements IRepository
 {
     use ApiResponseTrait;
+    private PersonRepository $personRepository;
 
+    /**
+     * @param PersonRepository $personRepository
+     */
+    public function __construct(PersonRepository $personRepository)
+    {
+        $this->personRepository = $personRepository;
+    }
     /**
      * Get all Suppliers
      *
@@ -55,8 +64,28 @@ class SupplierRepository implements IRepository
     public function create(FormRequest $data): Supplier
     {
         $data->validated();
-        $model = Supplier::create($data->all());
-        return $model;
+
+        // Create client with provided balance or default to 0
+        $Employee = new Supplier([
+            'salary',
+            'start_date',
+            'end_date',
+            'is_active',
+        ]);
+
+        // Handle person relationship
+        if ($data->has('person')) {
+            $personRequest = new PersonRequest($data->person);
+            $person = $this->personRepository->create($personRequest);
+            $Employee->person()->associate($person);
+        } else {
+            // Associate with existing person
+            $person = $this->personRepository->find($data->person_id);
+            $Employee->person()->associate($person);
+        }
+
+        $Employee->save();
+        return $Employee->load('person');
     }
 
     /**
@@ -71,10 +100,12 @@ class SupplierRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'notes' => $data->input('notes'),
+                    'balance' => $data->input('balance'),
+                ]
             );
-            $model->fresh();
-            return $model;
+            return $model->fresh()->load('person');
         } catch (Exception $e) {
             return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }

@@ -92,10 +92,10 @@ class ClientController extends Controller
      * @return JsonResponse Updated Client resource
      * @throws Exception If update fails
      */
-    public function update(ClientRequest $request) : JsonResponse
+    public function update(int $id,ClientRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new ClientResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

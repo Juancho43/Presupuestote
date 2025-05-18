@@ -68,9 +68,9 @@ class BudgetService
     }
 
 
-    public function updateBudget(BudgetRequest $data) : Budget | JsonResponse
+    public function updateBudget(int $id,BudgetRequest $data) : Budget | JsonResponse
     {
-        $newBudget = $this->repository->update($data->id,$data);
+        $newBudget = $this->repository->update($id,$data);
         $newBudget = $this->updateBudgetPrice($newBudget->id);
         $newBudget->fresh();
         return $newBudget;

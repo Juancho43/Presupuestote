@@ -92,10 +92,10 @@ class InvoiceController extends Controller
      * @return JsonResponse Updated Invoice resource
      * @throws Exception If update fails
      */
-    public function update(InvoiceRequest $request) : JsonResponse
+    public function update(int $id,InvoiceRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new InvoiceResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

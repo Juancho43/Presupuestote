@@ -99,7 +99,6 @@ class WorkRepository implements IRepository
                  ->toArray();
              $work->materials()->sync($materials);
          }
-
          return $work->fresh('materials');
      } catch (Exception $e) {
          return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

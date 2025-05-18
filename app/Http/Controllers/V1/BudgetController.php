@@ -100,10 +100,10 @@ class BudgetController extends Controller
      * @return JsonResponse Updated Budget resource
      * @throws Exception If update fails
      */
-    public function update(BudgetRequest $request) : JsonResponse
+    public function update(int $id, BudgetRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->service->updateBudget($request);
+            $dummy = $this->service->updateBudget($id,$request);
             return $this->successResponse(new BudgetResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);

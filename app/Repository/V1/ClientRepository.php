@@ -3,6 +3,7 @@
 namespace App\Repository\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
+use App\Http\Requests\V1\PersonRequest;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,6 +20,17 @@ use Symfony\Component\HttpFoundation\Response;
 class ClientRepository implements IRepository
 {
     use ApiResponseTrait;
+
+    private PersonRepository $personRepository;
+
+    /**
+     * @param PersonRepository $personRepository
+     */
+    public function __construct(PersonRepository $personRepository)
+    {
+        $this->personRepository = $personRepository;
+    }
+
 
     /**
      * Get all Clients
@@ -55,8 +67,25 @@ class ClientRepository implements IRepository
     public function create(FormRequest $data): Client
     {
         $data->validated();
-        $model = Client::create($data->all());
-        return $model;
+
+        // Create client with provided balance or default to 0
+        $client = new Client([
+            'balance' => $data->balance ?? 0,
+        ]);
+
+        // Handle person relationship
+        if ($data->has('person')) {
+            $personRequest = new PersonRequest($data->person);
+            $person = $this->personRepository->create($personRequest);
+            $client->person()->associate($person);
+        } else {
+            // Associate with existing person
+            $person = $this->personRepository->find($data->person_id);
+            $client->person()->associate($person);
+        }
+
+        $client->save();
+        return $client->load('person');
     }
 
     /**
@@ -70,11 +99,19 @@ class ClientRepository implements IRepository
     {
         try {
             $data->validated();
-            $model = $this->find($id)->update(
-                $data->all()
-            );
-            $model->fresh();
-            return $model;
+            $client = $this->find($id);
+
+            if ($client instanceof JsonResponse) {
+                return $client;
+            }
+
+            // Update client fields
+            if ($data->has('balance')) {
+                $client->balance = $data->balance;
+            }
+
+            $client->save();
+            return $client->fresh()->load('person');
         } catch (Exception $e) {
             return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }

@@ -54,8 +54,17 @@ class PersonRepository implements IRepository
      */
     public function create(FormRequest $data): Person
     {
-        $data->validated();
-        $model = Person::create($data->all());
+        echo $data;
+
+        $model = Person::create([
+            'name' => $data->input('name'),
+            'last_name' => $data->input('last_name'),
+            'address' => $data->input('address'),
+            'phone_number' => $data->input('phone_number'),
+            'mail' => $data->input('mail'),
+            'dni' => $data->input('dni'),
+            'cuit' => $data->input('cuit'),
+        ]);
         return $model;
     }
 
@@ -71,7 +80,15 @@ class PersonRepository implements IRepository
         try {
             $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'name' => $data->input('name'),
+                    'last_name' => $data->input('last_name'),
+                    'address' => $data->input('address'),
+                    'phone_number' => $data->input('phone_number'),
+                     'mail' => $data->has('mail') && $data->input('mail') !== null ? $data->input('mail') : $this->find($id)->mail,
+                     'dni' => $data->has('dni') && $data->input('dni') !== null ? $data->input('dni') : $this->find($id)->dni,
+                     'cuit' => $data->has('cuit') && $data->input('cuit') !== null ? $data->input('cuit') : $this->find($id)->cuit,
+                ]
             );
             $model->fresh();
             return $model;

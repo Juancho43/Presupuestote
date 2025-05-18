@@ -92,10 +92,10 @@ class SubCategoryController extends Controller
      * @return JsonResponse Updated SubCategory resource
      * @throws Exception If update fails
      */
-    public function update(SubCategoryRequest $request) : JsonResponse
+    public function update(int $id, SubCategoryRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->update($request->id,$request);
+            $dummy = $this->repository->update($id,$request);
             return $this->successResponse(new SubCategoryResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
