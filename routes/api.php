@@ -42,6 +42,7 @@ Route::prefix('v1')->group(function () {
 
         Route::post('budgets/works' , [BudgetController::class, 'addWorks'])->name('budgets.addWorks');
         Route::get('budgets/updatePrice/{id}', [BudgetController::class, 'updateBudgetPrice'])->name('budgets.updatePrice');
+        Route::get('invoices/updateTotal/{id}', [InvoiceController::class, 'updateInvoiceTotal'])->name('invoices.updateTotal');
         Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
     });
 

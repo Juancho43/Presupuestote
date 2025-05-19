@@ -2,6 +2,7 @@
 
 namespace App\Repository\V1;
 
+use App\DTOs\V1\BudgetDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Budget;
 use App\Models\Work;
@@ -60,12 +61,11 @@ class BudgetRepository implements IRepository
     /**
      * Create a new Budget
      *
-     * @param FormRequest $data Request containing Budget data
+     * @param BudgetDTO $data Request containing Budget data
      * @return Budget Newly created Budget model
      */
-    public function create(FormRequest $data): Budget
+    public function create($data): Budget
     {
-        $data->validated();
         $model = Budget::create([
             'made_date' => $data->made_date,
             'description' => $data->description,
@@ -82,13 +82,12 @@ class BudgetRepository implements IRepository
      * Update an existing Budget
      *
      * @param int $id Budget ID to update
-     * @param FormRequest $data Request containing updated Budget data
+     * @param BudgetDTO $data Request containing updated Budget data
      * @return Budget|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Budget|JsonResponse
+    public function update(int $id,$data): Budget|JsonResponse
     {
         try {
-            $data->validated();
             $model = $this->find($id)->update(
                 [
                     'made_date' => $data->made_date,
@@ -127,7 +126,6 @@ class BudgetRepository implements IRepository
        try {
 
            $budget = Budget::findOrFail($budgetId);
-           echo $budget->cost;
            Work::whereIn('id', $workIds)->update(['budget_id' => $budgetId]);
            return $budget->fresh('works');
        }catch (Exception $e ){

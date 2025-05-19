@@ -2,6 +2,7 @@
 
 namespace App\Repository\V1;
 
+use App\DTOs\V1\PriceDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Price;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,16 +50,15 @@ class PriceRepository implements IRepository
     /**
      * Create a new Price
      *
-     * @param FormRequest $data Request containing Price data
+     * @param PriceDTO $data Request containing Price data
      * @return Price Newly created Price model
      */
-    public function create(FormRequest $data): Price
+    public function create($data): Price
     {
-        $data->validated();
         $model = Price::create([
-            'price' => $data->input('price'),
-            'date' => $data->input('date'),
-            'material_id' => $data->input('material_id'),
+            'price' => $data->price,
+            'date' => $data->date,
+            'material_id' => $data->material_id,
         ]);
         return $model;
     }
@@ -67,18 +67,18 @@ class PriceRepository implements IRepository
      * Update an existing Price
      *
      * @param int $id Price ID to update
-     * @param FormRequest $data Request containing updated Price data
+     * @param PriceDTO $data Request containing updated Price data
      * @return Price|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Price|JsonResponse
+    public function update(int $id, $data): Price|JsonResponse
     {
         try {
-            $data->validated();
+
             $model = $this->find($id)->update(
                 [
-                    'price' => $data->input('price'),
-                    'date' => $data->input('date'),
-                    'material_id' => $data->input('material_id'),
+                    'price' => $data->price,
+                    'date' => $data->date,
+                    'material_id' => $data->material_id,
                 ]
             );
             $model->fresh();

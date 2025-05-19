@@ -14,6 +14,7 @@
             Schema::create('invoices', function (Blueprint $table) {
                 $table->id();
                 $table->date('date');
+                $table->decimal('total', 10, 2)->default(0);
                 $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
                 $table->string('payment_status')->default('Deuda');
                 $table->timestamps();

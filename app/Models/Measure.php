@@ -16,7 +16,7 @@ class Measure extends Model
     protected $fillable = [
         'name',
         'abbreviation',
-        'unit'
+        'unit' // consider to eliminate this field
     ];
     protected $casts = [
         'name' => 'string',
