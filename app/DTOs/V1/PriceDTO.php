@@ -8,10 +8,10 @@ use Ramsey\Uuid\Type\Decimal;
 readonly class PriceDTO
 {
     public function __construct(
-        public int|null $id,
-        public decimal|null $price,
-        public Date|null $date,
-        public MaterialDTO|null $material,
+        public int|null $id = null,
+        public decimal|null $price = null,
+        public Date|null $date = null,
+        public MaterialDTO|null $material = null,
         ) {
     }
 }

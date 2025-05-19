@@ -2,6 +2,7 @@
 
 namespace App\Services\V1;
 
+use App\DTOs\V1\MaterialDTO;
 use App\DTOs\V1\PriceDTO;
 use App\DTOs\V1\StockDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
@@ -12,6 +13,7 @@ use App\Repository\V1\StockRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceService
@@ -70,8 +72,8 @@ class InvoiceService
         foreach ($materials as $materialData) {
             // Get the latest price and stock for the material
 
-            $newPrice = $this->priceRepository->create(new PriceDTO($prices[$i],Carbon::now(),$materialData['id']));
-            $newStock = $this->stockRepository->create(new StockDTO($quantities[$i],Carbon::now(),$materialData['id']));
+            $newPrice = $this->priceRepository->create(new PriceDTO(price: $prices[$i], date: new Date(), material: new MaterialDTO($materialData['id'])));
+            $newStock = $this->stockRepository->create(new StockDTO(stock: $quantities[$i], date: new Date(), material: new MaterialDTO($materialData['id'])));
             $pivotData[$materialData['id']] = [
                 'quantity' => $materialData['quantity'],
                 'price_id' => $newPrice,
