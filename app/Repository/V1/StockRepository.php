@@ -2,6 +2,7 @@
 
 namespace App\Repository\V1;
 
+use App\DTOs\V1\StockDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Stock;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,16 +50,15 @@ class StockRepository implements IRepository
     /**
      * Create a new Stock
      *
-     * @param FormRequest $data Request containing Stock data
+     * @param StockDTO $data Request containing Stock data
      * @return Stock Newly created Stock model
      */
-    public function create(FormRequest $data): Stock
+    public function create( $data): Stock
     {
-        $data->validated();
         $model = Stock::create([
-            'quantity' => $data->input('quantity'),
-            'date' => $data->input('date'),
-            'material_id' => $data->input('material_id'),
+            'quantity' => $data->quantity,
+            'date' => $data->date,
+            'material_id' => $data->material_id,
         ]);
         return $model;
     }
@@ -67,18 +67,16 @@ class StockRepository implements IRepository
      * Update an existing Stock
      *
      * @param int $id Stock ID to update
-     * @param FormRequest $data Request containing updated Stock data
+     * @param StockDTO $data Request containing updated Stock data
      * @return Stock|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Stock|JsonResponse
+    public function update(int $id, $data): Stock|JsonResponse
     {
         try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'quantity' => $data->input('quantity'),
-                    'date' => $data->input('date'),
-                    'material_id' => $data->input('material_id'),
+            $model = $this->find($id)->update([
+                    'quantity' => $data->quantity,
+                    'date' => $data->date,
+                    'material_id' => $data->material_id,
                 ]
             );
             $model->fresh();

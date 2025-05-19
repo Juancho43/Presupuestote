@@ -6,6 +6,7 @@ use App\Http\Requests\V1\InvoiceRequest;
 use App\Http\Resources\V1\InvoiceResource;
 use App\Http\Resources\V1\InvoiceResourceCollection;
 use App\Repository\V1\InvoiceRepository;
+use App\Services\V1\InvoiceService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 class InvoiceController extends Controller
 {
     use ApiResponseTrait;
+    protected InvoiceService $service;
 
     /**
      * @var InvoiceRepository Repository for Invoice data access
@@ -31,8 +33,9 @@ class InvoiceController extends Controller
      *
      * @param InvoiceRepository $InvoiceRepository
      */
-    public function __construct(InvoiceRepository $InvoiceRepository)
+    public function __construct(InvoiceRepository $InvoiceRepository, InvoiceService $service)
     {
+        $this->service = $service;
         $this->repository = $InvoiceRepository;
     }
 
@@ -118,5 +121,16 @@ class InvoiceController extends Controller
             return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function updateInvoiceTotal(int $id) : JsonResponse
+    {
+        try{
+            $dummy = $this->service->updateInvoiceTotal($id);
+            return $this->successResponse(new InvoiceResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
+        }catch(Exception $e){
+            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 }

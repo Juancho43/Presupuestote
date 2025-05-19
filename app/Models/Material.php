@@ -58,5 +58,12 @@ class Material extends Model
     {
         return $this->belongsTo(Measure::class);
     }
+    public function getPivotPriceAttribute()
+    {
+        if (!$this->pivot || !$this->pivot->price_id) {
+            return null;
+        }
 
+        return $this->prices->firstWhere('id', $this->pivot->price_id)?->price;
+    }
 }

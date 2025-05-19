@@ -11,8 +11,8 @@ interface IRepository
 {
     public function all(): Collection;
     public function find(int $id);
-    public function create(FormRequest $data);
-    public function update(int $id, FormRequest $data) ;
+    public function create($data);
+    public function update(int $id, $data) ;
     public function delete(int $id): bool |JsonResponse;
 }
-?>
+

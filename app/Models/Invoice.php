@@ -20,20 +20,24 @@ class Invoice extends Model
     protected $fillable = [
         'date',
         'payment_status',
+        'total',
 
     ];
     protected $casts = [
         'date' => 'date',
+        'total' => 'decimal:2',
         'payment_status' => PaymentState::class
     ];
 
-     public function materials(): BelongsToMany
-     {
-         return $this->belongsToMany(Material::class)
-                     ->withPivot(['quantity', 'unit_price'])
-                     ->withTimestamps();
-     }
-
+  public function materials(): BelongsToMany
+  {
+      return $this->belongsToMany(Material::class)
+                  ->withPivot(['quantity', 'price_id', 'stock_id'])
+                  ->withTimestamps()
+                  ->with(['prices' => function($query) {
+                      $query->select('id', 'material_id', 'price');
+                  }]);
+  }
     public function supplier():Belongsto
     {
         return $this->belongsTo(Supplier::class);

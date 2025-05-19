@@ -17,6 +17,8 @@ class InvoiceResource extends JsonResource
         return [
             'id' => $this->id,
             'date' => $this->date?->toDateString(),
+            'total' => $this->total,
+            'payment_status' => $this->payment_status,
             'materials' => MaterialResource::collection($this->whenLoaded('materials')),
             'payments' => PaymentResource::collection($this->whenLoaded('payments')),
             'created_at' => $this->created_at?->toDateTimeString(),
