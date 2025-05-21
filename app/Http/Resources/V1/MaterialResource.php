@@ -21,6 +21,7 @@ class MaterialResource extends JsonResource
             'color' => $this->color,
             'brand' => $this->brand,
             'quantity' => $this->pivot->quantity ?? null,
+            'latestPrice' => new PriceResource($this->latestPrice),
             'subcategory' => new SubCategoryResource($this->whenLoaded('subcategory')),
             'prices' => PriceResource::collection($this->whenLoaded('prices')),
             'stocks' => StockResource::collection($this->whenLoaded('stocks')),

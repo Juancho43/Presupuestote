@@ -55,10 +55,11 @@ class StockRepository implements IRepository
      */
     public function create( $data): Stock
     {
+        $date = $data->date->format('Y-m-d');
         $model = Stock::create([
-            'quantity' => $data->quantity,
-            'date' => $data->date,
-            'material_id' => $data->material_id,
+            'stock' => $data->stock,
+            'date' => $date,
+            'material_id' => $data->material->id,
         ]);
         return $model;
     }
@@ -72,11 +73,12 @@ class StockRepository implements IRepository
      */
     public function update(int $id, $data): Stock|JsonResponse
     {
+        $date = $data->date->format('Y-m-d');
         try {
             $model = $this->find($id)->update([
-                    'quantity' => $data->quantity,
-                    'date' => $data->date,
-                    'material_id' => $data->material_id,
+                    'stock' => $data->stock,
+                    'date' => $date,
+                    'material_id' => $data->material->id,
                 ]
             );
             $model->fresh();

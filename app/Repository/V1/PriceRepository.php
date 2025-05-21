@@ -54,11 +54,13 @@ class PriceRepository implements IRepository
      * @return Price Newly created Price model
      */
     public function create($data): Price
+
     {
+        $date = $data->date->format('Y-m-d');
         $model = Price::create([
             'price' => $data->price,
-            'date' => $data->date,
-            'material_id' => $data->material_id,
+            'date' => $date,
+            'material_id' => $data->material->id,
         ]);
         return $model;
     }
@@ -73,12 +75,12 @@ class PriceRepository implements IRepository
     public function update(int $id, $data): Price|JsonResponse
     {
         try {
-
+            $date = $data->date->format('Y-m-d');
             $model = $this->find($id)->update(
                 [
                     'price' => $data->price,
-                    'date' => $data->date,
-                    'material_id' => $data->material_id,
+                    'date' => $date,
+                    'material_id' => $data->material->id,
                 ]
             );
             $model->fresh();

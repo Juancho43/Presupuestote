@@ -18,7 +18,7 @@ class AddMaterialsToInvoiceRequest extends FormRequest
             'materials' => ['required', 'array'],
             'materials.*.id' => ['required', 'integer', 'exists:materials,id'],
             'materials.*.quantity' => ['required', 'integer', 'min:1'],
-            'materials.*.price_id' => ['required', 'decimal', 'exists:prices,id'],
+            'materials.*.price' => ['required', 'decimal:0,2'],
         ];
     }
 

@@ -66,4 +66,8 @@ class Material extends Model
 
         return $this->prices->firstWhere('id', $this->pivot->price_id)?->price;
     }
+    public function latestPrice() : HasOne
+    {
+        return $this->hasOne(Price::class)->latest();
+    }
 }

@@ -6,5 +6,5 @@ use App\States\PaymentState\PaymentState;
 
 class Deuda extends PaymentState
 {
-
+    public static $name = 'Deuda';
 }

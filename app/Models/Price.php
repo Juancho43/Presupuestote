@@ -14,10 +14,12 @@ class Price extends Model
     protected $fillable = [
         'price',
         'date',
+        'material_id',
     ];
     protected $casts = [
         'price' => 'decimal:2',
         'date' => 'date',
+        'material_id' => 'integer',
     ];
     public function material() : BelongsTo
     {

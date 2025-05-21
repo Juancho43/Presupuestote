@@ -31,12 +31,10 @@ class Invoice extends Model
 
   public function materials(): BelongsToMany
   {
-      return $this->belongsToMany(Material::class)
-                  ->withPivot(['quantity', 'price_id', 'stock_id'])
-                  ->withTimestamps()
-                  ->with(['prices' => function($query) {
-                      $query->select('id', 'material_id', 'price');
-                  }]);
+     return $this->belongsToMany(Material::class)
+                 ->withPivot(['quantity', 'price_id', 'stock_id'])
+                 ->withTimestamps()
+                 ->with(['latestPrice']);
   }
     public function supplier():Belongsto
     {

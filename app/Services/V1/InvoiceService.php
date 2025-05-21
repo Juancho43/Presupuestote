@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
+use Ramsey\Uuid\Exception\InvalidArgumentException;
+use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceService
@@ -38,7 +40,7 @@ class InvoiceService
         $this->priceRepository = $priceRepository;
         $this->repository = $repository;
     }
-    public function calculateInvoiceTotal(int $invoiceId) : float
+    private function calculateInvoiceTotal(int $invoiceId) : float
     {
         $invoice = $this->repository->find($invoiceId);
         $total = 0;
@@ -55,31 +57,41 @@ class InvoiceService
         $invoice->save();
         return $invoice;
     }
-    public function addMaterialsToInvoice(FormRequest $data) : Invoce | JsonResponse
+    public function addMaterialsToInvoice(FormRequest $data) : Invoice | JsonResponse
     {
         try {
-            $budget = $this->repository->addMaterials($data->invoice_id, $data->materials_ids);
-            return $budget;
+            $data->validated();
+            $invoice = $this->repository->find($data->invoice_id);
+            $syncData = $this->generateInvoiceMaterialPivot($data->materials);
+            $invoice->materials()->sync($syncData);
+            $invoice->save();
+            $this->updateInvoiceTotal($invoice->id);
+            echo $invoice;
+            return $invoice;
+
         }catch (Exception $e) {
             return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    private function generateInvoiceMaterialPivot(array $materials, array $quantities, array $prices) : array | JsonResponse
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function generateInvoiceMaterialPivot(array $materials) : array | JsonResponse
     {
         $pivotData = [];
-       $i = 0;
-        foreach ($materials as $materialData) {
-            // Get the latest price and stock for the material
-
-            $newPrice = $this->priceRepository->create(new PriceDTO(price: $prices[$i], date: new Date(), material: new MaterialDTO($materialData['id'])));
-            $newStock = $this->stockRepository->create(new StockDTO(stock: $quantities[$i], date: new Date(), material: new MaterialDTO($materialData['id'])));
+        foreach ($materials as $materialData)
+        {
+            $price = new Decimal($materialData['price']);
+            $stock = new Decimal($materialData['quantity']);
+            $date = Date::now();
+            $newPrice = $this->priceRepository->create(new PriceDTO(price: $price, date: $date, material: new MaterialDTO(id:$materialData['id'])));
+            $newStock = $this->stockRepository->create(new StockDTO(stock: $stock, date: $date, material: new MaterialDTO(id: $materialData['id'])));
             $pivotData[$materialData['id']] = [
                 'quantity' => $materialData['quantity'],
-                'price_id' => $newPrice,
-                'stock_id' => $newStock
+                'price_id' => $newPrice->id,
+                'stock_id' => $newStock->id
             ];
-            $i++;
         }
 
         return $pivotData;

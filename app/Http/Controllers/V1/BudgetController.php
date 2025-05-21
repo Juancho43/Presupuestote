@@ -8,7 +8,7 @@ use App\Http\Resources\V1\BudgetResource;
 use App\Http\Resources\V1\BudgetResourceCollection;
 use App\Repository\V1\BudgetRepository;
 use App\Services\V1\BudgetService;
-use Exception;
+use Exception as Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +37,7 @@ class BudgetController extends Controller
      * Initialize controller with repository dependency
      *
      * @param BudgetRepository $BudgetRepository
+     * @param BudgetService $service
      */
     public function __construct(BudgetRepository $BudgetRepository, BudgetService $service)
     {
@@ -55,7 +56,7 @@ class BudgetController extends Controller
 
         try{
             return $this->successResponse(new BudgetResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
+        }catch(\Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
