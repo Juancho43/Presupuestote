@@ -22,7 +22,6 @@ class PaymentResource extends JsonResource
             'payable_type' => (string) $this->payable_type,
             'payable_id' => (int) $this->payable_id,
             'payable' => $this->whenLoaded('payable'),
-
             'created_at' => (string) $this->created_at?->toDateTimeString(),
             'updated_at' => (string) $this->updated_at?->toDateTimeString(),
             'deleted_at' => (string) $this->deleted_at?->toDateTimeString()

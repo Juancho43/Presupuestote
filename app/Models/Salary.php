@@ -36,4 +36,8 @@ class Salary extends Model
     {
         return $this->morphMany(Payment::class, 'payable');
     }
+    public function calculateDebt()
+    {
+        return $this->amount - $this->payments->sum('amount');
+    }
 }

@@ -17,11 +17,14 @@ class Payment extends Model
         'amount',
         'date',
         'description',
+        'payable_id',
+        'payable_type',
     ];
     protected $casts = [
         'description' => 'string',
         'date' => 'datetime',
         'amount' => 'decimal:2',
+        'payable_id' => 'integer',
     ];
     public function payable(): MorphTo
     {

@@ -46,6 +46,9 @@ Route::prefix('v1')->group(function () {
         Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
         Route::post('invoices/materials', [InvoiceController::class, 'addMaterials'])->name('invoices.addMaterials');
 
+        Route::post('payments/budget', [PaymentController::class, 'addPaymentToBudget'])->name('payments.toBudget');
+        Route::post('payments/invoice', [PaymentController::class, 'addPaymentToInvoice'])->name('payments.toInvoice');
+        Route::post('payments/salary', [PaymentController::class, 'addPaymentToSalary'])->name('payments.toSalary');
     });
 
 

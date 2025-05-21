@@ -20,6 +20,7 @@
                 'description' => $this->description,
                 'dead_line' => $this->dead_line?->toDateString(),
                 'state' => $this->state,
+                'payment_status' => $this->payment_status,
                 'cost' => $this->cost,
                 'profit' => $this->profit,
                 'price' => $this->price,

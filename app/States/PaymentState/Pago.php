@@ -4,5 +4,5 @@ namespace App\States\PaymentState;
 
 class Pago extends PaymentState
 {
-    public static $name = 'Pago';
+    public static string $name = 'Pago';
 }
