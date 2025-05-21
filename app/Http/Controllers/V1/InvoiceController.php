@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\DTOs\V1\InvoiceDTO;
+use App\DTOs\V1\SupplierDTO;
+use App\Http\Requests\V1\AddMaterialsToInvoiceRequest;
 use App\Http\Requests\V1\InvoiceRequest;
 use App\Http\Resources\V1\InvoiceResource;
 use App\Http\Resources\V1\InvoiceResourceCollection;
@@ -81,7 +84,8 @@ class InvoiceController extends Controller
     public function store(InvoiceRequest $request) : JsonResponse
     {
         try{
-            $dummy = $this->repository->create($request);
+            $request->validated();
+            $dummy = $this->repository->create(new InvoiceDTO(date: $request->date, supplier: new SupplierDTO(id:$request->supplier_id)));
             return $this->successResponse(new InvoiceResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
         }catch(Exception $e){
             return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -131,6 +135,18 @@ class InvoiceController extends Controller
         }
     }
 
+    public function addMaterials(AddMaterialsToInvoiceRequest $request) : JsonResponse
+    {
+        try {
+            $invoice = $this->service->addMaterialsToInvoice($request);
+            return $this->successResponse(new InvoiceResource($invoice), "Materials added successfully", Response::HTTP_CREATED);
+        }catch (Exception $e){
+            return $this->errorResponse("Controller Error: adding materials to work", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
+    }
 
 }
+
+
+

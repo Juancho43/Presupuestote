@@ -14,10 +14,12 @@ class Stock extends Model
     protected $fillable = [
         'stock',
         'date',
+        'material_id',
     ];
     protected $casts = [
         'stock' => 'decimal:2',
         'date' => 'date',
+        'material_id' => 'integer',
     ];
     public function material() : BelongsTo
     {

@@ -6,7 +6,6 @@ use App\DTOs\V1\InvoiceDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,9 +41,7 @@ public function find(int $id): Invoice|JsonResponse
 {
     $model = Invoice::with([
         'materials',
-        'materials.prices' => function($query) {
-            $query->select('id', 'material_id', 'price');
-        },
+        'materials.latestPrice',
         'supplier.person'
     ])->findOrFail($id);
 
