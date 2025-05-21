@@ -26,7 +26,7 @@ class Budget extends Model
         'cost',
         'profit',
         'price',
-        'payment_status',
+        '',
     ];
     protected $casts = [
         'made_date' => 'date',
@@ -52,4 +52,9 @@ class Budget extends Model
     {
         return $this->hasMany(Work::class);
     }
+    public function calculateDebt()
+    {
+        return $this->price - $this->payments->sum('amount');
+    }
+
 }

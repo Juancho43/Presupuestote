@@ -2,6 +2,7 @@
 
 namespace App\Repository\V1;
 
+use App\DTOs\V1\PersonDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,21 +50,21 @@ class PersonRepository implements IRepository
     /**
      * Create a new Person
      *
-     * @param FormRequest $data Request containing Person data
+     * @param PersonDTO $data Request containing Person data
      * @return Person Newly created Person model
      */
-    public function create(FormRequest $data): Person
+    public function create($data): Person
     {
-        echo $data;
-
         $model = Person::create([
-            'name' => $data->input('name'),
-            'last_name' => $data->input('last_name'),
-            'address' => $data->input('address'),
-            'phone_number' => $data->input('phone_number'),
-            'mail' => $data->input('mail'),
-            'dni' => $data->input('dni'),
-            'cuit' => $data->input('cuit'),
+            [
+                'name' => $data->name,
+                'last_name' => $data->last_name,
+                'address' => $data->address,
+                'phone_number' => $data->phone_number,
+                'mail' => $data->mail,
+                'dni' => $data->dni,
+                'cuit' => $data->cuit,
+            ]
         ]);
         return $model;
     }
@@ -72,23 +73,22 @@ class PersonRepository implements IRepository
      * Update an existing Person
      *
      * @param int $id Person ID to update
-     * @param FormRequest $data Request containing updated Person data
+     * @param PersonDTO $data Request containing updated Person data
      * @return Person|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Person|JsonResponse
+    public function update(int $id,$data): Person|JsonResponse
     {
         try {
-            $data->validated();
             $model = $this->find($id)->update(
-                [
-                    'name' => $data->input('name'),
-                    'last_name' => $data->input('last_name'),
-                    'address' => $data->input('address'),
-                    'phone_number' => $data->input('phone_number'),
-                     'mail' => $data->has('mail') && $data->input('mail') !== null ? $data->input('mail') : $this->find($id)->mail,
-                     'dni' => $data->has('dni') && $data->input('dni') !== null ? $data->input('dni') : $this->find($id)->dni,
-                     'cuit' => $data->has('cuit') && $data->input('cuit') !== null ? $data->input('cuit') : $this->find($id)->cuit,
-                ]
+               [
+                   'name' => $data->name,
+                   'last_name' => $data->last_name,
+                   'address' => $data->address,
+                   'phone_number' => $data->phone_number,
+                   'mail' => $data->mail ?? $this->find($id)->mail,
+                   'dni' => $data->dni ?? $this->find($id)->dni,
+                   'cuit' => $data->cuit ?? $this->find($id)->cuit,
+               ]
             );
             $model->fresh();
             return $model;

@@ -100,7 +100,7 @@
             Payment::factory()->create([
                 'payable_type' => Budget::class,
                 'payable_id' => $budget->id,
-                'amount' => 2500.00,
+                'amount' => 10.00,
                 'date' => now(),
                 'description' => 'First payment',
             ]);

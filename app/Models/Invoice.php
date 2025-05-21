@@ -45,4 +45,8 @@ class Invoice extends Model
     {
         return $this->morphMany(Payment::class, 'payable');
     }
+    public function calculateDebt()
+    {
+        return $this->total - $this->payments->sum('amount');
+    }
 }

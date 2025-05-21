@@ -2,6 +2,7 @@
 
 namespace App\Repository\V1;
 
+use App\DTOs\V1\PaymentDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Budget;
 use App\Models\Invoice;
@@ -44,7 +45,7 @@ class PaymentRepository implements IRepository
     {
         $model = Payment::where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Repository Error: can't find the resource with id: " . $id);
         }
         return $model;
     }
@@ -52,13 +53,18 @@ class PaymentRepository implements IRepository
     /**
      * Create a new Payment
      *
-     * @param FormRequest $data Request containing Payment data
+     * @param PaymentDTO $data Request containing Payment data
      * @return Payment Newly created Payment model
      */
-    public function create(FormRequest $data): Payment
+    public function create($data): Payment
     {
-        $data->validated();
-        $model = Payment::create($data->all());
+        $model = Payment::create([
+            'payable_id' => $data->payable_id,
+            'payable_type' => $data->payable_type,
+            'amount' => $data->amount,
+            'date' => $data->date,
+            'description' => $data->description,
+        ]);
         return $model;
     }
 
@@ -66,20 +72,25 @@ class PaymentRepository implements IRepository
      * Update an existing Payment
      *
      * @param int $id Payment ID to update
-     * @param FormRequest $data Request containing updated Payment data
+     * @param PaymentDTO $data Request containing updated Payment data
      * @return Payment|JsonResponse
      */
-    public function update(int $id, FormRequest $data): Payment|JsonResponse
+    public function update(int $id,$data): Payment|JsonResponse
     {
         try {
-            $data->validated();
             $model = $this->find($id)->update(
-                $data->all()
+                [
+                    'payable_id' => $data->payable_id,
+                    'payable_type' => $data->payable_type,
+                    'amount' => $data->amount,
+                    'date' => $data->date,
+                    'description' => $data->description,
+                ]
             );
             $model->fresh();
             return $model;
         } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->errorResponse("Repository Error: can't update the resource", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

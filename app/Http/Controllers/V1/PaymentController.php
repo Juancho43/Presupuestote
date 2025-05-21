@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\V1;
 
+
 use App\Http\Requests\V1\PaymentRequest;
 use App\Http\Resources\V1\PaymentResource;
 use App\Http\Resources\V1\PaymentResourceCollection;
+use App\Models\Budget;
+use App\Models\Invoice;
+use App\Models\Salary;
 use App\Repository\V1\PaymentRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\V1\PaymentService;
 
 /**
  * Payment Controller
@@ -21,6 +26,8 @@ class PaymentController extends Controller
 {
     use ApiResponseTrait;
 
+    protected PaymentService $service;
+
     /**
      * @var PaymentRepository Repository for Payment data access
      */
@@ -31,8 +38,9 @@ class PaymentController extends Controller
      *
      * @param PaymentRepository $PaymentRepository
      */
-    public function __construct(PaymentRepository $PaymentRepository)
+    public function __construct(PaymentRepository $PaymentRepository, PaymentService $PaymentService)
     {
+        $this->service = $PaymentService;
         $this->repository = $PaymentRepository;
     }
 
@@ -143,6 +151,36 @@ class PaymentController extends Controller
             return $this->successResponse(new PaymentResourceCollection($this->repository->allSupplierPayments($id)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function addPaymentToBudget(PaymentRequest $request) : JsonResponse
+    {
+        try{
+            $response = $this->service->processModelPayment(Budget::class, $request, 'budget');
+            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
+        }catch(Exception $e){
+            return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function addPaymentToInvoice(PaymentRequest $request) : JsonResponse
+    {
+        try{
+            $response = $this->service->processModelPayment(Invoice::class, $request, 'invoice');
+            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
+        }catch(Exception $e){
+            return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function addPaymentToSalary(PaymentRequest $request) : JsonResponse
+    {
+        try{
+            $response = $this->service->processModelPayment(Salary::class, $request, 'salary');
+            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
+        }catch(Exception $e){
+            return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
