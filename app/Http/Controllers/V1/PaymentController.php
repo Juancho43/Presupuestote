@@ -157,7 +157,8 @@ class PaymentController extends Controller
     public function addPaymentToBudget(PaymentRequest $request) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResource($this->service->processModelPayment(Budget::class, $request, 'budget')), null, Response::HTTP_OK);
+            $response = $this->service->processModelPayment(Budget::class, $request, 'budget');
+            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -166,7 +167,8 @@ class PaymentController extends Controller
     public function addPaymentToInvoice(PaymentRequest $request) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResource($this->service->processModelPayment(Invoice::class, $request, 'invoice')), null, Response::HTTP_OK);
+            $response = $this->service->processModelPayment(Invoice::class, $request, 'invoice');
+            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -175,7 +177,8 @@ class PaymentController extends Controller
     public function addPaymentToSalary(PaymentRequest $request) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResource($this->service->processModelPayment(Salary::class, $request, 'salary')), null, Response::HTTP_OK);
+            $response = $this->service->processModelPayment(Salary::class, $request, 'salary');
+            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }

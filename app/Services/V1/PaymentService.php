@@ -48,7 +48,7 @@ class PaymentService
         $this->repository->delete($id);
     }
 
- public function processModelPayment(string $modelClass, PaymentRequest $data, string $modelType): Payment | JsonResponse
+ public function processModelPayment(string $modelClass, PaymentRequest $data, string $modelType): array | JsonResponse
  {
      try {
          $model = $modelClass::findOrFail($data->payable_id);
@@ -65,11 +65,13 @@ class PaymentService
          ));
          $model = $modelClass::findOrFail($data->payable_id);
          $newDebt = $model->calculateDebt();
+         $response['message'] = "Current debt: " . $newDebt;
          if ($newDebt == 0) {
+             $response['message'] = "Payment completed successfully, {$modelType} is fully paid.";
              $this->updatePaymentStatus($model, Pago::class);
          }
-
-         return $payment;
+         $response['payment'] = $payment;
+         return $response ;
      } catch (\Exception $e) {
          return $this->errorResponse("Service error: adding payment to a {$modelType}", $e->getMessage(), \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
      }
