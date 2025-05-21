@@ -57,4 +57,42 @@ class Budget extends Model
         return $this->price - $this->payments->sum('amount');
     }
 
+    private function calculatePrice()
+    {
+        return $this->cost + $this->profit;
+    }
+
+    private function calculateCost()
+    {
+        float : $cost = 0;
+        foreach ($this->works as $work) {
+            $cost += $work->cost;
+        }
+        return $cost;
+    }
+
+    public function updateCost()
+    {
+        try {
+            $this->cost = $this->calculateCost();
+            $this->save();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function updatePrice()
+    {
+        try {
+            $this->updateCost();
+            $this->price = $this->calculatePrice();
+            $this->save();
+            return true;
+        }catch (Exception $e) {
+            return false;
+        }
+
+    }
+
 }

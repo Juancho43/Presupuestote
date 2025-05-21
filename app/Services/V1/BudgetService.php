@@ -1,23 +1,46 @@
 <?php
 namespace App\Services\V1;
 
+use App\DTOs\V1\BudgetDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Http\Requests\V1\BudgetRequest;
 use App\Models\Budget;
 use App\Repository\V1\BudgetRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Foundation\Http\FormRequest;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class BudgetService
+ *
+ * Service layer for handling business logic related to Budget entity.
+ * Implements the Singleton pattern for resource efficiency.
+ *
+ * @package App\Services\V1
+ */
 class BudgetService
 {
     use ApiResponseTrait;
-    private BudgetRepository $repository;
-    private WorkService $workService;
 
+    /**
+     * Singleton instance
+     *
+     * @var BudgetService|null
+     */
     private static ?BudgetService $instance = null;
 
+    /**
+     * Repository for data access operations
+     *
+     * @var BudgetRepository
+     */
+    private BudgetRepository $repository;
+
+    /**
+     * Get or create the singleton instance
+     *
+     * @return BudgetService
+     */
     public static function getInstance(): BudgetService
     {
         if (self::$instance === null) {
@@ -25,72 +48,96 @@ class BudgetService
         }
         return self::$instance;
     }
+
+    /**
+     * Constructor
+     *
+     * @param BudgetRepository $repository Repository for data operations
+     */
     public function __construct(BudgetRepository $repository)
     {
-
         $this->repository = $repository;
     }
 
-    private function calculateBudgetCost(Budget $budget) : float
+    /**
+     * Retrieve a specific Budget entity by ID
+     *
+     * @param int $id The entity ID
+     * @return Budget|JsonResponse The found entity or error response
+     */
+    public function get(int $id): Budget | JsonResponse
     {
-       float : $cost = 0;
-       foreach ($budget->works as $work){
-           $cost += $work->cost;
-       }
-       return $cost;
-    }
-
-    private function calculateBudgetPrice(Budget $budget) : float
-    {
-        return $budget->cost + $budget->profit;
-    }
-
-
-    public function updateBudgetCost(Budget $budget) : Budget
-    {
-        $budget->cost = $this->calculateBudgetCost($budget);
-        $budget->save();
-        return $budget;
-    }
-
-    public function updateBudgetPrice(int $budgetId) : Budget
-    {
-        $budget = $this->repository->find($budgetId);
-        $budget = $this->updateBudgetCost($budget);
-        $budget->price = $this->calculateBudgetPrice($budget);
-        $budget->save();
-        return $budget;
-    }
-
-
-    public function updateBudget(int $id,BudgetRequest $data) : Budget | JsonResponse
-    {
-        $newBudget = $this->repository->update($id,$data);
-        $newBudget = $this->updateBudgetPrice($newBudget->id);
-        $newBudget->fresh();
-        return $newBudget;
-    }
-
-    public function createBudget(BudgetRequest $data) : Budget | JsonResponse
-    {
-        $newBudget = $this->repository->create($data);
-        $newBudget = $this->updateBudgetPrice($newBudget->id);
-        $newBudget->fresh();
-        return $newBudget;
+        try {
+            return $this->repository->find($id);
+        } catch (Exception $e) {
+            return $this->errorResponse("Service Error: can't find dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
-     * @throws Exception
+     * Retrieve all Budget entities
+     *
+     * @return Collection|JsonResponse Collection of entities or error response
      */
-    public function addWorksToBudget(FormRequest $data): Budget | JsonResponse
+    public function getAll(): Collection | JsonResponse
     {
         try {
-            $budget = $this->repository->addWorks($data->budget_id, $data->work_ids);
-            return $budget;
-        }catch (Exception $e) {
-            return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->repository->all();
+        } catch (Exception $e) {
+            return $this->errorResponse("Service Error: can't retrieve dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
     }
+
+    /**
+     * Create a new Budget entity
+     *
+     * @param BudgetDTO $data Data transfer object containing entity information
+     * @return Budget|JsonResponse The created entity or error response
+     */
+    public function create(BudgetDTO $data): Budget | JsonResponse
+    {
+        try {
+            $newBudget = $this->repository->create($data);
+            $newBudget->updatePrice();
+            $newBudget->fresh();
+            return $newBudget;
+        } catch (Exception $e) {
+            return $this->errorResponse("Service Error: can't create dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Update an existing Budget entity
+     *
+     * @param BudgetDTO $data Data transfer object containing updated information
+     * @return Budget|JsonResponse The updated entity or error response
+     */
+    public function update(BudgetDTO $data): Budget | JsonResponse
+    {
+        try {
+            $newBudget = $this->repository->update($data->id, $data);
+            $newBudget->updatePrice();
+            $newBudget->fresh();
+            return $newBudget;
+        } catch (Exception $e) {
+            return $this->errorResponse("Service Error: can't update dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Delete a Budget entity by ID
+     *
+     * @param int $id The entity ID
+     * @return bool|JsonResponse True if successful or error response
+     */
+    public function delete(int $id): bool | JsonResponse
+    {
+        try {
+            return $this->repository->delete($id);
+        } catch (Exception $e) {
+            return $this->errorResponse("Service Error: can't delete dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

@@ -33,7 +33,6 @@ class BudgetRepository implements IRepository
         return Budget::with('client.person')->get();
     }
 
-
     /**
      * Find a Budget by ID
      *
@@ -121,16 +120,4 @@ class BudgetRepository implements IRepository
         }
     }
 
-   public function addWorks(int $budgetId, array $workIds): Budget | JsonResponse
-   {
-       try {
-
-           $budget = Budget::findOrFail($budgetId);
-           Work::whereIn('id', $workIds)->update(['budget_id' => $budgetId]);
-           return $budget->fresh('works');
-       }catch (Exception $e ){
-           return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-       }
-
-   }
 }
