@@ -66,9 +66,7 @@ class InvoiceService
             $invoice->materials()->sync($syncData);
             $invoice->save();
             $this->updateInvoiceTotal($invoice->id);
-            echo $invoice;
             return $invoice;
-
         }catch (Exception $e) {
             return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }

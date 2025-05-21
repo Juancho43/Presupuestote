@@ -58,9 +58,7 @@ class BudgetService
         $budget = $this->repository->find($budgetId);
         $budget = $this->updateBudgetCost($budget);
         $budget->price = $this->calculateBudgetPrice($budget);
-
         $budget->save();
-        echo $budget->price;
         return $budget;
     }
 
