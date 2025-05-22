@@ -1,44 +1,44 @@
 <?php
 namespace App\Http\Controllers\V1;
 
-use App\Services\V1\CategoryService;
-use App\DTOs\V1\CategoryDTO;
-use App\Http\Requests\V1\CategoryRequest;
-use App\Http\Resources\V1\CategoryResource;
-use App\Http\Resources\V1\CategoryResourceCollection;
+use App\Services\V1\UserService;
+use App\DTOs\V1\UserDTO;
+use App\Http\Requests\V1\UserRequest;
+use App\Http\Resources\V1\UserResource;
+use App\Http\Resources\V1\UserResourceCollection;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Category Controller
+ * User Controller
  *
- * Handles HTTP requests related to category records including CRUD operations
+ * Handles HTTP requests related to user records including CRUD operations
  */
-class CategoryController extends Controller
+class UserController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var CategoryService Service for category data logic
+     * @var UserService Service for user data logic
      */
-    protected CategoryService $service;
+    protected UserService $service;
 
     /**
      * Initialize controller with service dependency
      *
-     * @param CategoryService $service
+     * @param UserService $service
      */
-    public function __construct(CategoryService $service)
+    public function __construct(UserService $service)
     {
         $this->service = $service->getInstance();
     }
 
     /**
-     * Get all category records
+     * Get all user records
      *
-     * @return JsonResponse Collection of category records
+     * @return JsonResponse Collection of user records
      */
     public function index(): JsonResponse
     {
@@ -49,17 +49,17 @@ class CategoryController extends Controller
         }
 
         return $this->successResponse(
-            new CategoryResourceCollection($result),
+            new UserResourceCollection($result),
             "Data retrieved successfully",
             Response::HTTP_OK
         );
     }
 
     /**
-     * Get single category record by ID
+     * Get single user record by ID
      *
-     * @param int $id Category record ID
-     * @return JsonResponse Single category resource
+     * @param int $id User record ID
+     * @return JsonResponse Single user resource
      */
     public function show(int $id): JsonResponse
     {
@@ -70,67 +70,62 @@ class CategoryController extends Controller
         }
 
         return $this->successResponse(
-            new CategoryResource($result),
+            new UserResource($result),
             "Data retrieved successfully",
             Response::HTTP_OK
         );
     }
 
     /**
-     * Create new category record
+     * Create new user record
      *
-     * @param CategoryRequest $request Validated category data
-     * @return JsonResponse Created category resource
+     * @param UserRequest $request Validated User data
+     * @return JsonResponse Created user resource
      */
-public function store(CategoryRequest $request): JsonResponse
-{
-    $categoryDTO = new CategoryDTO(
-        null,
-        $request->name
-    );
-    $result = $this->service->create($categoryDTO);
+    public function store(UserRequest $request): JsonResponse
+    {
+    // Transform request data into DTO
+    $userDTO = new UserDTO($request->validated());
+
+    $result = $this->service->create($userDTO);
 
         if ($result instanceof JsonResponse) {
             return $result;
         }
 
         return $this->successResponse(
-            new CategoryResource($result),
+            new UserResource($result),
             "Data stored successfully",
             Response::HTTP_CREATED
         );
     }
 
     /**
-     * Update existing category record
+     * Update existing user record
      *
-     * @param CategoryRequest $request Validated category data
-     * @return JsonResponse Updated category resource
+     * @param UserRequest $request Validated User data
+     * @return JsonResponse Updated user resource
      */
-    public function update(int $id,CategoryRequest $request): JsonResponse
+    public function update(int $id,UserRequest $request): JsonResponse
     {
-
-        $categoryDTO = new CategoryDTO(
-            $id,
-            $request->name
-        );
-        $result = $this->service->update($categoryDTO);
+        $userDTO = new UserDTO($id);
+        $result = $this->service->update($userDTO);
 
         if ($result instanceof JsonResponse) {
             return $result;
         }
 
         return $this->successResponse(
-            new CategoryResource($result),
+            new UserResource($result),
             "Data updated successfully",
             Response::HTTP_OK
         );
     }
 
     /**
-     * Delete category record
+     * Delete user record
      *
-     * @param int $id Category record ID
+     * @param int $id User record ID
      * @return JsonResponse Empty response on success
      */
     public function destroy(int $id): JsonResponse

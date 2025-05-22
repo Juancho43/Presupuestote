@@ -3,7 +3,6 @@
 namespace App\DTOs\V1;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Date;
 use Ramsey\Uuid\Type\Decimal;
 
 readonly class StockDTO

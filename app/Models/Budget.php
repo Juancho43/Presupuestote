@@ -26,7 +26,7 @@ class Budget extends Model
         'cost',
         'profit',
         'price',
-        '',
+        'client_id'
     ];
     protected $casts = [
         'made_date' => 'date',

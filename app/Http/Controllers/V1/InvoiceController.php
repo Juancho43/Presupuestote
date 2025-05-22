@@ -1,152 +1,178 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
-use App\DTOs\V1\InvoiceDTO;
 use App\DTOs\V1\SupplierDTO;
 use App\Http\Requests\V1\AddMaterialsToInvoiceRequest;
+use App\Services\V1\InvoiceService;
+use App\DTOs\V1\InvoiceDTO;
 use App\Http\Requests\V1\InvoiceRequest;
 use App\Http\Resources\V1\InvoiceResource;
 use App\Http\Resources\V1\InvoiceResourceCollection;
-use App\Repository\V1\InvoiceRepository;
-use App\Services\V1\InvoiceService;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Invoice Controller
  *
- * Handles HTTP requests related to Invoice records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to invoice records including CRUD operations
  */
 class InvoiceController extends Controller
 {
     use ApiResponseTrait;
+
+    /**
+     * @var InvoiceService Service for invoice data logic
+     */
     protected InvoiceService $service;
 
     /**
-     * @var InvoiceRepository Repository for Invoice data access
-     */
-    protected InvoiceRepository $repository;
-
-    /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param InvoiceRepository $InvoiceRepository
+     * @param InvoiceService $service
      */
-    public function __construct(InvoiceRepository $InvoiceRepository, InvoiceService $service)
+    public function __construct(InvoiceService $service)
     {
-        $this->service = $service;
-        $this->repository = $InvoiceRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Invoice records
+     * Get all invoice records
      *
-     * @return JsonResponse Collection of Invoice records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of invoice records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new InvoiceResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new InvoiceResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Invoice record by ID
+     * Get single invoice record by ID
      *
      * @param int $id Invoice record ID
-     * @return JsonResponse Single Invoice resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single invoice resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new InvoiceResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new InvoiceResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Invoice record
+     * Create new invoice record
      *
      * @param InvoiceRequest $request Validated Invoice data
-     * @return JsonResponse Created Invoice resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created invoice resource
      */
-    public function store(InvoiceRequest $request) : JsonResponse
+    public function store(InvoiceRequest $request): JsonResponse
     {
-        try{
-            $request->validated();
-            $dummy = $this->repository->create(new InvoiceDTO(date: $request->date, supplier: new SupplierDTO(id:$request->supplier_id)));
-            return $this->successResponse(new InvoiceResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+
+
+        $invoiceDTO = new InvoiceDTO(date: $request->date, supplier: new SupplierDTO(id:$request->supplier_id));
+
+        $result = $this->service->create($invoiceDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new InvoiceResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing Invoice record
+     * Update existing invoice record
      *
      * @param InvoiceRequest $request Validated Invoice data
-     * @return JsonResponse Updated Invoice resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated invoice resource
      */
-    public function update(int $id,InvoiceRequest $request) : JsonResponse
+    public function update(int $id,InvoiceRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new InvoiceResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $invoiceDTO = new InvoiceDTO(id: $id,date: $request->date, supplier: new SupplierDTO(id:$request->supplier_id));
+        $result = $this->service->update($invoiceDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new InvoiceResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Invoice record
+     * Delete invoice record
      *
      * @param int $id Invoice record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->delete($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
     }
+
     public function updateInvoiceTotal(int $id) : JsonResponse
     {
-        try{
-            $dummy = $this->service->updateInvoiceTotal($id);
-            return $this->successResponse(new InvoiceResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        $result = $this->service->get($id)->updateTotal();
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+        return $this->successResponse(
+            new InvoiceResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     public function addMaterials(AddMaterialsToInvoiceRequest $request) : JsonResponse
     {
-        try {
-            $invoice = $this->service->addMaterialsToInvoice($request);
-            return $this->successResponse(new InvoiceResource($invoice), "Materials added successfully", Response::HTTP_CREATED);
-        }catch (Exception $e){
-            return $this->errorResponse("Controller Error: adding materials to work", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        $result = $this->service->addMaterialsToInvoice($request);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
-
+        return $this->successResponse(
+            new InvoiceResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
-
 }
-
-
-

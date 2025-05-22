@@ -1,146 +1,197 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
-use App\Http\Requests\V1\AddWorksToBudgeRequest;
+use App\DTOs\V1\ClientDTO;
+use App\Services\V1\BudgetService;
+use App\DTOs\V1\BudgetDTO;
 use App\Http\Requests\V1\BudgetRequest;
 use App\Http\Resources\V1\BudgetResource;
 use App\Http\Resources\V1\BudgetResourceCollection;
-use App\Repository\V1\BudgetRepository;
-use App\Services\V1\BudgetService;
-use Exception as Exception;
-use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Budget Controller
  *
- * Handles HTTP requests related to Budget records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to budget records including CRUD operations
  */
 class BudgetController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var BudgetRepository Repository for Budget data access
-     */
-    protected BudgetRepository $repository;
-
-    /**
-     * @var BudgetService Service for Budget business logic
+     * @var BudgetService Service for budget data logic
      */
     protected BudgetService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param BudgetRepository $BudgetRepository
      * @param BudgetService $service
      */
-    public function __construct(BudgetRepository $BudgetRepository, BudgetService $service)
+    public function __construct(BudgetService $service)
     {
-        $this->service = $service;
-        $this->repository = $BudgetRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Budget records
+     * Get all budget records
      *
-     * @return JsonResponse Collection of Budget records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of budget records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new BudgetResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(\Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new BudgetResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Budget record by ID
+     * Get single budget record by ID
      *
      * @param int $id Budget record ID
-     * @return JsonResponse Single Budget resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single budget resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new BudgetResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new BudgetResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Budget record
+     * Create new budget record
      *
-     * @param BudgetRequest $request Validated Budget data
-     * @return JsonResponse Created Budget resource
-     * @throws Exception If creation fails
+     * @param BudgetRequest $request Validated budget data
+     * @return JsonResponse Created budget resource
      */
-    public function store(BudgetRequest $request) : JsonResponse
+    public function store(BudgetRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->service->createBudget($request);
-            return $this->successResponse(new BudgetResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            // Parse dates
+            try {
+                $madeDate = Carbon::parse($request->made_date);
+                $deadLine = isset($request->dead_line) ? Carbon::parse($request->dead_line) : null;
+            } catch (Exception $e) {
+                return $this->errorResponse(
+                    "Invalid date format",
+                    $e->getMessage(),
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+            try {
+                $budgetDTO = new BudgetDTO(
+                    null,
+                    $request->description,
+                    $madeDate,
+                    $deadLine,
+                     null,
+                    isset($request->profit) ? new Decimal($request->profit) : null,
+                    null,
+                    null,
+                    null,
+                    new ClientDTO(id: $request->client_id),
+                );
+            } catch (Exception $e) {
+                return $this->errorResponse(
+                    "Error creating BudgetDTO",
+                    $e->getMessage(),
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
+
+            // Call service to create budget
+            $result = $this->service->create($budgetDTO);
+
+            if ($result instanceof JsonResponse) {
+                return $result;
+            }
+
+            return $this->successResponse(
+                new BudgetResource($result),
+                "Data stored successfully",
+                Response::HTTP_CREATED
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "An unexpected error occurred",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
-
     /**
-     * Update existing Budget record
+     * Update existing budget record
      *
-     * @param BudgetRequest $request Validated Budget data
-     * @return JsonResponse Updated Budget resource
-     * @throws Exception If update fails
+     * @param BudgetRequest $request Validated budget data
+     * @return JsonResponse Updated budget resource
      */
-    public function update(int $id, BudgetRequest $request) : JsonResponse
+    public function update(int $id, BudgetRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->service->updateBudget($id,$request);
-            return $this->successResponse(new BudgetResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $budgetDTO = new BudgetDTO(
+            $id,
+            $request->description,
+            new Carbon($request->made_date),
+            new Carbon($request->dead_line),
+            null,
+            $request->profit,
+            null,
+            null,
+            null,
+            new ClientDTO(id: $request->client_id),
+        );
+        $result = $this->service->update($budgetDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new BudgetResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Budget record
+     * Delete budget record
      *
      * @param int $id Budget record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
-    public function addWorks(AddWorksToBudgeRequest $request) : JsonResponse
-    {
-        try {
-           $budget = $this->service->addWorksToBudget($request);
-            return $this->successResponse(new BudgetResource($budget), "Works added successfully", Response::HTTP_OK);
-        }catch (Exception $e) {
-            return $this->errorResponse("Error adding works to budget", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
-    }
-    public function updateBudgetPrice(int $id) : JsonResponse
-    {
-        $budget= $this->service->updateBudgetPrice($id);
-        return $this->successResponse(new BudgetResource($budget), "Budget cost updated successfully", Response::HTTP_OK);
-    }
 
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

@@ -1,29 +1,20 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\DTOs\V1\InvoiceDTO;
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Invoice;
+use App\DTOs\V1\InvoiceDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class InvoiceRepository
- *
- * Repository class for handling Invoice CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class InvoiceRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Invoices
      *
      * @return Collection Collection of Invoice models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -31,87 +22,70 @@ class InvoiceRepository implements IRepository
     }
 
     /**
-     * Find am Invoice by ID
+     * Find a Invoice by ID
      *
      * @param int $id Invoice ID to find
-     * @return Invoice|JsonResponse Found Invoice model or error response
+     * @return Invoice Found Invoice model
      * @throws Exception When Invoice is not found
      */
-public function find(int $id): Invoice|JsonResponse
-{
-    $model = Invoice::with([
-        'materials',
-        'materials.latestPrice',
-        'supplier.person'
-    ])->findOrFail($id);
-
-    if (!$model) {
-        throw new Exception('Error to find the resource with id: ' . $id);
+    public function find(int $id): Model
+    {
+        $model = Invoice::with([
+            'materials',
+            'materials.latestPrice',
+            'supplier.person'
+        ])->findOrFail($id);
+        if (!$model) {
+            throw new Exception("Invoice with id: {$id} not found");
+        }
+        return $model;
     }
-    return $model;
-}
+
     /**
      * Create a new Invoice
      *
-     * @param  InvoiceDTO $data Request containing Invoice data
-     * @return Invoice Newly created Invoice model
+     * @param InvoiceDTO $data DTO containing Invoice data
+     * @return Invoice Newly created Invoice
+     * @throws Exception If creation fails
      */
-    public function create($data): Invoice
+    public function create($data): Model
     {
-        $model = Invoice::create([
+        return Invoice::create([
             'supplier_id' => $data->supplier->id,
             'date' => $data->date,
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Invoice
      *
-     * @param int $id Invoice ID to update
-     * @param InvoiceDTO $data Request containing updated Invoice data
-     * @return Invoice|JsonResponse
+     * @param InvoiceDTO $data DTO containing updated Invoice data
+     * @return Invoice Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id,$data): Invoice|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'supplier_id' => $data->supplier->id,
-                    'date' => $data->date,
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'supplier_id' => $data->supplier->id,
+            'date' => $data->date,
+        ])) {
+            throw new Exception("Failed to update Invoice: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Invoice
      *
      * @param int $id Invoice ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
+    }
 
-    }
-    public function addMaterials(int $invoiceId, array $materialsIds, array $pricesId, array $quantities): Invoice|JsonResponse
-    {
-        try {
-            $model = $this->find($invoiceId);
-            $model->materials()->sync($materialsIds);
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to add materials to the invoice', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 }

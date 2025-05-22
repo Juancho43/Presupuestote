@@ -1,122 +1,153 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
+use App\Services\V1\MeasureService;
+use App\DTOs\V1\MeasureDTO;
 use App\Http\Requests\V1\MeasureRequest;
 use App\Http\Resources\V1\MeasureResource;
 use App\Http\Resources\V1\MeasureResourceCollection;
-use App\Repository\V1\MeasureRepository;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Measure Controller
  *
- * Handles HTTP requests related to Measure records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to measure records including CRUD operations
  */
 class MeasureController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var MeasureRepository Repository for Measure data access
+     * @var MeasureService Service for measure data logic
      */
-    protected MeasureRepository $repository;
+    protected MeasureService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param MeasureRepository $MeasureRepository
+     * @param MeasureService $service
      */
-    public function __construct(MeasureRepository $MeasureRepository)
+    public function __construct(MeasureService $service)
     {
-        $this->repository = $MeasureRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Measure records
+     * Get all measure records
      *
-     * @return JsonResponse Collection of Measure records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of measure records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new MeasureResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MeasureResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Measure record by ID
+     * Get single measure record by ID
      *
      * @param int $id Measure record ID
-     * @return JsonResponse Single Measure resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single measure resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new MeasureResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MeasureResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Measure record
+     * Create new measure record
      *
      * @param MeasureRequest $request Validated Measure data
-     * @return JsonResponse Created Measure resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created measure resource
      */
-    public function store(MeasureRequest $request) : JsonResponse
+    public function store(MeasureRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new MeasureResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+    // Transform request data into DTO
+    $measureDTO = new MeasureDTO(
+        null,
+        $request->input('name'),
+        $request->input('description'),
+    );
+
+    $result = $this->service->create($measureDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MeasureResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing Measure record
+     * Update existing measure record
      *
      * @param MeasureRequest $request Validated Measure data
-     * @return JsonResponse Updated Measure resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated measure resource
      */
-    public function update(int $id,MeasureRequest $request) : JsonResponse
+    public function update(int $id,MeasureRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new MeasureResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $measureDTO = new MeasureDTO(
+            $id,
+            $request->input('name'),
+            $request->input('description'),
+        );
+        $result = $this->service->update($measureDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MeasureResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Measure record
+     * Delete measure record
      *
      * @param int $id Measure record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

@@ -1,30 +1,20 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\DTOs\V1\StockDTO;
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Stock;
+use App\DTOs\V1\StockDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class StockRepository
- *
- * Repository class for handling Stock CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class StockRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Stocks
      *
      * @return Collection Collection of Stock models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -35,14 +25,14 @@ class StockRepository implements IRepository
      * Find a Stock by ID
      *
      * @param int $id Stock ID to find
-     * @return Stock|JsonResponse Found Stock model or error response
+     * @return Stock Found Stock model
      * @throws Exception When Stock is not found
      */
-    public function find(int $id): Stock|JsonResponse
+    public function find(int $id): Model
     {
         $model = Stock::where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Stock with id: {$id} not found");
         }
         return $model;
     }
@@ -50,56 +40,49 @@ class StockRepository implements IRepository
     /**
      * Create a new Stock
      *
-     * @param StockDTO $data Request containing Stock data
-     * @return Stock Newly created Stock model
+     * @param StockDTO $data DTO containing Stock data
+     * @return Stock Newly created Stock
+     * @throws Exception If creation fails
      */
-    public function create( $data): Stock
+    public function create($data): Model
     {
-        $date = $data->date->format('Y-m-d');
-        $model = Stock::create([
-            'stock' => $data->stock,
-            'date' => $date,
+        return Stock::create([
+            'quantity' => $data->stock,
             'material_id' => $data->material->id,
+            'date' => $data->date,
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Stock
      *
-     * @param int $id Stock ID to update
-     * @param StockDTO $data Request containing updated Stock data
-     * @return Stock|JsonResponse
+     * @param StockDTO $data DTO containing updated Stock data
+     * @return Stock Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, $data): Stock|JsonResponse
+    public function update($data): Model
     {
-        $date = $data->date->format('Y-m-d');
-        try {
-            $model = $this->find($id)->update([
-                    'stock' => $data->stock,
-                    'date' => $date,
-                    'material_id' => $data->material->id,
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'quantity' => $data->stock,
+            'material_id' => $data->material->id,
+            'date' => $data->date,
+        ])) {
+            throw new Exception("Failed to update Stock: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Stock
      *
      * @param int $id Stock ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

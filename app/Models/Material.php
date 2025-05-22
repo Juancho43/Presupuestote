@@ -20,6 +20,8 @@ class Material extends Model
         'description',
         'color',
         'brand',
+        'subcategory_id',
+        'measure_id',
     ];
 
     protected $casts = [

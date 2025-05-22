@@ -14,7 +14,6 @@
         public function rules(): array
         {
             return [
-                'balance' => [ 'numeric', 'decimal:0,2'],
                 'person_id' => ['required_without:person', 'exists:people,id'],
                 'person' => ['required_without:person_id', 'array'],
                 'person.name' => ['required_with:person', 'string', 'max:255'],
@@ -30,11 +29,10 @@
         public function messages(): array
         {
             return [
-                'person_id.required_without' => 'Either person data or person ID is required',
+                'person_id.required_without_person' => 'Either person data or person ID is required',
                 'person.required_without' => 'Either person data or person ID is required',
                 'person.name.required_with' => 'The person name is required when creating a new person',
                 'person.phone_number.required_with' => 'The phone number is required when creating a new person',
-                'balance.decimal' => 'The balance must have 2 decimal places',
             ];
         }
     }

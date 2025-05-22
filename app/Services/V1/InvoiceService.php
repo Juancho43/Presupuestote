@@ -1,18 +1,19 @@
 <?php
 namespace App\Services\V1;
 
-use App\DTOs\V1\MaterialDTO;
 use App\DTOs\V1\PriceDTO;
 use App\DTOs\V1\StockDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Models\Invoice;
 use App\Repository\V1\InvoiceRepository;
+use App\DTOs\V1\InvoiceDTO;
+use App\Models\Invoice;
 use App\Repository\V1\PriceRepository;
 use App\Repository\V1\StockRepository;
 use Carbon\Carbon;
-use Carbon\Traits\Date;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,10 +43,8 @@ class InvoiceService
      * @var InvoiceRepository
      */
     private InvoiceRepository $repository;
-
     private PriceRepository $priceRepository;
     private StockRepository $stockRepository;
-
 
     /**
      * Get or create the singleton instance
@@ -55,7 +54,11 @@ class InvoiceService
     public static function getInstance(): InvoiceService
     {
         if (self::$instance === null) {
-            self::$instance = new self(new InvoiceRepository(), new PriceRepository(), new StockRepository());
+            self::$instance = new self(
+                new InvoiceRepository(),
+                new PriceRepository(),
+                new StockRepository()
+            );
         }
         return self::$instance;
     }
@@ -65,10 +68,14 @@ class InvoiceService
      *
      * @param InvoiceRepository $repository Repository for data operations
      */
-    public function __construct(InvoiceRepository $repository, PriceRepository $priceRepository, StockRepository $stockRepository)
+    public function __construct(
+        InvoiceRepository $repository,
+        PriceRepository $priceRepository,
+        StockRepository $stockRepository
+    )
     {
-        $this->stockRepository = $stockRepository;
         $this->priceRepository = $priceRepository;
+        $this->stockRepository = $stockRepository;
         $this->repository = $repository;
     }
 
@@ -78,12 +85,20 @@ class InvoiceService
      * @param int $id The entity ID
      * @return Invoice|JsonResponse The found entity or error response
      */
-    public function get(int $id): Invoice | JsonResponse
+    public function get(int $id): Model|JsonResponse
     {
         try {
             return $this->repository->find($id);
         } catch (Exception $e) {
-            return $this->errorResponse("Service Error: can't find dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $statusCode = str_contains($e->getMessage(), "not found")
+                ? Response::HTTP_NOT_FOUND
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                "Service Error: can't find Invoice",
+                $e->getMessage(),
+                $statusCode
+            );
         }
     }
 
@@ -92,12 +107,16 @@ class InvoiceService
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Collection | JsonResponse
+    public function getAll(): Collection|JsonResponse
     {
         try {
             return $this->repository->all();
         } catch (Exception $e) {
-            return $this->errorResponse("Service Error: can't retrieve dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->errorResponse(
+                "Service Error: can't retrieve dummies",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -107,14 +126,17 @@ class InvoiceService
      * @param InvoiceDTO $data Data transfer object containing entity information
      * @return Invoice|JsonResponse The created entity or error response
      */
-    public function create(InvoiceDTO $data): Invoice | JsonResponse
+    public function create(InvoiceDTO $data): Model|JsonResponse
     {
         try {
             $newInvoice = $this->repository->create($data);
-            $newInvoice->fresh();
             return $newInvoice;
         } catch (Exception $e) {
-            return $this->errorResponse("Service Error: can't create dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->errorResponse(
+                "Service Error: can't create Invoice",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -124,14 +146,21 @@ class InvoiceService
      * @param InvoiceDTO $data Data transfer object containing updated information
      * @return Invoice|JsonResponse The updated entity or error response
      */
-    public function update(InvoiceDTO $data): Invoice | JsonResponse
+    public function update(InvoiceDTO $data): Model|JsonResponse
     {
         try {
-            $newInvoice = $this->repository->update($data->id, $data);
-            $newInvoice->fresh();
-            return $newInvoice;
+            $updatedInvoice = $this->repository->update($data);
+            return $updatedInvoice;
         } catch (Exception $e) {
-            return $this->errorResponse("Service Error: can't update dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $statusCode = str_contains($e->getMessage(), "not found")
+                ? Response::HTTP_NOT_FOUND
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                "Service Error: can't update Invoice",
+                $e->getMessage(),
+                $statusCode
+            );
         }
     }
 
@@ -141,33 +170,23 @@ class InvoiceService
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
      */
-    public function delete(int $id): bool | JsonResponse
+    public function delete(int $id): bool|JsonResponse
     {
         try {
             return $this->repository->delete($id);
         } catch (Exception $e) {
-            return $this->errorResponse("Service Error: can't delete dummy", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $statusCode = str_contains($e->getMessage(), "not found")
+                ? Response::HTTP_NOT_FOUND
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                "Service Error: can't delete Invoice",
+                $e->getMessage(),
+                $statusCode
+            );
         }
     }
 
-    public function addMaterialsToInvoice(FormRequest $data) : Invoice | JsonResponse
-    {
-        try {
-            $data->validated();
-            $invoice = $this->repository->find($data->invoice_id);
-            $syncData = $this->generateInvoiceMaterialPivot($data->materials);
-            $invoice->materials()->sync($syncData);
-            $invoice->save();
-            $invoice->updateTotal();
-            return $invoice;
-        }catch (Exception $e) {
-            return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
     private function generateInvoiceMaterialPivot(array $materials) : array | JsonResponse
     {
         $pivotData = [];
@@ -187,4 +206,19 @@ class InvoiceService
 
         return $pivotData;
     }
+
+    public function addMaterialsToInvoice(FormRequest $data) : Invoice | JsonResponse
+    {
+        try {
+            $invoice = $this->repository->find($data->invoice_id);
+            $syncData = $this->generateInvoiceMaterialPivot($data->materials);
+            $invoice->materials()->sync($syncData);
+            $invoice->save();
+            $invoice->updateTotal();
+            return $invoice;
+        }catch (Exception $e) {
+            return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

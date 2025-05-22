@@ -15,6 +15,7 @@ class Supplier extends Model
     protected $fillable = [
         'notes',
         'balance',
+        'person_id',
     ];
     protected $casts = [
         'balance' => 'decimal:2',

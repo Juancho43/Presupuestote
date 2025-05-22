@@ -1,41 +1,22 @@
 <?php
-
+// app/Repository/V1/ClientRepository.php
 namespace App\Repository\V1;
 
-use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Http\Requests\V1\PersonRequest;
+use App\DTOs\V1\ClientDTO;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class ClientRepository
- *
- * Repository class for handling Client CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class ClientRepository implements IRepository
 {
-    use ApiResponseTrait;
-
-    private PersonRepository $personRepository;
-
-    /**
-     * @param PersonRepository $personRepository
-     */
-    public function __construct(PersonRepository $personRepository)
-    {
-        $this->personRepository = $personRepository;
-    }
-
 
     /**
      * Get all Clients
      *
      * @return Collection Collection of Client models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -46,14 +27,14 @@ class ClientRepository implements IRepository
      * Find a Client by ID
      *
      * @param int $id Client ID to find
-     * @return Client|JsonResponse Found Client model or error response
+     * @return Client Found Client model
      * @throws Exception When Client is not found
      */
-    public function find(int $id): Client|JsonResponse
+    public function find(int $id): Model
     {
         $model = Client::with(['budgets', 'person'])->where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Client with id: {$id} not found");
         }
         return $model;
     }
@@ -61,77 +42,47 @@ class ClientRepository implements IRepository
     /**
      * Create a new Client
      *
-     * @param FormRequest $data Request containing Client data
-     * @return Client Newly created Client model
+     * @param ClientDTO $data DTO containing Client data
+     * @return Client Newly created Client
+     * @throws Exception If creation fails
      */
-    public function create(FormRequest $data): Client
+    public function create($data): Model
     {
-        $data->validated();
-
-        // Create client with provided balance or default to 0
-        $client = new Client([
-            'balance' => $data->balance ?? 0,
+        return Client::create([
+            'balance' => $data->balance,
+            'person_id' => $data->person->id,
         ]);
-
-        // Handle person relationship
-        if ($data->has('person')) {
-            $personRequest = new PersonRequest($data->person);
-            $person = $this->personRepository->create($personRequest);
-            $client->person()->associate($person);
-        } else {
-            // Associate with existing person
-            $person = $this->personRepository->find($data->person_id);
-            $client->person()->associate($person);
-        }
-
-        $client->save();
-        return $client->load('person');
     }
 
     /**
      * Update an existing Client
      *
-     * @param int $id Client ID to update
-     * @param FormRequest $data Request containing updated Client data
-     * @return Client|JsonResponse
+     * @param ClientDTO $data DTO containing updated Client data
+     * @return Client Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, FormRequest $data): Client|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $client = $this->find($id);
+        $model = $this->find($data->id);
 
-            if ($client instanceof JsonResponse) {
-                return $client;
-            }
-
-            // Update client fields
-            if ($data->has('balance')) {
-                $client->balance = $data->balance;
-            }
-
-            $client->save();
-            return $client->fresh()->load('person');
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        if (!$model->update([
+            'balance' => $data->balance,
+        ])) {
+            throw new Exception("Failed to update Client: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Client
      *
      * @param int $id Client ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
-
-
-
 }

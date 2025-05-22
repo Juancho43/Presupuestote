@@ -15,10 +15,11 @@ class Salary extends Model
     use SoftDeletes;
 
     protected $fillable = [
-      'amount',
-      'date',
-      'active',
-      'payment_status',
+        'amount',
+        'date',
+        'active',
+        'payment_status',
+        'employee_id',
     ];
 
     protected $casts = [

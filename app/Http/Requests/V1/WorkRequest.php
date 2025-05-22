@@ -21,7 +21,6 @@ class WorkRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'estimated_time' => ['required', 'integer', 'min:0'],
             'dead_line' => ['required', 'date'],
-            'cost' => ['required', 'numeric', 'decimal:0,2', 'min:0'],
             'budget_id' => ['required', 'exists:budgets,id']
         ];
     }
@@ -37,9 +36,6 @@ class WorkRequest extends FormRequest
             'estimated_time.min' => 'The estimated time must be greater than or equal to 0',
             'dead_line.required' => 'The deadline is required',
             'dead_line.date' => 'The deadline must be a valid date',
-            'cost.required' => 'The cost is required',
-            'cost.decimal' => 'The cost must have 2 decimal places',
-            'cost.min' => 'The cost must be greater than or equal to 0',
             'budget_id.required' => 'The budget is required',
             'budget_id.exists' => 'The selected budget does not exist'
         ];

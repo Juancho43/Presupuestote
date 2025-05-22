@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::group(['as' => 'public.'], function() {
-        // TODO: Controller refactor - Copy all actual files to generate new ones using Prueba.php as template
+        // TODO: Make a updatePersonRequest and update in PersonRepostiry.
         //Crud entities routes
         Route::resource('clients', ClientController::class)->names('clients');
         Route::resource('people', PersonController::class)->names('people');

@@ -1,29 +1,20 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Measure;
+use App\DTOs\V1\MeasureDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class MeasureRepository
- *
- * Repository class for handling Measure CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class MeasureRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Measures
      *
      * @return Collection Collection of Measure models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -34,14 +25,14 @@ class MeasureRepository implements IRepository
      * Find a Measure by ID
      *
      * @param int $id Measure ID to find
-     * @return Measure|JsonResponse Found Measure model or error response
+     * @return Measure Found Measure model
      * @throws Exception When Measure is not found
      */
-    public function find(int $id): Measure|JsonResponse
+    public function find(int $id): Model
     {
         $model = Measure::where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Measure with id: {$id} not found");
         }
         return $model;
     }
@@ -49,59 +40,47 @@ class MeasureRepository implements IRepository
     /**
      * Create a new Measure
      *
-     * @param FormRequest $data Request containing Measure data
-     * @return Measure Newly created Measure model
+     * @param MeasureDTO $data DTO containing Measure data
+     * @return Measure Newly created Measure
+     * @throws Exception If creation fails
      */
-    public function create(FormRequest $data): Measure
+    public function create($data): Model
     {
-        $data->validated();
-        $model = Measure::create([
-            'name' => $data->input('name'),
-            'abbreviation' => $data->input('abbreviation'),
-            'unit' => $data->input('unit'),
-
+        return Measure::create([
+            'name' => $data->name,
+            'description' => $data->description,
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Measure
      *
-     * @param int $id Measure ID to update
-     * @param FormRequest $data Request containing updated Measure data
-     * @return Measure|JsonResponse
+     * @param MeasureDTO $data DTO containing updated Measure data
+     * @return Measure Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, FormRequest $data): Measure|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'name' => $data->input('name'),
-                    'abbreviation' => $data->input('abbreviation'),
-                    'unit' => $data->input('unit'),
-
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'name' => $data->name,
+            'description' => $data->description,
+        ])) {
+            throw new Exception("Failed to update Measure: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Measure
      *
      * @param int $id Measure ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

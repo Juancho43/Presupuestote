@@ -14,26 +14,27 @@ class BudgetRequest extends FormRequest
     }
 
     public function rules(): array
-    {
-        return [
-            'made_date' => ['required', 'date'],
-            'description' => ['required', 'string'],
-            'dead_line' => ['required', 'date', 'after:made_date'],
-            'cost' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
-            'profit' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
-            'client_id' => ['required_without_all:person.name,person.phone_number', 'exists:clients,id'],
-            'person.name' => ['required_without:client_id', 'string', 'required_with:person.phone_number'],
-            'person.phone_number' => ['required_without:client_id', 'string', 'required_with:person.name'],
-        ];
-    }
+  {
+      return [
+          'made_date' => ['required', 'date'],
+          'description' => ['required', 'string'],
+          'dead_line' => ['nullable', 'date', 'after:' . $this->input('made_date')],
+          'profit' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
+          'client_id' => ['required', 'exists:clients,id'],
+      ];
+  }
 
-    public function messages(): array
-    {
-        return [
-            'dead_line.after' => 'The deadline must be after the made date',
-            'client_id.required_without_all' => 'Either client ID or person details are required',
-            'person.name.required_without' => 'Person name is required when client ID is not provided',
-            'person.phone_number.required_without' => 'Person phone number is required when client ID is not provided',
-        ];
+  public function messages(): array
+  {
+      return [
+          'made_date.required' => 'The made date is required',
+          'made_date.date' => 'The made date must be a valid date',
+          'description.required' => 'The description is required',
+          'dead_line.date' => 'The deadline must be a valid date',
+          'dead_line.after' => 'The deadline must be after the made date',
+          'profit.decimal' => 'The profit must have up to 2 decimal places',
+          'client_id.required' => 'The client ID is required',
+          'client_id.exists' => 'The selected client does not exist',
+      ];
     }
 }
