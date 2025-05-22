@@ -2,9 +2,9 @@
 namespace App\Services\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Repository\V1\BudgetRepository;
-use App\DTOs\V1\BudgetDTO;
-use App\Models\Budget;
+use App\Repository\V1\PriceRepository;
+use App\DTOs\V1\PriceDTO;
+use App\Models\Price;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,40 +12,40 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BudgetService
+ * Class PriceService
  *
- * Service layer for handling business logic related to Budget entity.
+ * Service layer for handling business logic related to Price entity.
  * Implements the Singleton pattern for resource efficiency.
  *
  * @package App\Services\V1
  */
-class BudgetService
+class PriceService
 {
     use ApiResponseTrait;
 
     /**
      * Singleton instance
      *
-     * @var BudgetService|null
+     * @var PriceService|null
      */
-    private static ?BudgetService $instance = null;
+    private static ?PriceService $instance = null;
 
     /**
      * Repository for data access operations
      *
-     * @var BudgetRepository
+     * @var PriceRepository
      */
-    private BudgetRepository $repository;
+    private PriceRepository $repository;
 
     /**
      * Get or create the singleton instance
      *
-     * @return BudgetService
+     * @return PriceService
      */
-    public static function getInstance(): BudgetService
+    public static function getInstance(): PriceService
     {
         if (self::$instance === null) {
-            self::$instance = new self(new BudgetRepository());
+            self::$instance = new self(new PriceRepository());
         }
         return self::$instance;
     }
@@ -53,18 +53,18 @@ class BudgetService
     /**
      * Constructor
      *
-     * @param BudgetRepository $repository Repository for data operations
+     * @param PriceRepository $repository Repository for data operations
      */
-    public function __construct(BudgetRepository $repository)
+    public function __construct(PriceRepository $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * Retrieve a specific Budget entity by ID
+     * Retrieve a specific Price entity by ID
      *
      * @param int $id The entity ID
-     * @return Budget|JsonResponse The found entity or error response
+     * @return Price|JsonResponse The found entity or error response
      */
     public function get(int $id): Model|JsonResponse
     {
@@ -76,7 +76,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't find Budget",
+                "Service Error: can't find Price",
                 $e->getMessage(),
                 $statusCode
             );
@@ -84,7 +84,7 @@ class BudgetService
     }
 
     /**
-     * Retrieve all Budget entities
+     * Retrieve all Price entities
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
@@ -102,21 +102,19 @@ class BudgetService
     }
 
     /**
-     * Create a new Budget entity
+     * Create a new Price entity
      *
-     * @param BudgetDTO $data Data transfer object containing entity information
-     * @return Budget|JsonResponse The created entity or error response
+     * @param PriceDTO $data Data transfer object containing entity information
+     * @return Price|JsonResponse The created entity or error response
      */
-    public function create(BudgetDTO $data): Budget|JsonResponse
+    public function create(PriceDTO $data): Model|JsonResponse
     {
         try {
-            $newBudget = $this->repository->create($data);
-            $newBudget->updatePrice();
-            $newBudget->fresh();
-            return $newBudget;
+            $newPrice = $this->repository->create($data);
+            return $newPrice;
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't create Budget",
+                "Service Error: can't create Price",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -124,25 +122,23 @@ class BudgetService
     }
 
     /**
-     * Update an existing Budget entity
+     * Update an existing Price entity
      *
-     * @param BudgetDTO $data Data transfer object containing updated information
-     * @return Budget|JsonResponse The updated entity or error response
+     * @param PriceDTO $data Data transfer object containing updated information
+     * @return Price|JsonResponse The updated entity or error response
      */
-    public function update(BudgetDTO $data): Model|JsonResponse
+    public function update(PriceDTO $data): Model|JsonResponse
     {
         try {
-            $updatedBudget = $this->repository->update($data);
-            $updatedBudget->updatePrice();
-            $updatedBudget->fresh();
-            return $updatedBudget;
+            $updatedPrice = $this->repository->update($data);
+            return $updatedPrice;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't update Budget",
+                "Service Error: can't update Price",
                 $e->getMessage(),
                 $statusCode
             );
@@ -150,7 +146,7 @@ class BudgetService
     }
 
     /**
-     * Delete a Budget entity by ID
+     * Delete a Price entity by ID
      *
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
@@ -165,7 +161,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't delete Budget",
+                "Service Error: can't delete Price",
                 $e->getMessage(),
                 $statusCode
             );

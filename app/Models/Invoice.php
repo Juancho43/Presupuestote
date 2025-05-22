@@ -21,6 +21,7 @@ class Invoice extends Model
         'date',
         'payment_status',
         'total',
+        'supplier_id',
 
     ];
     protected $casts = [
@@ -48,5 +49,20 @@ class Invoice extends Model
     public function calculateDebt()
     {
         return $this->total - $this->payments->sum('amount');
+    }
+
+    private function calculateTotal() : float
+    {
+        $total = 0;
+        foreach ($this->materials as $material) {
+            $total += $material->pivot_price * $material->pivot->quantity;
+        }
+        return $total;
+    }
+    public function updateTotal() : Invoice
+    {
+        $this->total = $this->calculateTotal();
+        $this->save();
+        return $this;
     }
 }

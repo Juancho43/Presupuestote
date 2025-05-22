@@ -16,12 +16,10 @@ class Measure extends Model
     protected $fillable = [
         'name',
         'abbreviation',
-        'unit' // consider to eliminate this field
     ];
     protected $casts = [
         'name' => 'string',
         'abbreviation' => 'string',
-        'unit' => 'decimal:2'
     ];
 
     public function materials():HasMany

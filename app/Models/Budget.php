@@ -26,7 +26,7 @@ class Budget extends Model
         'cost',
         'profit',
         'price',
-        '',
+        'client_id'
     ];
     protected $casts = [
         'made_date' => 'date',
@@ -54,7 +54,36 @@ class Budget extends Model
     }
     public function calculateDebt()
     {
-        return $this->price - $this->payments->sum('amount');
+        return floatval($this->price) - $this->payments->sum('amount');
+    }
+
+    private function calculatePrice()
+    {
+        return $this->cost + $this->profit;
+    }
+
+    private function calculateCost()
+    {
+        float : $cost = 0;
+        foreach ($this->works as $work) {
+            $cost += $work->cost;
+        }
+        return $cost;
+    }
+
+    public function updateCost()
+    {
+        $this->cost = $this->calculateCost();
+        $this->save();
+        return $this;
+    }
+
+    public function updatePrice()
+    {
+        $this->updateCost();
+        $this->price = $this->calculatePrice();
+        $this->save();
+        return $this;
     }
 
 }

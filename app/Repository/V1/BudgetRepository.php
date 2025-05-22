@@ -1,79 +1,67 @@
 <?php
-
+// app/Repository/V1/BudgetRepository.php
 namespace App\Repository\V1;
 
 use App\DTOs\V1\BudgetDTO;
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Budget;
-use App\Models\Work;
-use App\States\BudgetState\Aprobado;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class BudgetRepository
- *
- * Repository class for handling Budget CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
-material */
+
 class BudgetRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Budgets
      *
      * @return Collection Collection of Budget models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
         return Budget::with('client.person')->get();
     }
 
-
     /**
      * Find a Budget by ID
      *
      * @param int $id Budget ID to find
-     * @return Budget|JsonResponse Found Budget model or error response
+     * @return Model Found Budget model
      * @throws Exception When Budget is not found
      */
-    public function find(int $id): Budget|JsonResponse
+    public function find(int $id): Model
     {
-        try {
-            $model = Budget::with([
-                'works' => function ($query) {
-                    $query->with(['materials' => function ($query) {
-                        $query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'material_work.quantity');
-                    }]);
-                },
-                'payments'
-            ])->findOrFail($id);
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error retrieving data', $e->getMessage(), Response::HTTP_NOT_FOUND);
+        $model = Budget::with([
+            'works' => function ($query) {
+                $query->with(['materials' => function ($query) {
+                    $query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'material_work.quantity');
+                }]);
+            },
+            'payments'
+        ])->findOrFail($id);
+        if (!$model) {
+            throw new Exception("Budget with id: {$id} not found");
         }
+        return $model;
     }
 
     /**
      * Create a new Budget
      *
-     * @param BudgetDTO $data Request containing Budget data
-     * @return Budget Newly created Budget model
+     * @param BudgetDTO $data DTO containing Budget data
+     * @return Model Newly created Budget
+     * @throws Exception If creation fails
      */
-    public function create($data): Budget
+    public function create($data): Model
     {
         $model = Budget::create([
-            'made_date' => $data->made_date,
-            'description' => $data->description,
-            'dead_line' => $data->dead_line,
-            'profit' => $data->profit ?? 0,
-            'price' => $data->price ?? 0,
-            'cost' => $data->cost ?? 0,
-            'client_id' => $data->client_id
+        'made_date' => $data->madeDate,
+        'description' => $data->description,
+        'dead_line' => $data->deadLine,
+        'profit' => $data->profit ?? 0,
+        'price' => $data->price ?? 0,
+        'cost' => $data->cost ?? 0,
+        'client_id' => $data->client->id
         ]);
         return $model;
     }
@@ -81,56 +69,38 @@ class BudgetRepository implements IRepository
     /**
      * Update an existing Budget
      *
-     * @param int $id Budget ID to update
-     * @param BudgetDTO $data Request containing updated Budget data
-     * @return Budget|JsonResponse
+     * @param BudgetDTO $data DTO containing updated Budget data
+     * @return Model Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id,$data): Budget|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $model = $this->find($id)->update(
-                [
-                    'made_date' => $data->made_date,
-                    'description' => $data->description,
-                    'dead_line' => $data->dead_line,
-                    'profit' => $data->profit ?? 0,
-                    'price' => $data->price ?? 0,
-                    'cost' => $data->cost ?? 0,
-                    'client_id' => $data->client_id
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+
+        if (!$model->update([
+            'made_date' => $data->madeDate,
+            'description' => $data->description,
+            'dead_line' => $data->deadLine,
+            'profit' => $data->profit ?? 0,
+            'price' => $data->price ?? 0,
+            'cost' => $data->cost ?? 0,
+            'client_id' => $data->client->id
+        ])) {
+            throw new Exception("Failed to update Budget: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Budget
      *
      * @param int $id Budget ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
-
-   public function addWorks(int $budgetId, array $workIds): Budget | JsonResponse
-   {
-       try {
-
-           $budget = Budget::findOrFail($budgetId);
-           Work::whereIn('id', $workIds)->update(['budget_id' => $budgetId]);
-           return $budget->fresh('works');
-       }catch (Exception $e ){
-           return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-       }
-
-   }
 }

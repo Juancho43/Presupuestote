@@ -3,21 +3,48 @@ namespace App\Services\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Price;
-use App\Models\Work;
+use App\Models\Stock;
 use App\Repository\V1\WorkRepository;
+use App\DTOs\V1\WorkDTO;
+use App\Models\Work;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class WorkService{
-use ApiResponseTrait;
-    private WorkRepository $repository;
+/**
+ * Class WorkService
+ *
+ * Service layer for handling business logic related to Work entity.
+ * Implements the Singleton pattern for resource efficiency.
+ *
+ * @package App\Services\V1
+ */
+class WorkService
+{
+    use ApiResponseTrait;
+
+    /**
+     * Singleton instance
+     *
+     * @var WorkService|null
+     */
     private static ?WorkService $instance = null;
-    private BudgetService $budgetService;
 
+    /**
+     * Repository for data access operations
+     *
+     * @var WorkRepository
+     */
+    private WorkRepository $repository;
 
-
+    /**
+     * Get or create the singleton instance
+     *
+     * @return WorkService
+     */
     public static function getInstance(): WorkService
     {
         if (self::$instance === null) {
@@ -26,62 +53,147 @@ use ApiResponseTrait;
         return self::$instance;
     }
 
-
-
+    /**
+     * Constructor
+     *
+     * @param WorkRepository $repository Repository for data operations
+     */
     public function __construct(WorkRepository $repository)
     {
-        $this->budgetService = BudgetService::getInstance();
         $this->repository = $repository;
     }
 
-    public function calculateWorkCost(int $workId): float
+    /**
+     * Retrieve a specific Work entity by ID
+     *
+     * @param int $id The entity ID
+     * @return Work|JsonResponse The found entity or error response
+     */
+    public function get(int $id): Model|JsonResponse
     {
-        $work = $this->repository->find($workId);
-        $cost = 0;
+        try {
+            return $this->repository->find($id);
+        } catch (Exception $e) {
+            $statusCode = str_contains($e->getMessage(), "not found")
+                ? Response::HTTP_NOT_FOUND
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
 
-        if ($work->materials->isEmpty()) {
-            return $cost;
+            return $this->errorResponse(
+                "Service Error: can't find Work",
+                $e->getMessage(),
+                $statusCode
+            );
         }
+    }
 
-        foreach ($work->materials as $material) {
-            $price = Price::find($material->pivot->price_id);
-            $cost += $material->pivot->quantity * $price->price;
-
+    /**
+     * Retrieve all Work entities
+     *
+     * @return Collection|JsonResponse Collection of entities or error response
+     */
+    public function getAll(): Collection|JsonResponse
+    {
+        try {
+            return $this->repository->all();
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't retrieve dummies",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
+    }
 
-        return $cost;
+    /**
+     * Create a new Work entity
+     *
+     * @param WorkDTO $data Data transfer object containing entity information
+     * @return Work|JsonResponse The created entity or error response
+     */
+    public function create(WorkDTO $data): Model|JsonResponse
+    {
+        try {
+            return $this->repository->create($data);
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't create Work",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    /**
+     * Update an existing Work entity
+     *
+     * @param WorkDTO $data Data transfer object containing updated information
+     * @return Work|JsonResponse The updated entity or error response
+     */
+    public function update(WorkDTO $data): Model|JsonResponse
+    {
+        try {
+            return $this->repository->update($data);
+        } catch (Exception $e) {
+            $statusCode = str_contains($e->getMessage(), "not found")
+                ? Response::HTTP_NOT_FOUND
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                "Service Error: can't update Work",
+                $e->getMessage(),
+                $statusCode
+            );
+        }
+    }
+
+    /**
+     * Delete a Work entity by ID
+     *
+     * @param int $id The entity ID
+     * @return bool|JsonResponse True if successful or error response
+     */
+    public function delete(int $id): bool|JsonResponse
+    {
+        try {
+            return $this->repository->delete($id);
+        } catch (Exception $e) {
+            $statusCode = str_contains($e->getMessage(), "not found")
+                ? Response::HTTP_NOT_FOUND
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                "Service Error: can't delete Work",
+                $e->getMessage(),
+                $statusCode
+            );
+        }
     }
     public function addMaterialsToWork(FormRequest $request): Work | JsonResponse
     {
         try {
-            $request->validated();
-            $work = $this->repository->find($request->work_id);
-
-            $syncData = $this->generateMaterialWorksPivot($request->materials, $work);
+            $work = $this->repository->find($request->input('work_id'));
+            $syncData = $this->generateMaterialWorksPivot($request->input('materials'));
             $work->materials()->sync($syncData);
-
-            // Calculate and update the work cost
-            $work->cost = $this->calculateWorkCost($work->id);
-
-            $work->save();
-            $this->budgetService->updateBudgetPrice($work->budget_id);
-            return $this->repository->find($work->id);
+            $work->refresh();
+            $work->updateCost();
+            $work->budget->updatePrice();
+            return $work;
         } catch (Exception $e) {
             return $this->errorResponse("Service Error: adding materials to work failed", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    private function generateMaterialWorksPivot(array $materials, Work $work) : array | JsonResponse
+    private function generateMaterialWorksPivot(array $materials) : array | JsonResponse
     {
         $pivotData = [];
 
         foreach ($materials as $materialData) {
             // Get the latest price and stock for the material
-            $latestPrice = \App\Models\Price::where('material_id', $materialData['id'])
+            $latestPrice = Price::where('material_id', $materialData['id'])
                 ->latest('date')
                 ->first();
 
-            $latestStock = \App\Models\Stock::where('material_id', $materialData['id'])
+            $latestStock = Stock::where('material_id', $materialData['id'])
                 ->latest('date')
                 ->first();
 
@@ -89,7 +201,6 @@ use ApiResponseTrait;
                 return $this->errorResponse(
                     "Service Error: Material missing price or stock",
                     "Material ID {$materialData['id']} has no price or stock records",
-                    Response::HTTP_BAD_REQUEST
                 );
             }
 
@@ -102,7 +213,4 @@ use ApiResponseTrait;
 
         return $pivotData;
     }
-
-
-
 }

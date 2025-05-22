@@ -1,18 +1,15 @@
 <?php
+// app/Repository/V1/IRepository.php
 namespace App\Repository\V1;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Js;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Database\Eloquent\Model;
 
 interface IRepository
 {
     public function all(): Collection;
-    public function find(int $id);
-    public function create($data);
-    public function update(int $id, $data) ;
-    public function delete(int $id): bool |JsonResponse;
+    public function find(int $id): Model;
+    public function create($data): Model;
+    public function update($data): Model;
+    public function delete(int $id): bool;
 }
-

@@ -15,6 +15,7 @@ class Client extends Model
 
     protected $fillable=[
         'balance',
+        'person_id',
     ];
 
     protected $casts = [

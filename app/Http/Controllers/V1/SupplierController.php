@@ -1,122 +1,173 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
+use App\DTOs\V1\PersonDTO;
+use App\Services\V1\SupplierService;
+use App\DTOs\V1\SupplierDTO;
 use App\Http\Requests\V1\SupplierRequest;
 use App\Http\Resources\V1\SupplierResource;
 use App\Http\Resources\V1\SupplierResourceCollection;
-use App\Repository\V1\SupplierRepository;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Supplier Controller
  *
- * Handles HTTP requests related to Supplier records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to supplier records including CRUD operations
  */
 class SupplierController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var SupplierRepository Repository for Supplier data access
+     * @var SupplierService Service for supplier data logic
      */
-    protected SupplierRepository $repository;
+    protected SupplierService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param SupplierRepository $SupplierRepository
+     * @param SupplierService $service
      */
-    public function __construct(SupplierRepository $SupplierRepository)
+    public function __construct(SupplierService $service)
     {
-        $this->repository = $SupplierRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Supplier records
+     * Get all supplier records
      *
-     * @return JsonResponse Collection of Supplier records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of supplier records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new SupplierResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SupplierResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Supplier record by ID
+     * Get single supplier record by ID
      *
      * @param int $id Supplier record ID
-     * @return JsonResponse Single Supplier resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single supplier resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new SupplierResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SupplierResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Supplier record
+     * Create new supplier record
      *
      * @param SupplierRequest $request Validated Supplier data
-     * @return JsonResponse Created Supplier resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created supplier resource
      */
-    public function store(SupplierRequest $request) : JsonResponse
+    public function store(SupplierRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new SupplierResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+    // Transform request data into DTO
+    $supplierDTO = new SupplierDTO(
+        null,
+        $request->input('notes'),
+        null,
+        new PersonDTO(
+            $request->input('person_id'),
+            $request->input('person.name'),
+            $request->input('person.last_name'),
+            $request->input('person.address'),
+            $request->input('person.phone_number'),
+            $request->input('person.mail'),
+            $request->input('person.dni'),
+            $request->input('person.cuit')
+    ));
+
+
+    $result = $this->service->create($supplierDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SupplierResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing Supplier record
+     * Update existing supplier record
      *
      * @param SupplierRequest $request Validated Supplier data
-     * @return JsonResponse Updated Supplier resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated supplier resource
      */
-    public function update(int $id,SupplierRequest $request) : JsonResponse
+    public function update(int $id,SupplierRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new SupplierResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $supplierDTO = new SupplierDTO(
+            $id,
+            $request->input('notes'),
+            null,
+            new PersonDTO(
+                $request->input('person_id'),
+                $request->input('person.name'),
+                $request->input('person.last_name'),
+                $request->input('person.address'),
+                $request->input('person.phone_number'),
+                $request->input('person.mail'),
+                $request->input('person.dni'),
+                $request->input('person.cuit')
+            ));
+        $result = $this->service->update($supplierDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SupplierResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Supplier record
+     * Delete supplier record
      *
      * @param int $id Supplier record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

@@ -1,30 +1,21 @@
 <?php
-
+// app/Repository/V1/PersonRepository.php
 namespace App\Repository\V1;
 
 use App\DTOs\V1\PersonDTO;
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class PersonRepository
- *
- * Repository class for handling Person CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class PersonRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Persons
      *
      * @return Collection Collection of Person models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -35,14 +26,14 @@ class PersonRepository implements IRepository
      * Find a Person by ID
      *
      * @param int $id Person ID to find
-     * @return Person|JsonResponse Found Person model or error response
+     * @return Model Found Person model
      * @throws Exception When Person is not found
      */
-    public function find(int $id): Person|JsonResponse
+    public function find(int $id): Model
     {
         $model = Person::where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Person with id: {$id} not found");
         }
         return $model;
     }
@@ -50,65 +41,59 @@ class PersonRepository implements IRepository
     /**
      * Create a new Person
      *
-     * @param PersonDTO $data Request containing Person data
-     * @return Person Newly created Person model
+     * @param PersonDTO $data DTO containing Person data
+     * @return Model Newly created Person
+     * @throws Exception If creation fails
      */
-    public function create($data): Person
+    public function create($data): Model
     {
-        $model = Person::create([
-            [
-                'name' => $data->name,
-                'last_name' => $data->last_name,
-                'address' => $data->address,
-                'phone_number' => $data->phone_number,
-                'mail' => $data->mail,
-                'dni' => $data->dni,
-                'cuit' => $data->cuit,
-            ]
+        return Person::create([
+            'name' => $data->name,
+            'last_name' => $data->last_name,
+            'address' => $data->address,
+            'phone_number' => $data->phone_number,
+            'mail' => $data->mail,
+            'dni' => $data->dni,
+            'cuit' => $data->cuit,
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Person
      *
      * @param int $id Person ID to update
-     * @param PersonDTO $data Request containing updated Person data
-     * @return Person|JsonResponse
+     * @param PersonDTO $data DTO containing updated Person data
+     * @return Model Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id,$data): Person|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $model = $this->find($id)->update(
-               [
-                   'name' => $data->name,
-                   'last_name' => $data->last_name,
-                   'address' => $data->address,
-                   'phone_number' => $data->phone_number,
-                   'mail' => $data->mail ?? $this->find($id)->mail,
-                   'dni' => $data->dni ?? $this->find($id)->dni,
-                   'cuit' => $data->cuit ?? $this->find($id)->cuit,
-               ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+
+        if (!$model->update([
+            'name' => $data->name ?? $model->name,
+            'last_name' => $data->last_name ?? $model->last_name,
+            'address' => $data->address ?? $model->address,
+            'phone_number' => $data->phone_number ?? $model->phone_number,
+            'mail' => $data->mail ?? $model->mail,
+            'dni' => $data->dni ?? $model->dni,
+            'cuit' => $data->cuit ?? $model->cuit,
+        ])) {
+            throw new Exception("Failed to update Person: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Person
      *
      * @param int $id Person ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

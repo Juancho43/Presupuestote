@@ -1,47 +1,38 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\DTOs\V1\WorkDTO;
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Work;
+use App\DTOs\V1\WorkDTO;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use \Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Class WorkRepository
- *
- * Repository class for handling Work CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class WorkRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Works
      *
      * @return Collection Collection of Work models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
-        return Work::all();
+        return Work::with('budget')->get();
     }
 
     /**
      * Find a Work by ID
      *
      * @param int $id Work ID to find
-     * @return Work|JsonResponse Found Work model or error response
+     * @return Work Found Work model
      * @throws Exception When Work is not found
      */
-    public function find(int $id): Work|JsonResponse
+    public function find(int $id): Model
     {
-        $model = Work::with(['materials.prices','budget'])->where('id', $id)->firstOrFail();
+        $model = Work::with(['materials.prices','budget'])->find($id);
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Work with id: {$id} not found");
         }
         return $model;
     }
@@ -49,79 +40,57 @@ class WorkRepository implements IRepository
     /**
      * Create a new Work
      *
-     * @param WorkDTO $data Request containing Work data
-     * @return Work Newly created Work model
+     * @param WorkDTO $data DTO containing Work data
+     * @return Work Newly created Work
+     * @throws Exception If creation fails
      */
-    public function create($data): Work
+    public function create($data): Model
     {
-
-        $model = Work::create([
+        return Work::create([
             'order' => $data->order,
             'name' => $data->name,
             'notes' => $data->notes,
             'estimated_time' => $data->estimated_time,
-            'dead_line' => $data->dead_line,
-            'cost' => $data->cost ?? 0,
-            'budget_id' => $data->budget->id
+            'deadline' => $data->dead_line,
+            'status' => $data->cost ?? 0,
+            'budget_id' => $data->budget->id,
         ]);
-
-
-
-
-
-        return $model;
     }
 
     /**
      * Update an existing Work
      *
-     * @param int $id Work ID to update
-     * @param WorkDTO $data Request containing updated Work data
-     * @return Work|JsonResponse
+     * @param WorkDTO $data DTO containing updated Work data
+     * @return Work Updated model
+     * @throws Exception When update fails
      */
- public function update(int $id,$data): Work|JsonResponse
- {
-     try {
-         $work = $this->find($id);
+    public function update($data): Model
+    {
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'order' => $data->order,
+            'name' => $data->name,
+            'notes' => $data->notes,
+            'estimated_time' => $data->estimated_time,
+            'deadline' => $data->dead_line,
+            'status' => $data->cost ?? 0,
+            'budget_id' => $data->budget->id,
+        ])) {
+            throw new Exception("Failed to update Work: Database update failed");
+        }
 
-         // Update Work fields
-         $work->update([
-             'order' => $data->order,
-             'name' => $data->name,
-             'notes' => $data->notes,
-             'estimated_time' => $data->estimated_time,
-             'dead_line' => $data->dead_line,
-             'cost' => $data->cost ?? 0,
-             'budget_id' => $data->budget->id
-         ]);
+        return $model->fresh();
+    }
 
-         // Update materials with quantities if provided
-         /*if ($data->has('materials')) {
-             // materials: array of ['id' => material_id, 'quantity' => value]
-             $materials = collect($data->input('materials'))
-                 ->mapWithKeys(fn($item) => [$item['id'] => ['quantity' => $item['quantity']]])
-                 ->toArray();
-             $work->materials()->sync($materials);
-         }*/
-         return $work->fresh('materials');
-     } catch (Exception $e) {
-         return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-     }
- }
- /**
+    /**
      * Delete a Work
      *
      * @param int $id Work ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
-
-
 }

@@ -1,122 +1,163 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
+use App\DTOs\V1\MeasureDTO;
+use App\DTOs\V1\SubCategoryDTO;
+use App\Services\V1\MaterialService;
+use App\DTOs\V1\MaterialDTO;
 use App\Http\Requests\V1\MaterialRequest;
 use App\Http\Resources\V1\MaterialResource;
 use App\Http\Resources\V1\MaterialResourceCollection;
-use App\Repository\V1\MaterialRepository;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Material Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to material records including CRUD operations
  */
 class MaterialController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var MaterialRepository Repository for Material data access
+     * @var MaterialService Service for material data logic
      */
-    protected MaterialRepository $repository;
+    protected MaterialService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param MaterialRepository $MaterialRepository
+     * @param MaterialService $service
      */
-    public function __construct(MaterialRepository $MaterialRepository)
+    public function __construct(MaterialService $service)
     {
-        $this->repository = $MaterialRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Material records
+     * Get all material records
      *
-     * @return JsonResponse Collection of Material records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of material records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new MaterialResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MaterialResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Material record by ID
+     * Get single material record by ID
      *
      * @param int $id Material record ID
-     * @return JsonResponse Single Material resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single material resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new MaterialResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Material record
+     * Create new material record
      *
      * @param MaterialRequest $request Validated Material data
-     * @return JsonResponse Created Material resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created material resource
      */
-    public function store(MaterialRequest $request) : JsonResponse
+    public function store(MaterialRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new MaterialResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        $materialDTO = new MaterialDTO(
+            null,
+            $request->input('name'),
+            $request->input('description'),
+            $request->input('brand'),
+            $request->input('color'),
+            new SubCategoryDTO(id:$request->input('sub_category_id')),
+            new MeasureDTO(id: $request->input('measure_id')),
+        );
+
+        $result = $this->service->create($materialDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing Material record
+     * Update existing material record
      *
      * @param MaterialRequest $request Validated Material data
-     * @return JsonResponse Updated Material resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated material resource
      */
-    public function update(int $id,MaterialRequest $request) : JsonResponse
+    public function update(int $id,MaterialRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new MaterialResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $materialDTO = new MaterialDTO(
+            $id,
+            $request->input('name'),
+            $request->input('description'),
+            $request->input('brand'),
+            $request->input('color'),
+            new SubCategoryDTO(id:$request->input('sub_category_id')),
+            new MeasureDTO(id: $request->input('measure_id')),
+        );
+        $result = $this->service->update($materialDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Material record
+     * Delete material record
      *
      * @param int $id Material record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

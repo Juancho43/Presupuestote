@@ -19,7 +19,6 @@ class MeasureFactory extends Factory
      return [
          'name' => $this->faker->word,
          'abbreviation' => $this->faker->lexify('???'),
-         'unit' => $this->faker->randomFloat(2, 0, 100),
      ];
     }
 }

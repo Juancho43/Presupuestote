@@ -2,9 +2,9 @@
 namespace App\Services\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Repository\V1\BudgetRepository;
-use App\DTOs\V1\BudgetDTO;
-use App\Models\Budget;
+use App\Repository\V1\UserRepository;
+use App\DTOs\V1\UserDTO;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,40 +12,40 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BudgetService
+ * Class UserService
  *
- * Service layer for handling business logic related to Budget entity.
+ * Service layer for handling business logic related to User entity.
  * Implements the Singleton pattern for resource efficiency.
  *
  * @package App\Services\V1
  */
-class BudgetService
+class UserService
 {
     use ApiResponseTrait;
 
     /**
      * Singleton instance
      *
-     * @var BudgetService|null
+     * @var UserService|null
      */
-    private static ?BudgetService $instance = null;
+    private static ?UserService $instance = null;
 
     /**
      * Repository for data access operations
      *
-     * @var BudgetRepository
+     * @var UserRepository
      */
-    private BudgetRepository $repository;
+    private UserRepository $repository;
 
     /**
      * Get or create the singleton instance
      *
-     * @return BudgetService
+     * @return UserService
      */
-    public static function getInstance(): BudgetService
+    public static function getInstance(): UserService
     {
         if (self::$instance === null) {
-            self::$instance = new self(new BudgetRepository());
+            self::$instance = new self(new UserRepository());
         }
         return self::$instance;
     }
@@ -53,18 +53,18 @@ class BudgetService
     /**
      * Constructor
      *
-     * @param BudgetRepository $repository Repository for data operations
+     * @param UserRepository $repository Repository for data operations
      */
-    public function __construct(BudgetRepository $repository)
+    public function __construct(UserRepository $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * Retrieve a specific Budget entity by ID
+     * Retrieve a specific User entity by ID
      *
      * @param int $id The entity ID
-     * @return Budget|JsonResponse The found entity or error response
+     * @return User|JsonResponse The found entity or error response
      */
     public function get(int $id): Model|JsonResponse
     {
@@ -76,7 +76,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't find Budget",
+                "Service Error: can't find User",
                 $e->getMessage(),
                 $statusCode
             );
@@ -84,7 +84,7 @@ class BudgetService
     }
 
     /**
-     * Retrieve all Budget entities
+     * Retrieve all User entities
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
@@ -102,21 +102,19 @@ class BudgetService
     }
 
     /**
-     * Create a new Budget entity
+     * Create a new User entity
      *
-     * @param BudgetDTO $data Data transfer object containing entity information
-     * @return Budget|JsonResponse The created entity or error response
+     * @param UserDTO $data Data transfer object containing entity information
+     * @return User|JsonResponse The created entity or error response
      */
-    public function create(BudgetDTO $data): Budget|JsonResponse
+    public function create(UserDTO $data): Model|JsonResponse
     {
         try {
-            $newBudget = $this->repository->create($data);
-            $newBudget->updatePrice();
-            $newBudget->fresh();
-            return $newBudget;
+            $newUser = $this->repository->create($data);
+            return $newUser;
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't create Budget",
+                "Service Error: can't create User",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -124,25 +122,23 @@ class BudgetService
     }
 
     /**
-     * Update an existing Budget entity
+     * Update an existing User entity
      *
-     * @param BudgetDTO $data Data transfer object containing updated information
-     * @return Budget|JsonResponse The updated entity or error response
+     * @param UserDTO $data Data transfer object containing updated information
+     * @return User|JsonResponse The updated entity or error response
      */
-    public function update(BudgetDTO $data): Model|JsonResponse
+    public function update(UserDTO $data): Model|JsonResponse
     {
         try {
-            $updatedBudget = $this->repository->update($data);
-            $updatedBudget->updatePrice();
-            $updatedBudget->fresh();
-            return $updatedBudget;
+            $updatedUser = $this->repository->update($data);
+            return $updatedUser;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't update Budget",
+                "Service Error: can't update User",
                 $e->getMessage(),
                 $statusCode
             );
@@ -150,7 +146,7 @@ class BudgetService
     }
 
     /**
-     * Delete a Budget entity by ID
+     * Delete a User entity by ID
      *
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
@@ -165,7 +161,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't delete Budget",
+                "Service Error: can't delete User",
                 $e->getMessage(),
                 $statusCode
             );

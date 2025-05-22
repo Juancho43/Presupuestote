@@ -2,9 +2,9 @@
 namespace App\Services\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Repository\V1\BudgetRepository;
-use App\DTOs\V1\BudgetDTO;
-use App\Models\Budget;
+use App\Repository\V1\StockRepository;
+use App\DTOs\V1\StockDTO;
+use App\Models\Stock;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,40 +12,40 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BudgetService
+ * Class StockService
  *
- * Service layer for handling business logic related to Budget entity.
+ * Service layer for handling business logic related to Stock entity.
  * Implements the Singleton pattern for resource efficiency.
  *
  * @package App\Services\V1
  */
-class BudgetService
+class StockService
 {
     use ApiResponseTrait;
 
     /**
      * Singleton instance
      *
-     * @var BudgetService|null
+     * @var StockService|null
      */
-    private static ?BudgetService $instance = null;
+    private static ?StockService $instance = null;
 
     /**
      * Repository for data access operations
      *
-     * @var BudgetRepository
+     * @var StockRepository
      */
-    private BudgetRepository $repository;
+    private StockRepository $repository;
 
     /**
      * Get or create the singleton instance
      *
-     * @return BudgetService
+     * @return StockService
      */
-    public static function getInstance(): BudgetService
+    public static function getInstance(): StockService
     {
         if (self::$instance === null) {
-            self::$instance = new self(new BudgetRepository());
+            self::$instance = new self(new StockRepository());
         }
         return self::$instance;
     }
@@ -53,18 +53,18 @@ class BudgetService
     /**
      * Constructor
      *
-     * @param BudgetRepository $repository Repository for data operations
+     * @param StockRepository $repository Repository for data operations
      */
-    public function __construct(BudgetRepository $repository)
+    public function __construct(StockRepository $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * Retrieve a specific Budget entity by ID
+     * Retrieve a specific Stock entity by ID
      *
      * @param int $id The entity ID
-     * @return Budget|JsonResponse The found entity or error response
+     * @return Stock|JsonResponse The found entity or error response
      */
     public function get(int $id): Model|JsonResponse
     {
@@ -76,7 +76,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't find Budget",
+                "Service Error: can't find Stock",
                 $e->getMessage(),
                 $statusCode
             );
@@ -84,7 +84,7 @@ class BudgetService
     }
 
     /**
-     * Retrieve all Budget entities
+     * Retrieve all Stock entities
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
@@ -102,21 +102,19 @@ class BudgetService
     }
 
     /**
-     * Create a new Budget entity
+     * Create a new Stock entity
      *
-     * @param BudgetDTO $data Data transfer object containing entity information
-     * @return Budget|JsonResponse The created entity or error response
+     * @param StockDTO $data Data transfer object containing entity information
+     * @return Stock|JsonResponse The created entity or error response
      */
-    public function create(BudgetDTO $data): Budget|JsonResponse
+    public function create(StockDTO $data): Model|JsonResponse
     {
         try {
-            $newBudget = $this->repository->create($data);
-            $newBudget->updatePrice();
-            $newBudget->fresh();
-            return $newBudget;
+            $newStock = $this->repository->create($data);
+            return $newStock;
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't create Budget",
+                "Service Error: can't create Stock",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -124,25 +122,23 @@ class BudgetService
     }
 
     /**
-     * Update an existing Budget entity
+     * Update an existing Stock entity
      *
-     * @param BudgetDTO $data Data transfer object containing updated information
-     * @return Budget|JsonResponse The updated entity or error response
+     * @param StockDTO $data Data transfer object containing updated information
+     * @return Stock|JsonResponse The updated entity or error response
      */
-    public function update(BudgetDTO $data): Model|JsonResponse
+    public function update(StockDTO $data): Model|JsonResponse
     {
         try {
-            $updatedBudget = $this->repository->update($data);
-            $updatedBudget->updatePrice();
-            $updatedBudget->fresh();
-            return $updatedBudget;
+            $updatedStock = $this->repository->update($data);
+            return $updatedStock;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't update Budget",
+                "Service Error: can't update Stock",
                 $e->getMessage(),
                 $statusCode
             );
@@ -150,7 +146,7 @@ class BudgetService
     }
 
     /**
-     * Delete a Budget entity by ID
+     * Delete a Stock entity by ID
      *
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
@@ -165,7 +161,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't delete Budget",
+                "Service Error: can't delete Stock",
                 $e->getMessage(),
                 $statusCode
             );

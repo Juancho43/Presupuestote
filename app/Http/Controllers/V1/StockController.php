@@ -1,122 +1,157 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
+use App\DTOs\V1\MaterialDTO;
+use App\Services\V1\StockService;
+use App\DTOs\V1\StockDTO;
 use App\Http\Requests\V1\StockRequest;
 use App\Http\Resources\V1\StockResource;
 use App\Http\Resources\V1\StockResourceCollection;
-use App\Repository\V1\StockRepository;
+use Carbon\Carbon;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Stock Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to stock records including CRUD operations
  */
 class StockController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var StockRepository Repository for dummy data access
+     * @var StockService Service for stock data logic
      */
-    protected StockRepository $repository;
+    protected StockService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param StockRepository $StockRepository
+     * @param StockService $service
      */
-    public function __construct(StockRepository $StockRepository)
+    public function __construct(StockService $service)
     {
-        $this->repository = $StockRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Stock records
+     * Get all stock records
      *
-     * @return JsonResponse Collection of Stock records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of stock records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new StockResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new StockResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Stock record by ID
+     * Get single stock record by ID
      *
      * @param int $id Stock record ID
-     * @return JsonResponse Single Stock resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single stock resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new StockResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new StockResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Stock record
+     * Create new stock record
      *
      * @param StockRequest $request Validated Stock data
-     * @return JsonResponse Created Stock resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created stock resource
      */
-    public function store(StockRequest $request) : JsonResponse
+    public function store(StockRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new StockResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+    // Transform request data into DTO
+    $stockDTO = new StockDTO(
+        null,
+        $request->input('stock'),
+        new Carbon($request->input('date')),
+        new MaterialDTO(id: $request->input('material_id')),
+    );
+
+    $result = $this->service->create($stockDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new StockResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing Stock record
+     * Update existing stock record
      *
      * @param StockRequest $request Validated Stock data
-     * @return JsonResponse Updated Stock resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated stock resource
      */
-    public function update(int $id,StockRequest $request) : JsonResponse
+    public function update(int $id,StockRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new StockResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $stockDTO = new StockDTO(
+            $id,
+            $request->input('stock'),
+            new Carbon($request->input('date')),
+            new MaterialDTO(id: $request->input('material_id')),
+        );    $stockDTO = new StockDTO($id);
+        $result = $this->service->update($stockDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new StockResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Stock record
+     * Delete stock record
      *
      * @param int $id Stock record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

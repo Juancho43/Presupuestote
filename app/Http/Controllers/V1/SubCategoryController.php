@@ -1,122 +1,154 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
+use App\DTOs\V1\CategoryDTO;
+use App\Services\V1\SubCategoryService;
+use App\DTOs\V1\SubCategoryDTO;
 use App\Http\Requests\V1\SubCategoryRequest;
 use App\Http\Resources\V1\SubCategoryResource;
 use App\Http\Resources\V1\SubCategoryResourceCollection;
-use App\Repository\V1\SubCategoryRepository;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * SubCategory Controller
  *
- * Handles HTTP requests related to dummy records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to subcategory records including CRUD operations
  */
 class SubCategoryController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var SubCategoryRepository Repository for dummy data access
+     * @var SubCategoryService Service for subcategory data logic
      */
-    protected SubCategoryRepository $repository;
+    protected SubCategoryService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param SubCategoryRepository $SubCategoryRepository
+     * @param SubCategoryService $service
      */
-    public function __construct(SubCategoryRepository $SubCategoryRepository)
+    public function __construct(SubCategoryService $service)
     {
-        $this->repository = $SubCategoryRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all SubCategory records
+     * Get all subcategory records
      *
-     * @return JsonResponse Collection of SubCategory records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of subcategory records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new SubCategoryResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SubCategoryResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single SubCategory record by ID
+     * Get single subcategory record by ID
      *
      * @param int $id SubCategory record ID
-     * @return JsonResponse Single SubCategory resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single subcategory resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new SubCategoryResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SubCategoryResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new SubCategory record
+     * Create new subcategory record
      *
      * @param SubCategoryRequest $request Validated SubCategory data
-     * @return JsonResponse Created SubCategory resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created subcategory resource
      */
-    public function store(SubCategoryRequest $request) : JsonResponse
+    public function store(SubCategoryRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new SubCategoryResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+    // Transform request data into DTO
+    $subcategoryDTO = new SubCategoryDTO(
+        null,
+        $request->input('name'),
+        new CategoryDTO(id: $request->input('category_id')),
+    );
+
+    $result = $this->service->create($subcategoryDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SubCategoryResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing SubCategory record
+     * Update existing subcategory record
      *
      * @param SubCategoryRequest $request Validated SubCategory data
-     * @return JsonResponse Updated SubCategory resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated subcategory resource
      */
-    public function update(int $id, SubCategoryRequest $request) : JsonResponse
+    public function update(int $id,SubCategoryRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new SubCategoryResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $subcategoryDTO = new SubCategoryDTO(
+        $id,
+        $request->input('name'),
+        new CategoryDTO(id: $request->input('category_id')),
+        );
+        $result = $this->service->update($subcategoryDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new SubCategoryResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete SubCategory record
+     * Delete subcategory record
      *
      * @param int $id SubCategory record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }

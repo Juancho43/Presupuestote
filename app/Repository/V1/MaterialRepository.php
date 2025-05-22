@@ -1,53 +1,43 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\Material;
+use App\DTOs\V1\MaterialDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class MaterialRepository
- *
- * Repository class for handling Material CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class MaterialRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Materials
      *
      * @return Collection Collection of Material models
+     * @throws Exception If database query fails
      */
-  public function all(): Collection
-  {
-     return Material::with([
-        'measure',
-        'subcategory',
-        'prices' => function ($query) {
-            $query->latest('date')->limit(1);
-        },
-        'stocks' => function ($query) {
-            $query->latest('date')->limit(1);
-        }
-    ])->get();
-
-  }
+    public function all(): Collection
+    {
+        return Material::with([
+            'measure',
+            'subcategory',
+            'prices' => function ($query) {
+                $query->latest('date')->limit(1);
+            },
+            'stocks' => function ($query) {
+                $query->latest('date')->limit(1);
+            }
+        ])->get();
+    }
 
     /**
      * Find a Material by ID
      *
      * @param int $id Material ID to find
-     * @return Material|JsonResponse Found Material model or error response
+     * @return Material Found Material model
      * @throws Exception When Material is not found
      */
-    public function find(int $id): Material|JsonResponse
+    public function find(int $id): Model
     {
         $model = Material::with([
             'prices' => function($query) {
@@ -67,7 +57,7 @@ class MaterialRepository implements IRepository
             }
         ])->findOrFail($id);
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Material with id: {$id} not found");
         }
         return $model;
     }
@@ -75,63 +65,55 @@ class MaterialRepository implements IRepository
     /**
      * Create a new Material
      *
-     * @param FormRequest $data Request containing Material data
-     * @return Material Newly created Material model
+     * @param MaterialDTO $data DTO containing Material data
+     * @return Material Newly created Material
+     * @throws Exception If creation fails
      */
-    public function create(FormRequest $data): Material
+    public function create($data): Model
     {
-        $data->validated();
-        $model = Material::create([
-            'name' => $data->input('name'),
-            'description' => $data->input('description'),
-            'color' => $data->input('color'),
-            'brand' => $data->input('brand'),
-            'subcategory_id' => $data->input('subcategory_id'),
-            'measure_id' => $data->input('measure_id')
+        return Material::create([
+            'name' => $data->name,
+            'description' => $data->description,
+            'color' => $data->color,
+            'brand' => $data->brand,
+            'subcategory_id' => $data->subcategory->id,
+            'measure_id' => $data->measure->id
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Material
      *
-     * @param int $id Material ID to update
-     * @param FormRequest $data Request containing updated Material data
-     * @return Material|JsonResponse
+     * @param MaterialDTO $data DTO containing updated Material data
+     * @return Material Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, FormRequest $data): Material|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'name' => $data->input('name'),
-                    'description' => $data->input('description'),
-                    'color' => $data->input('color'),
-                    'brand' => $data->input('brand'),
-                    'subcategory_id' => $data->input('subcategory_id'),
-                    'measure_id' => $data->input('measure_id')
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'name' => $data->name ?? $model->name,
+            'description' => $data->description ?? $model->description,
+            'color' => $data->color ?? $model->color,
+            'brand' => $data->brand ?? $model->brand,
+            'subcategory_id' => $data->subcategory->id ?? $model->subcategory_id,
+            'measure_id' => $data->measure->id ?? $model->measure_id,
+        ])) {
+            throw new Exception("Failed to update Material: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Material
      *
      * @param int $id Material ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

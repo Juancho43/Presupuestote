@@ -1,136 +1,157 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
-
+use App\Services\V1\PaymentService;
+use App\DTOs\V1\PaymentDTO;
 use App\Http\Requests\V1\PaymentRequest;
 use App\Http\Resources\V1\PaymentResource;
 use App\Http\Resources\V1\PaymentResourceCollection;
-use App\Models\Budget;
-use App\Models\Invoice;
-use App\Models\Salary;
-use App\Repository\V1\PaymentRepository;
+use Carbon\Carbon;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use App\Services\V1\PaymentService;
 
 /**
  * Payment Controller
  *
- * Handles HTTP requests related to Payment records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to payment records including CRUD operations
  */
 class PaymentController extends Controller
 {
     use ApiResponseTrait;
 
+    /**
+     * @var PaymentService Service for payment data logic
+     */
     protected PaymentService $service;
 
     /**
-     * @var PaymentRepository Repository for Payment data access
-     */
-    protected PaymentRepository $repository;
-
-    /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param PaymentRepository $PaymentRepository
+     * @param PaymentService $service
      */
-    public function __construct(PaymentRepository $PaymentRepository, PaymentService $PaymentService)
+    public function __construct(PaymentService $service)
     {
-        $this->service = $PaymentService;
-        $this->repository = $PaymentRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Payment records
+     * Get all payment records
      *
-     * @return JsonResponse Collection of Payment records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of payment records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new PaymentResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new PaymentResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Payment record by ID
+     * Get single payment record by ID
      *
      * @param int $id Payment record ID
-     * @return JsonResponse Single Payment resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single payment resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new PaymentResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new PaymentResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Payment record
+     * Create new payment record
      *
      * @param PaymentRequest $request Validated Payment data
-     * @return JsonResponse Created Payment resource
-     * @throws Exception If creation fails
+     * @return JsonResponse Created payment resource
      */
-    public function store(PaymentRequest $request) : JsonResponse
+    public function store(PaymentRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new PaymentResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $paymentDTO = new PaymentDTO(null,
+            $request->input('amount'),
+            new Carbon($request->input('date')),
+            $request->input('description'),
+            $request->input('payable_type'),
+            $request->input('payable_id')
+        );
+        $result = $this->service->create($paymentDTO);
+
+        if ($result->getStatusCode() == Response::HTTP_INTERNAL_SERVER_ERROR) {
+            return $result;
         }
+
+        return $result;
     }
 
     /**
-     * Update existing Payment record
+     * Update existing payment record
      *
      * @param PaymentRequest $request Validated Payment data
-     * @return JsonResponse Updated Payment resource
-     * @throws Exception If update fails
+     * @return JsonResponse Updated payment resource
      */
-    public function update(int $id, PaymentRequest $request) : JsonResponse
+    public function update(int $id,PaymentRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new PaymentResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $paymentDTO = new PaymentDTO(
+            $id,
+            $request->input('amount'),
+            new Carbon($request->input('date')),
+            $request->input('description'),
+            $request->input('payable_type'),
+            $request->input('payable_id')
+        );
+        $result = $this->service->update($paymentDTO);
+
+        if ($result->getStatusCode() == Response::HTTP_INTERNAL_SERVER_ERROR) {
+            return $result;
         }
+
+        return $result;
     }
 
     /**
-     * Delete Payment record
+     * Delete payment record
      *
      * @param int $id Payment record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->delete($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
     }
+
 
     public function allClientPayments(int $id) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResourceCollection($this->repository->allClientPayments($id)), null, Response::HTTP_OK);
+            return $this->successResponse(new PaymentResourceCollection($this->service->allClientPayments($id)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -139,7 +160,7 @@ class PaymentController extends Controller
     public function allEmployeePayments(int $id) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResourceCollection($this->repository->allEmployeePayments($id)), null, Response::HTTP_OK);
+            return $this->successResponse(new PaymentResourceCollection($this->service->allEmployeePayments($id)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -148,40 +169,12 @@ class PaymentController extends Controller
     public function allSupplierPayments(int $id) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResourceCollection($this->repository->allSupplierPayments($id)), null, Response::HTTP_OK);
+            return $this->successResponse(new PaymentResourceCollection($this->service->allSupplierPayments($id)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function addPaymentToBudget(PaymentRequest $request) : JsonResponse
-    {
-        try{
-            $response = $this->service->processModelPayment(Budget::class, $request, 'budget');
-            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 
-    public function addPaymentToInvoice(PaymentRequest $request) : JsonResponse
-    {
-        try{
-            $response = $this->service->processModelPayment(Invoice::class, $request, 'invoice');
-            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function addPaymentToSalary(PaymentRequest $request) : JsonResponse
-    {
-        try{
-            $response = $this->service->processModelPayment(Salary::class, $request, 'salary');
-            return $this->successResponse(new PaymentResource($response['payment']), $response['message'], Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Controller Error: can't store data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 
 }

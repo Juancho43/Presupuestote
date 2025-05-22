@@ -1,56 +1,38 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Http\Requests\V1\PersonRequest;
 use App\Models\Supplier;
+use App\DTOs\V1\SupplierDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class SupplierRepository
- *
- * Repository class for handling Supplier CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class SupplierRepository implements IRepository
 {
-    use ApiResponseTrait;
-    private PersonRepository $personRepository;
-
-    /**
-     * @param PersonRepository $personRepository
-     */
-    public function __construct(PersonRepository $personRepository)
-    {
-        $this->personRepository = $personRepository;
-    }
     /**
      * Get all Suppliers
      *
      * @return Collection Collection of Supplier models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
-        return Supplier::with('person')->get();
+        return Supplier::all();
     }
 
     /**
      * Find a Supplier by ID
      *
      * @param int $id Supplier ID to find
-     * @return Supplier|JsonResponse Found Supplier model or error response
+     * @return Supplier Found Supplier model
      * @throws Exception When Supplier is not found
      */
-    public function find(int $id): Supplier|JsonResponse
+    public function find(int $id): Model
     {
-        $model = Supplier::with(['person','invoice'])->findOrFail($id);
+        $model = Supplier::where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Supplier with id: {$id} not found");
         }
         return $model;
     }
@@ -58,69 +40,47 @@ class SupplierRepository implements IRepository
     /**
      * Create a new Supplier
      *
-     * @param FormRequest $data Request containing Supplier data
-     * @return Supplier Newly created Supplier model
+     * @param SupplierDTO $data DTO containing Supplier data
+     * @return Supplier Newly created Supplier
+     * @throws Exception If creation fails
      */
-    public function create(FormRequest $data): Supplier
+    public function create($data): Model
     {
-        $data->validated();
-
-        // Create client with provided balance or default to 0
-        $Employee = new Supplier([
-            'notes'=>$data->notes,
-            'balance'=>$data->balance,
+        return Supplier::create([
+            'balance' => $data->balance,
+            'notes' => $data->notes,
         ]);
-
-        // Handle person relationship
-        if ($data->has('person')) {
-            $personRequest = new PersonRequest($data->person);
-            $person = $this->personRepository->create($personRequest);
-            $Employee->person()->associate($person);
-        } else {
-            // Associate with existing person
-            $person = $this->personRepository->find($data->person_id);
-            $Employee->person()->associate($person);
-        }
-
-        $Employee->save();
-        return $Employee->load('person');
     }
 
     /**
      * Update an existing Supplier
      *
-     * @param int $id Supplier ID to update
-     * @param FormRequest $data Request containing updated Supplier data
-     * @return Supplier|JsonResponse
+     * @param SupplierDTO $data DTO containing updated Supplier data
+     * @return Supplier Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, FormRequest $data): Supplier|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'notes' => $data->input('notes'),
-                    'balance' => $data->input('balance'),
-                ]
-            );
-            return $model->fresh()->load('person');
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'balance' => $data->balance,
+            'notes' => $data->notes,
+        ])) {
+            throw new Exception("Failed to update Supplier: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Supplier
      *
      * @param int $id Supplier ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

@@ -15,6 +15,7 @@ class SubCategory extends Model
     protected $table = 'subcategories';
     protected $fillable = [
         'name',
+        'category_id',
     ];
     protected $casts = [
         'name' => 'string',

@@ -1,10 +1,13 @@
 <?php
 namespace App\Services\V1;
 
+use App\DTOs\V1\ClientDTO;
+use App\DTOs\V1\PersonDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Repository\V1\BudgetRepository;
-use App\DTOs\V1\BudgetDTO;
-use App\Models\Budget;
+use App\Repository\V1\PersonRepository;
+use App\Repository\V1\SupplierRepository;
+use App\DTOs\V1\SupplierDTO;
+use App\Models\Supplier;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,40 +15,40 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BudgetService
+ * Class SupplierService
  *
- * Service layer for handling business logic related to Budget entity.
+ * Service layer for handling business logic related to Supplier entity.
  * Implements the Singleton pattern for resource efficiency.
  *
  * @package App\Services\V1
  */
-class BudgetService
+class SupplierService
 {
     use ApiResponseTrait;
 
     /**
      * Singleton instance
      *
-     * @var BudgetService|null
+     * @var SupplierService|null
      */
-    private static ?BudgetService $instance = null;
-
+    private static ?SupplierService $instance = null;
+    private PersonRepository $personRepository;
     /**
      * Repository for data access operations
      *
-     * @var BudgetRepository
+     * @var SupplierRepository
      */
-    private BudgetRepository $repository;
+    private SupplierRepository $repository;
 
     /**
      * Get or create the singleton instance
      *
-     * @return BudgetService
+     * @return SupplierService
      */
-    public static function getInstance(): BudgetService
+    public static function getInstance(): SupplierService
     {
         if (self::$instance === null) {
-            self::$instance = new self(new BudgetRepository());
+            self::$instance = new self(new SupplierRepository(), new PersonRepository());
         }
         return self::$instance;
     }
@@ -53,18 +56,19 @@ class BudgetService
     /**
      * Constructor
      *
-     * @param BudgetRepository $repository Repository for data operations
+     * @param SupplierRepository $repository Repository for data operations
      */
-    public function __construct(BudgetRepository $repository)
+    public function __construct(SupplierRepository $repository, PersonRepository $personRepository)
     {
+        $this->personRepository = $personRepository;
         $this->repository = $repository;
     }
 
     /**
-     * Retrieve a specific Budget entity by ID
+     * Retrieve a specific Supplier entity by ID
      *
      * @param int $id The entity ID
-     * @return Budget|JsonResponse The found entity or error response
+     * @return Supplier|JsonResponse The found entity or error response
      */
     public function get(int $id): Model|JsonResponse
     {
@@ -76,7 +80,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't find Budget",
+                "Service Error: can't find Supplier",
                 $e->getMessage(),
                 $statusCode
             );
@@ -84,7 +88,7 @@ class BudgetService
     }
 
     /**
-     * Retrieve all Budget entities
+     * Retrieve all Supplier entities
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
@@ -102,21 +106,31 @@ class BudgetService
     }
 
     /**
-     * Create a new Budget entity
+     * Create a new Supplier entity
      *
-     * @param BudgetDTO $data Data transfer object containing entity information
-     * @return Budget|JsonResponse The created entity or error response
+     * @param SupplierDTO $data Data transfer object containing entity information
+     * @return Supplier|JsonResponse The created entity or error response
      */
-    public function create(BudgetDTO $data): Budget|JsonResponse
+    public function create(SupplierDTO $data): Model|JsonResponse
     {
         try {
-            $newBudget = $this->repository->create($data);
-            $newBudget->updatePrice();
-            $newBudget->fresh();
-            return $newBudget;
+
+            $personId = $data->person->id;
+            if ($data->person->id == null) {
+                $person = $this->personRepository->create($data->person);
+                $personId = $person->id;
+            }
+
+            $newClient = $this->repository->create(new SupplierDTO(
+                null,
+                $data->notes,
+                $data->balance,
+                new PersonDTO(id:$personId)
+            ));
+            return $newClient;
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't create Budget",
+                "Service Error: can't create client",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -124,25 +138,23 @@ class BudgetService
     }
 
     /**
-     * Update an existing Budget entity
+     * Update an existing Supplier entity
      *
-     * @param BudgetDTO $data Data transfer object containing updated information
-     * @return Budget|JsonResponse The updated entity or error response
+     * @param SupplierDTO $data Data transfer object containing updated information
+     * @return Supplier|JsonResponse The updated entity or error response
      */
-    public function update(BudgetDTO $data): Model|JsonResponse
+    public function update(SupplierDTO $data): Model|JsonResponse
     {
         try {
-            $updatedBudget = $this->repository->update($data);
-            $updatedBudget->updatePrice();
-            $updatedBudget->fresh();
-            return $updatedBudget;
+            $updatedSupplier = $this->repository->update($data);
+            return $updatedSupplier;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't update Budget",
+                "Service Error: can't update Supplier",
                 $e->getMessage(),
                 $statusCode
             );
@@ -150,7 +162,7 @@ class BudgetService
     }
 
     /**
-     * Delete a Budget entity by ID
+     * Delete a Supplier entity by ID
      *
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
@@ -165,7 +177,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't delete Budget",
+                "Service Error: can't delete Supplier",
                 $e->getMessage(),
                 $statusCode
             );

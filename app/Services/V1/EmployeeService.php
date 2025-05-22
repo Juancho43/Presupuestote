@@ -1,10 +1,13 @@
 <?php
 namespace App\Services\V1;
 
+use App\DTOs\V1\ClientDTO;
+use App\DTOs\V1\PersonDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Repository\V1\BudgetRepository;
-use App\DTOs\V1\BudgetDTO;
-use App\Models\Budget;
+use App\Repository\V1\EmployeeRepository;
+use App\DTOs\V1\EmployeeDTO;
+use App\Models\Employee;
+use App\Repository\V1\PersonRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,40 +15,41 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BudgetService
+ * Class EmployeeService
  *
- * Service layer for handling business logic related to Budget entity.
+ * Service layer for handling business logic related to Employee entity.
  * Implements the Singleton pattern for resource efficiency.
  *
  * @package App\Services\V1
  */
-class BudgetService
+class EmployeeService
 {
     use ApiResponseTrait;
 
     /**
      * Singleton instance
      *
-     * @var BudgetService|null
+     * @var EmployeeService|null
      */
-    private static ?BudgetService $instance = null;
+    private static ?EmployeeService $instance = null;
 
     /**
      * Repository for data access operations
      *
-     * @var BudgetRepository
+     * @var EmployeeRepository
      */
-    private BudgetRepository $repository;
+    private EmployeeRepository $repository;
 
+    private PersonRepository $personRepository;
     /**
      * Get or create the singleton instance
      *
-     * @return BudgetService
+     * @return EmployeeService
      */
-    public static function getInstance(): BudgetService
+    public static function getInstance(): EmployeeService
     {
         if (self::$instance === null) {
-            self::$instance = new self(new BudgetRepository());
+            self::$instance = new self(new EmployeeRepository(), new PersonRepository());
         }
         return self::$instance;
     }
@@ -53,18 +57,19 @@ class BudgetService
     /**
      * Constructor
      *
-     * @param BudgetRepository $repository Repository for data operations
+     * @param EmployeeRepository $repository Repository for data operations
      */
-    public function __construct(BudgetRepository $repository)
+    public function __construct(EmployeeRepository $repository, PersonRepository $personRepository)
     {
+        $this->personRepository = $personRepository;
         $this->repository = $repository;
     }
 
     /**
-     * Retrieve a specific Budget entity by ID
+     * Retrieve a specific Employee entity by ID
      *
      * @param int $id The entity ID
-     * @return Budget|JsonResponse The found entity or error response
+     * @return Employee|JsonResponse The found entity or error response
      */
     public function get(int $id): Model|JsonResponse
     {
@@ -76,7 +81,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't find Budget",
+                "Service Error: can't find Employee",
                 $e->getMessage(),
                 $statusCode
             );
@@ -84,7 +89,7 @@ class BudgetService
     }
 
     /**
-     * Retrieve all Budget entities
+     * Retrieve all Employee entities
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
@@ -102,21 +107,33 @@ class BudgetService
     }
 
     /**
-     * Create a new Budget entity
+     * Create a new Employee entity
      *
-     * @param BudgetDTO $data Data transfer object containing entity information
-     * @return Budget|JsonResponse The created entity or error response
+     * @param EmployeeDTO $data Data transfer object containing entity information
+     * @return Employee|JsonResponse The created entity or error response
      */
-    public function create(BudgetDTO $data): Budget|JsonResponse
+    public function create(EmployeeDTO $data): Model|JsonResponse
     {
         try {
-            $newBudget = $this->repository->create($data);
-            $newBudget->updatePrice();
-            $newBudget->fresh();
-            return $newBudget;
+
+            $personId = $data->person->id;
+            if ($data->person->id == null) {
+                $person = $this->personRepository->create($data->person);
+                $personId = $person->id;
+            }
+
+            $newEmployee = $this->repository->create(new EmployeeDTO(
+                null,
+                $data->salary,
+                $data->startDate,
+                $data->endDate,
+                $data->isActive,
+                new PersonDTO(id:$personId)
+            ));
+            return $newEmployee;
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't create Budget",
+                "Service Error: can't create client",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -124,25 +141,23 @@ class BudgetService
     }
 
     /**
-     * Update an existing Budget entity
+     * Update an existing Employee entity
      *
-     * @param BudgetDTO $data Data transfer object containing updated information
-     * @return Budget|JsonResponse The updated entity or error response
+     * @param EmployeeDTO $data Data transfer object containing updated information
+     * @return Employee|JsonResponse The updated entity or error response
      */
-    public function update(BudgetDTO $data): Model|JsonResponse
+    public function update(EmployeeDTO $data): Model|JsonResponse
     {
         try {
-            $updatedBudget = $this->repository->update($data);
-            $updatedBudget->updatePrice();
-            $updatedBudget->fresh();
-            return $updatedBudget;
+            $updatedEmployee = $this->repository->update($data);
+            return $updatedEmployee;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't update Budget",
+                "Service Error: can't update Employee",
                 $e->getMessage(),
                 $statusCode
             );
@@ -150,7 +165,7 @@ class BudgetService
     }
 
     /**
-     * Delete a Budget entity by ID
+     * Delete a Employee entity by ID
      *
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
@@ -165,7 +180,7 @@ class BudgetService
                 : Response::HTTP_INTERNAL_SERVER_ERROR;
 
             return $this->errorResponse(
-                "Service Error: can't delete Budget",
+                "Service Error: can't delete Employee",
                 $e->getMessage(),
                 $statusCode
             );

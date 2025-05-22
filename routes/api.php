@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::group(['as' => 'public.'], function() {
-
+        // TODO: Make a updatePersonRequest and update in PersonRepostiry.
+        //Crud entities routes
         Route::resource('clients', ClientController::class)->names('clients');
         Route::resource('people', PersonController::class)->names('people');
         Route::resource('suppliers', SupplierController::class)->names('suppliers');
@@ -35,20 +36,21 @@ Route::prefix('v1')->group(function () {
         Route::resource('categories', CategoryController::class)->names('categories');
         Route::resource('subcategories', SubCategoryController::class)->names('subcategories');
         Route::resource('measures', MeasureController::class)->names('measures');
-
+        //Pricing
+        Route::get('budgets/updatePrice/{id}', [BudgetController::class, 'updateBudgetPrice'])->name('budgets.updatePrice');
+        Route::get('invoices/updateTotal/{id}', [InvoiceController::class, 'updateInvoiceTotal'])->name('invoices.updateTotal');
+        //Works and invoices
+        Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
+        Route::post('invoices/materials', [InvoiceController::class, 'addMaterials'])->name('invoices.addMaterials');
+        //Add Payments
+        Route::post('payments/budget', [PaymentController::class, 'addPaymentToBudget'])->name('payments.toBudget');
+        Route::post('payments/invoice', [PaymentController::class, 'addPaymentToInvoice'])->name('payments.toInvoice');
+        Route::post('payments/salary', [PaymentController::class, 'addPaymentToSalary'])->name('payments.toSalary');
+        //Get sorted payments
         Route::get('payments/client/{id}', [PaymentController::class, 'allClientPayments'])->name('indexClient');
         Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
         Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
 
-        Route::post('budgets/works' , [BudgetController::class, 'addWorks'])->name('budgets.addWorks');
-        Route::get('budgets/updatePrice/{id}', [BudgetController::class, 'updateBudgetPrice'])->name('budgets.updatePrice');
-        Route::get('invoices/updateTotal/{id}', [InvoiceController::class, 'updateInvoiceTotal'])->name('invoices.updateTotal');
-        Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
-        Route::post('invoices/materials', [InvoiceController::class, 'addMaterials'])->name('invoices.addMaterials');
-
-        Route::post('payments/budget', [PaymentController::class, 'addPaymentToBudget'])->name('payments.toBudget');
-        Route::post('payments/invoice', [PaymentController::class, 'addPaymentToInvoice'])->name('payments.toInvoice');
-        Route::post('payments/salary', [PaymentController::class, 'addPaymentToSalary'])->name('payments.toSalary');
     });
 
 

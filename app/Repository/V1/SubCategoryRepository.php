@@ -1,29 +1,21 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\SubCategory;
+use App\DTOs\V1\SubCategoryDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class SubCategoryRepository
- *
- * Repository class for handling SubCategory CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class SubCategoryRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
+     *
      * Get all SubCategorys
      *
      * @return Collection Collection of SubCategory models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -34,14 +26,14 @@ class SubCategoryRepository implements IRepository
      * Find a SubCategory by ID
      *
      * @param int $id SubCategory ID to find
-     * @return SubCategory|JsonResponse Found SubCategory model or error response
+     * @return SubCategory Found SubCategory model
      * @throws Exception When SubCategory is not found
      */
-    public function find(int $id): SubCategory|JsonResponse
+    public function find(int $id): Model
     {
-        $model = SubCategory::with('category')->findOrFail($id);
+        $model = SubCategory::with('category')->find($id);
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("SubCategory with id: {$id} not found");
         }
         return $model;
     }
@@ -49,55 +41,47 @@ class SubCategoryRepository implements IRepository
     /**
      * Create a new SubCategory
      *
-     * @param FormRequest $data Request containing SubCategory data
-     * @return SubCategory Newly created SubCategory model
+     * @param SubCategoryDTO $data DTO containing SubCategory data
+     * @return SubCategory Newly created SubCategory
+     * @throws Exception If creation fails
      */
-    public function create(FormRequest $data): SubCategory
+    public function create($data): Model
     {
-        $data->validated();
-        $model = SubCategory::create([
-            'name' => $data->input('name'),
-            'category_id' => $data->input('category_id'),
+        return SubCategory::create([
+            'name' => $data->name,
+            'category_id' => $data->category->id
         ]);
-        return $model;
     }
 
     /**
      * Update an existing SubCategory
      *
-     * @param int $id SubCategory ID to update
-     * @param FormRequest $data Request containing updated SubCategory data
-     * @return SubCategory|JsonResponse
+     * @param SubCategoryDTO $data DTO containing updated SubCategory data
+     * @return SubCategory Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, FormRequest $data): SubCategory|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'name' => $data->input('name'),
-                    'category_id' => $data->input('category_id'),
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'name' => $data->name ?? $model->name,
+            'category_id' => $data->category->id ?? $model->category_id
+        ])) {
+            throw new Exception("Failed to update SubCategory: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a SubCategory
      *
      * @param int $id SubCategory ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

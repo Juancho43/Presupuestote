@@ -1,29 +1,21 @@
 <?php
-
+// app/Repository/V1/CategoryRepository.php
 namespace App\Repository\V1;
 
-use App\Http\Controllers\V1\ApiResponseTrait;
+use App\DTOs\V1\CategoryDTO;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class CategoryRepository
- *
- * Repository class for handling Category CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class CategoryRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Categorys
      *
      * @return Collection Collection of Category models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -34,14 +26,14 @@ class CategoryRepository implements IRepository
      * Find a Category by ID
      *
      * @param int $id Category ID to find
-     * @return Category|JsonResponse Found Category model or error response
+     * @return Model Found Category model
      * @throws Exception When Category is not found
      */
-    public function find(int $id): Category|JsonResponse
+    public function find(int $id): Model
     {
         $model = Category::where('id', $id)->first();
         if (!$model) {
-            throw new Exception('Error to find the resource with id: ' . $id);
+            throw new Exception("Category with id: {$id} not found");
         }
         return $model;
     }
@@ -49,53 +41,44 @@ class CategoryRepository implements IRepository
     /**
      * Create a new Category
      *
-     * @param FormRequest $data Request containing Category data
-     * @return Category Newly created Category model
+     * @param CategoryDTO $data DTO containing Category data
+     * @return Model Newly created Category
+     * @throws Exception If creation fails
      */
-    public function create(FormRequest $data): Category
+    public function create($data): Model
     {
-        $data->validated();
-        $model = Category::create([
+        return Category::create([
             'name' => $data->name,
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Category
      *
-     * @param int $id Category ID to update
-     * @param FormRequest $data Request containing updated Category data
-     * @return Category|JsonResponse
+     * @param CategoryDTO $data DTO containing updated Category data
+     * @return Model Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id, FormRequest $data): Category|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $data->validated();
-            $model = $this->find($id)->update(
-                [
-                    'name' => $data->name,
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to update the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+
+        if (!$model->update([  'name' => $data->name,])) {
+            throw new Exception("Failed to update Category: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Category
      *
      * @param int $id Category ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
 }

@@ -1,33 +1,20 @@
 <?php
-
 namespace App\Repository\V1;
 
-use App\DTOs\V1\PaymentDTO;
-use App\Http\Controllers\V1\ApiResponseTrait;
-use App\Models\Budget;
-use App\Models\Invoice;
 use App\Models\Payment;
-use App\Models\Salary;
+use App\DTOs\V1\PaymentDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Http\FormRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Model;
+use \Exception;
 
-/**
- * Class PaymentRepository
- *
- * Repository class for handling Payment CRUD operations
- * Implements IRepository interface and uses ApiResponseTrait
- */
+
 class PaymentRepository implements IRepository
 {
-    use ApiResponseTrait;
-
     /**
      * Get all Payments
      *
      * @return Collection Collection of Payment models
+     * @throws Exception If database query fails
      */
     public function all(): Collection
     {
@@ -38,14 +25,14 @@ class PaymentRepository implements IRepository
      * Find a Payment by ID
      *
      * @param int $id Payment ID to find
-     * @return Payment|JsonResponse Found Payment model or error response
+     * @return Payment Found Payment model
      * @throws Exception When Payment is not found
      */
-    public function find(int $id): Payment|JsonResponse
+    public function find(int $id): Model
     {
         $model = Payment::where('id', $id)->first();
         if (!$model) {
-            throw new Exception("Repository Error: can't find the resource with id: " . $id);
+            throw new Exception("Payment with id: {$id} not found");
         }
         return $model;
     }
@@ -53,62 +40,55 @@ class PaymentRepository implements IRepository
     /**
      * Create a new Payment
      *
-     * @param PaymentDTO $data Request containing Payment data
-     * @return Payment Newly created Payment model
+     * @param PaymentDTO $data DTO containing Payment data
+     * @return Payment Newly created Payment
+     * @throws Exception If creation fails
      */
-    public function create($data): Payment
+    public function create($data): Model
     {
-        $model = Payment::create([
+        return Payment::create([
             'payable_id' => $data->payable_id,
             'payable_type' => $data->payable_type,
             'amount' => $data->amount,
             'date' => $data->date,
             'description' => $data->description,
         ]);
-        return $model;
     }
 
     /**
      * Update an existing Payment
      *
-     * @param int $id Payment ID to update
-     * @param PaymentDTO $data Request containing updated Payment data
-     * @return Payment|JsonResponse
+     * @param PaymentDTO $data DTO containing updated Payment data
+     * @return Payment Updated model
+     * @throws Exception When update fails
      */
-    public function update(int $id,$data): Payment|JsonResponse
+    public function update($data): Model
     {
-        try {
-            $model = $this->find($id)->update(
-                [
-                    'payable_id' => $data->payable_id,
-                    'payable_type' => $data->payable_type,
-                    'amount' => $data->amount,
-                    'date' => $data->date,
-                    'description' => $data->description,
-                ]
-            );
-            $model->fresh();
-            return $model;
-        } catch (Exception $e) {
-            return $this->errorResponse("Repository Error: can't update the resource", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        $model = $this->find($data->id);
+        if (!$model->update([
+            'payable_id' => $data->payable_id,
+            'payable_type' => $data->payable_type,
+            'amount' => $data->amount,
+            'date' => $data->date,
+            'description' => $data->description,
+        ])) {
+            throw new Exception("Failed to update Payment: Database update failed");
         }
+
+        return $model->fresh();
     }
 
     /**
      * Delete a Payment
      *
      * @param int $id Payment ID to delete
-     * @return bool|JsonResponse True if deleted successfully, error response otherwise
+     * @return bool True if deleted successfully
+     * @throws Exception If deletion fails
      */
-    public function delete(int $id): bool|JsonResponse
+    public function delete(int $id): bool
     {
-        try {
-            return $this->find($id)->delete();
-        } catch (Exception $e) {
-            return $this->errorResponse('Error to delete the resource', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->find($id)->delete();
     }
-
     public function allClientPayments(int $clientId): Collection
     {
         return
