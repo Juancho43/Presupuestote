@@ -10,7 +10,6 @@ use App\Http\Resources\V1\SupplierResourceCollection;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

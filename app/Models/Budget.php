@@ -54,7 +54,7 @@ class Budget extends Model
     }
     public function calculateDebt()
     {
-        return $this->price - $this->payments->sum('amount');
+        return floatval($this->price) - $this->payments->sum('amount');
     }
 
     private function calculatePrice()
@@ -73,26 +73,17 @@ class Budget extends Model
 
     public function updateCost()
     {
-        try {
-            $this->cost = $this->calculateCost();
-            $this->save();
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+        $this->cost = $this->calculateCost();
+        $this->save();
+        return $this;
     }
 
     public function updatePrice()
     {
-        try {
-            $this->updateCost();
-            $this->price = $this->calculatePrice();
-            $this->save();
-            return true;
-        }catch (Exception $e) {
-            return false;
-        }
-
+        $this->updateCost();
+        $this->price = $this->calculatePrice();
+        $this->save();
+        return $this;
     }
 
 }

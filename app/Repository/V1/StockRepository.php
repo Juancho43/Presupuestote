@@ -47,7 +47,7 @@ class StockRepository implements IRepository
     public function create($data): Model
     {
         return Stock::create([
-            'quantity' => $data->stock,
+            'stock' => $data->stock,
             'material_id' => $data->material->id,
             'date' => $data->date,
         ]);

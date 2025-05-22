@@ -171,18 +171,13 @@ class WorkService
     public function addMaterialsToWork(FormRequest $request): Work | JsonResponse
     {
         try {
-            $request->validated();
             $work = $this->repository->find($request->input('work_id'));
-
             $syncData = $this->generateMaterialWorksPivot($request->input('materials'));
             $work->materials()->sync($syncData);
-
+            $work->refresh();
             $work->updateCost();
-
-            $work->save();
             $work->budget->updatePrice();
-
-            return $this->repository->find($work->id);
+            return $work;
         } catch (Exception $e) {
             return $this->errorResponse("Service Error: adding materials to work failed", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }

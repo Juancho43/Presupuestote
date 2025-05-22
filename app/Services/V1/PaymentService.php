@@ -6,12 +6,10 @@ use App\Repository\V1\PaymentRepository;
 use App\DTOs\V1\PaymentDTO;
 use App\Models\Payment;
 use App\States\PaymentState\Pago;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -118,6 +116,7 @@ class PaymentService
                 throw new Exception($debt['message']);
             }
             $payment = $this->repository->create($data);
+
             return $this->successResponse($payment,$debt['message'], Response::HTTP_OK);
         } catch (Exception $e) {
             return $this->errorResponse(
@@ -179,13 +178,15 @@ class PaymentService
     {
         $model = $modelClass::findOrFail($modelId);
         $currentDebt = $model->calculateDebt();
-        $response["message"] = "Payment amount is valid, current debt: " . $currentDebt;
+        $newDebt = $currentDebt - $amount;
+        $response["message"] = "Payment amount is valid current debt: ". $newDebt;
         $response['success'] = true;
-        if ($amount > $currentDebt) {
-            $response['message'] = "Payment amount exceeds the remaining {$modelClass} debt by: " . ($amount - $currentDebt);
+        $response['previous_debt'] = $currentDebt;
+        if ($amount >$currentDebt) {
+            $response['message'] = "Payment amount exceeds the remaining {$modelClass} debt: ". $newDebt;
             $response['success'] = false;
         }
-        if ($currentDebt == 0){
+        if ($newDebt == 0){
             $this->updatePaymentStatus($model, Pago::class);
             $response['message'] = "Payment completed successfully, {$modelClass} is fully paid.";
         }

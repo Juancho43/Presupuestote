@@ -10,7 +10,6 @@ use App\Http\Resources\V1\ClientResourceCollection;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -89,7 +88,7 @@ class ClientController extends Controller
 
         $clientDTO = new ClientDTO(
             null,
-            new Decimal($request->input('balance')),
+            null,
             new PersonDTO(
                 $request->input('person_id'),
                 $request->input('person.name'),
@@ -125,7 +124,7 @@ class ClientController extends Controller
     {
          $clientDTO = new ClientDTO(
             $id,
-            new Decimal($request->input('balance')),
+            null,
             new PersonDTO(
                 $request->input('person_id'),
                 $request->input('person.name'),

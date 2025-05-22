@@ -8,7 +8,6 @@ use App\Http\Requests\V1\EmployeeRequest;
 use App\Http\Resources\V1\EmployeeResource;
 use App\Http\Resources\V1\EmployeeResourceCollection;
 use Carbon\Carbon;
-use Ramsey\Uuid\Type\Decimal;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -89,7 +88,7 @@ class EmployeeController extends Controller
     {
         $employeeDTO = new EmployeeDTO(
             null,
-            new Decimal($request->input('salary')),
+            $request->input('salary'),
             new Carbon($request->input('start_date')),
             new Carbon($request->input('end_date')),
             $request->input('is_active'),
@@ -129,7 +128,7 @@ class EmployeeController extends Controller
     {
         $employeeDTO = new EmployeeDTO(
             $id,
-            new Decimal($request->input('salary')),
+            $request->input('salary'),
             new Carbon($request->input('start_date')),
             new Carbon($request->input('end_date')),
             $request->input('is_active'),

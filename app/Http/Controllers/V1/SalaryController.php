@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -89,7 +88,7 @@ class SalaryController extends Controller
     {
     // Transform request data into DTO
     $salaryDTO = new SalaryDTO(null,
-        new Decimal($request->input('amount')),
+        $request->input('amount'),
         new Carbon($request->input('date')),
         $request->input('active'),
         null,
@@ -121,7 +120,7 @@ class SalaryController extends Controller
     {
         $salaryDTO = new SalaryDTO(
             $id,
-            new Decimal($request->input('amount')),
+            $request->input('amount'),
             new Carbon($request->input('date')),
             $request->input('active'),
             null,

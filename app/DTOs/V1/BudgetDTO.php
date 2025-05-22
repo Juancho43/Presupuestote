@@ -5,7 +5,7 @@ namespace App\DTOs\V1;
 use App\States\BudgetState\BudgetState;
 use App\States\PaymentState\PaymentState;
 use Carbon\Carbon;
-use Ramsey\Uuid\Type\Decimal;
+
 
 readonly class BudgetDTO
 {
@@ -14,9 +14,9 @@ readonly class BudgetDTO
         public string|null $description = null,
         public Carbon|null $madeDate = null,
         public Carbon|null $deadLine = null,
-        public decimal|null $cost = null,
-        public decimal|null $profit = null,
-        public decimal|null  $price = null,
+        public float|null $cost = null,
+        public float|null $profit = null,
+        public float|null  $price = null,
         public BudgetState|null $status = null,
         public PaymentState|null $paymentState = null,
         public ClientDTO|null $client = null

@@ -50,7 +50,7 @@ class Work extends Model
             ->withPivot('quantity', 'price_id', 'stock_id');
     }
 
-    private function calculateCost(): float
+    public function calculateCost(): float
     {
         $cost = 0;
 
@@ -70,6 +70,6 @@ class Work extends Model
     {
         $this->cost = $this->calculateCost();
         $this->save();
-        return true;
+        return $this;
     }
 }

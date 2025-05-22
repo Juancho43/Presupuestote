@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -90,7 +89,7 @@ class StockController extends Controller
     // Transform request data into DTO
     $stockDTO = new StockDTO(
         null,
-        new Decimal($request->input('stock')),
+        $request->input('stock'),
         new Carbon($request->input('date')),
         new MaterialDTO(id: $request->input('material_id')),
     );
@@ -118,7 +117,7 @@ class StockController extends Controller
     {
         $stockDTO = new StockDTO(
             $id,
-            new Decimal($request->input('stock')),
+            $request->input('stock'),
             new Carbon($request->input('date')),
             new MaterialDTO(id: $request->input('material_id')),
         );    $stockDTO = new StockDTO($id);

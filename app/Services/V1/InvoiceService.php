@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\V1;
 
+use App\DTOs\V1\MaterialDTO;
 use App\DTOs\V1\PriceDTO;
 use App\DTOs\V1\StockDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
@@ -15,7 +16,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -129,8 +129,7 @@ class InvoiceService
     public function create(InvoiceDTO $data): Model|JsonResponse
     {
         try {
-            $newInvoice = $this->repository->create($data);
-            return $newInvoice;
+            return $this->repository->create($data);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't create Invoice",
@@ -149,8 +148,7 @@ class InvoiceService
     public function update(InvoiceDTO $data): Model|JsonResponse
     {
         try {
-            $updatedInvoice = $this->repository->update($data);
-            return $updatedInvoice;
+            return $this->repository->update($data);
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
@@ -165,7 +163,7 @@ class InvoiceService
     }
 
     /**
-     * Delete a Invoice entity by ID
+     * Delete an Invoice entity by ID
      *
      * @param int $id The entity ID
      * @return bool|JsonResponse True if successful or error response
@@ -192,11 +190,9 @@ class InvoiceService
         $pivotData = [];
         foreach ($materials as $materialData)
         {
-            $price = new Decimal($materialData['price']);
-            $stock = new Decimal($materialData['quantity']);
             $date = new Carbon();
-            $newPrice = $this->priceRepository->create(new PriceDTO(price: $price, date: $date, material: new MaterialDTO(id:$materialData['id'])));
-            $newStock = $this->stockRepository->create(new StockDTO(stock: $stock, date: $date, material: new MaterialDTO(id: $materialData['id'])));
+            $newPrice = $this->priceRepository->create(new PriceDTO(price: $materialData['price'], date: $date, material: new MaterialDTO(id:$materialData['id'])));
+            $newStock = $this->stockRepository->create(new StockDTO(stock: $materialData['quantity'], date: $date, material: new MaterialDTO(id: $materialData['id'])));
             $pivotData[$materialData['id']] = [
                 'quantity' => $materialData['quantity'],
                 'price_id' => $newPrice->id,
@@ -213,7 +209,7 @@ class InvoiceService
             $invoice = $this->repository->find($data->invoice_id);
             $syncData = $this->generateInvoiceMaterialPivot($data->materials);
             $invoice->materials()->sync($syncData);
-            $invoice->save();
+            $invoice->refresh();
             $invoice->updateTotal();
             return $invoice;
         }catch (Exception $e) {

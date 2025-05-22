@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -87,7 +86,7 @@ class PaymentController extends Controller
     public function store(PaymentRequest $request): JsonResponse
     {
         $paymentDTO = new PaymentDTO(null,
-            new Decimal($request->input('amount')),
+            $request->input('amount'),
             new Carbon($request->input('date')),
             $request->input('description'),
             $request->input('payable_type'),
@@ -112,7 +111,7 @@ class PaymentController extends Controller
     {
         $paymentDTO = new PaymentDTO(
             $id,
-            new Decimal($request->input('amount')),
+            $request->input('amount'),
             new Carbon($request->input('date')),
             $request->input('description'),
             $request->input('payable_type'),

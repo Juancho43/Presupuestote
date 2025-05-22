@@ -8,11 +8,9 @@ use App\Http\Requests\V1\BudgetRequest;
 use App\Http\Resources\V1\BudgetResource;
 use App\Http\Resources\V1\BudgetResourceCollection;
 use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -107,7 +105,7 @@ class BudgetController extends Controller
                     $madeDate,
                     $deadLine,
                      null,
-                    isset($request->profit) ? new Decimal($request->profit) : null,
+                    isset($request->profit) ? $request->profit : null,
                     null,
                     null,
                     null,
@@ -192,6 +190,15 @@ class BudgetController extends Controller
             null,
             "Data deleted successfully",
             Response::HTTP_NO_CONTENT
+        );
+    }
+    public function updateBudgetPrice(int $id)
+    {
+        $budget = $this->service->get($id);
+        $budget->updatePrice();
+        return $this->successResponse($budget,
+            "Budget price updated successfully",
+
         );
     }
 }
