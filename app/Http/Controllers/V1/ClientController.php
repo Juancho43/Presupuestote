@@ -1,122 +1,173 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
+use App\DTOs\V1\PersonDTO;
+use App\Services\V1\ClientService;
+use App\DTOs\V1\ClientDTO;
 use App\Http\Requests\V1\ClientRequest;
 use App\Http\Resources\V1\ClientResource;
 use App\Http\Resources\V1\ClientResourceCollection;
-use App\Repository\V1\ClientRepository;
+use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Ramsey\Uuid\Type\Decimal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Client Controller
  *
- * Handles HTTP requests related to Client records including CRUD operations
- * and tag-based filtering.
+ * Handles HTTP requests related to client records including CRUD operations
  */
 class ClientController extends Controller
 {
     use ApiResponseTrait;
 
     /**
-     * @var ClientRepository Repository for dummy data access
+     * @var ClientService Service for client data logic
      */
-    protected ClientRepository $repository;
+    protected ClientService $service;
 
     /**
-     * Initialize controller with repository dependency
+     * Initialize controller with service dependency
      *
-     * @param ClientRepository $ClientRepository
+     * @param ClientService $service
      */
-    public function __construct(ClientRepository $ClientRepository)
+    public function __construct(ClientService $service)
     {
-        $this->repository = $ClientRepository;
+        $this->service = $service->getInstance();
     }
 
     /**
-     * Get all Client records
+     * Get all client records
      *
-     * @return JsonResponse Collection of Client records
-     * @throws Exception If error occurs retrieving data
+     * @return JsonResponse Collection of client records
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
+        $result = $this->service->getAll();
 
-        try{
-            return $this->successResponse(new ClientResourceCollection($this->repository->all()), null, Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new ClientResourceCollection($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Get single Client record by ID
+     * Get single client record by ID
      *
      * @param int $id Client record ID
-     * @return JsonResponse Single Client resource
-     * @throws Exception If record not found or error occurs
+     * @return JsonResponse Single client resource
      */
-    public function show(int $id) : JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try{
-            return $this->successResponse(new ClientResource($this->repository->find($id)),null,Response::HTTP_OK);
-        }catch(Exception $e){
-            return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+        $result = $this->service->get($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new ClientResource($result),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Create new Client record
+     * Create new client record
      *
-     * @param ClientRequest $request Validated Client data
-     * @return JsonResponse Created Client resource
-     * @throws Exception If creation fails
+     * @param ClientRequest $request Validated client data
+     * @return JsonResponse Created client resource
      */
-    public function store(ClientRequest $request) : JsonResponse
+    public function store(ClientRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->create($request);
-            return $this->successResponse(new ClientResource($dummy),"Data stored successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error storing data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        $clientDTO = new ClientDTO(
+            null,
+            new Decimal($request->input('balance')),
+            new PersonDTO(
+                $request->input('person_id'),
+                $request->input('person.name'),
+                $request->input('person.last_name'),
+                $request->input('person.address'),
+                $request->input('person.phone_number'),
+                $request->input('person.mail'),
+                $request->input('person.dni'),
+                $request->input('person.cuit')
+            )
+        );
+
+        $result = $this->service->create($clientDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new ClientResource($result),
+            "Data stored successfully",
+            Response::HTTP_CREATED
+        );
     }
 
     /**
-     * Update existing Client record
+     * Update existing client record
      *
-     * @param ClientRequest $request Validated Client data
-     * @return JsonResponse Updated Client resource
-     * @throws Exception If update fails
+     * @param ClientRequest $request Validated client data
+     * @return JsonResponse Updated client resource
      */
-    public function update(int $id,ClientRequest $request) : JsonResponse
+    public function update(int $id, ClientRequest $request): JsonResponse
     {
-        try{
-            $dummy = $this->repository->update($id,$request);
-            return $this->successResponse(new ClientResource($dummy),"Data updated successfully" , Response::HTTP_CREATED);
-        }catch(Exception $e){
-            return $this->errorResponse("Error updating data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+         $clientDTO = new ClientDTO(
+            $id,
+            new Decimal($request->input('balance')),
+            new PersonDTO(
+                $request->input('person_id'),
+                $request->input('person.name'),
+                $request->input('person.last_name'),
+                $request->input('person.address'),
+                $request->input('person.phone_number'),
+                $request->input('person.mail'),
+                $request->input('person.dni'),
+                $request->input('person.cuit')
+            )
+        );
+        $result = $this->service->update($clientDTO);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
         }
+
+        return $this->successResponse(
+            new ClientResource($result),
+            "Data updated successfully",
+            Response::HTTP_OK
+        );
     }
 
     /**
-     * Delete Client record
+     * Delete client record
      *
      * @param int $id Client record ID
      * @return JsonResponse Empty response on success
-     * @throws Exception If deletion fails
      */
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try{
-            $this->repository->delete($id);
-            return $this->successResponse(null, null, Response::HTTP_NO_CONTENT);
-        }catch(Exception $e){
-            return $this->errorResponse("Error deleting data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+        $result = $this->service->delete($id);
 
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            null,
+            "Data deleted successfully",
+            Response::HTTP_NO_CONTENT
+        );
+    }
 }
