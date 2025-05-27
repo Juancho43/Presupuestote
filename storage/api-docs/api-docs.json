@@ -1,0 +1,322 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Budget API",
+        "description": "API endpoints for managing budgets",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/budgets": {
+            "get": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Get all budgets",
+                "operationId": "06999f11a2a237909a8d8fe082152337",
+                "responses": {
+                    "200": {
+                        "description": "List of budgets retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Budget"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/budgets/{id}": {
+            "get": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Get budget by ID",
+                "operationId": "fee5c06ace59383e336a8d7170e4f87f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Budget ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Budget found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Budget not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Update an existing budget",
+                "operationId": "d4af2d3a3cc79664a0933c11143cd603",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BudgetRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Budget updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Delete a budget",
+                "operationId": "f0dfbcdddbc44a54b5211ec35ca2a597",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Budget deleted successfully"
+                    },
+                    "404": {
+                        "description": "Budget not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/budgets": {
+            "post": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Create a new budget",
+                "operationId": "fea15c33a7149052e8bd60a8fef51363",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "description",
+                                    "made_date",
+                                    "client_id"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "made_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "dead_line": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "profit": {
+                                        "type": "number"
+                                    },
+                                    "client_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Budget created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/budgets/{id}/update-price": {
+            "put": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Update budget price",
+                "operationId": "c80aec07871a430c9b4cb3ee6fc9682b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Budget price updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Budget": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "made_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "dead_line": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "profit": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "total_price": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "client_id": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ApiResponse": {
+                "properties": {
+                    "data": {
+                        "type": "object"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "BudgetRequest": {
+                "required": [
+                    "description",
+                    "made_date",
+                    "client_id"
+                ],
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "made_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "dead_line": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "profit": {
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "client_id": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Budgets",
+            "description": "API Endpoints for Budget operations"
+        }
+    ]
+}

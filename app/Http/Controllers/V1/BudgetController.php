@@ -12,11 +12,49 @@ use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use OpenApi\Annotations as OA;
+
 
 /**
- * Budget Controller
+ * @OA\Info(
+ *     title="Budget API",
+ *     version="1.0.0",
+ *     description="API endpoints for managing budgets"
+ * )
+ * @OA\Server(
+ *      url="/api/v1",
+ *      description="API Server"
+ *  )
+ * @OA\Tag(
+ *      name="Budgets",
+ *      description="API Endpoints for Budget operations"
+ *  )
+ * @OA\Schema(
+ *     schema="Budget",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="made_date", type="string", format="date"),
+ *     @OA\Property(property="dead_line", type="string", format="date"),
+ *     @OA\Property(property="profit", type="number", format="float"),
+ *     @OA\Property(property="total_price", type="number", format="float"),
+ *     @OA\Property(property="client_id", type="integer")
+ * )
  *
- * Handles HTTP requests related to budget records including CRUD operations
+ * @OA\Schema(
+ *     schema="ApiResponse",
+ *     @OA\Property(property="data", type="object"),
+ *     @OA\Property(property="message", type="string"),
+ *     @OA\Property(property="status", type="integer")
+ * )
+* @OA\Schema(
+ *     schema="BudgetRequest",
+ *     required={"description","made_date","client_id"},
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="made_date", type="string", format="date"),
+ *     @OA\Property(property="dead_line", type="string", format="date", nullable=true),
+ *     @OA\Property(property="profit", type="number", format="float", nullable=true),
+ *     @OA\Property(property="client_id", type="integer")
+ * )
  */
 class BudgetController extends Controller
 {
@@ -38,9 +76,22 @@ class BudgetController extends Controller
     }
 
     /**
-     * Get all budget records
-     *
-     * @return JsonResponse Collection of budget records
+     * @OA\Get(
+     *     path="/budgets",
+     *     summary="Get all budgets",
+     *     tags={"Budgets"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of budgets retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Budget")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -58,10 +109,27 @@ class BudgetController extends Controller
     }
 
     /**
-     * Get single budget record by ID
-     *
-     * @param int $id Budget record ID
-     * @return JsonResponse Single budget resource
+     * @OA\Get(
+     *     path="/api/v1/budgets/{id}",
+     *     summary="Get budget by ID",
+     *     tags={"Budgets"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Budget ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Budget found",
+     *         @OA\JsonContent(ref="#/components/schemas/ApiResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Budget not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -79,10 +147,27 @@ class BudgetController extends Controller
     }
 
     /**
-     * Create new budget record
-     *
-     * @param BudgetRequest $request Validated budget data
-     * @return JsonResponse Created budget resource
+     * @OA\Post(
+     *     path="/api/v1/budgets",
+     *     summary="Create a new budget",
+     *     tags={"Budgets"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"description","made_date","client_id"},
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="made_date", type="string", format="date"),
+     *             @OA\Property(property="dead_line", type="string", format="date"),
+     *             @OA\Property(property="profit", type="number"),
+     *             @OA\Property(property="client_id", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Budget created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/ApiResponse")
+     *     )
+     * )
      */
     public function store(BudgetRequest $request): JsonResponse
     {
@@ -139,11 +224,29 @@ class BudgetController extends Controller
             );
         }
     }
+
+
     /**
-     * Update existing budget record
-     *
-     * @param BudgetRequest $request Validated budget data
-     * @return JsonResponse Updated budget resource
+     * @OA\Put(
+     *     path="/api/v1/budgets/{id}",
+     *     summary="Update an existing budget",
+     *     tags={"Budgets"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/BudgetRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Budget updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/ApiResponse")
+     *     )
+     * )
      */
     public function update(int $id, BudgetRequest $request): JsonResponse
     {
@@ -173,10 +276,25 @@ class BudgetController extends Controller
     }
 
     /**
-     * Delete budget record
-     *
-     * @param int $id Budget record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/budgets/{id}",
+     *     summary="Delete a budget",
+     *     tags={"Budgets"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Budget deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Budget not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {
@@ -192,6 +310,25 @@ class BudgetController extends Controller
             Response::HTTP_NO_CONTENT
         );
     }
+
+    /**
+     * @OA\Put(
+     *     path="/api/v1/budgets/{id}/update-price",
+     *     summary="Update budget price",
+     *     tags={"Budgets"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Budget price updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/ApiResponse")
+     *     )
+     * )
+     */
     public function updateBudgetPrice(int $id)
     {
         $budget = $this->service->get($id);
