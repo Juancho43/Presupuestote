@@ -8,7 +8,7 @@ use App\Http\Controllers\V1\InvoiceController;
 use App\Http\Controllers\V1\MaterialController;
 use App\Http\Controllers\V1\MeasureController;
 use App\Http\Controllers\V1\PaymentController;
-use App\Http\Controllers\V1\PersonController;
+//use App\Http\Controllers\V1\PersonController;
 use App\Http\Controllers\V1\PriceController;
 use App\Http\Controllers\V1\SalaryController;
 use App\Http\Controllers\V1\StockController;
@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
         // TODO: Make a updatePersonRequest and update in PersonRepostiry.
         //Crud entities routes
         Route::resource('clients', ClientController::class)->names('clients');
-        Route::resource('people', PersonController::class)->names('people');
+//        Route::resource('people', PersonController::class)->names('people');
         Route::resource('suppliers', SupplierController::class)->names('suppliers');
         Route::resource('employees', EmployeeController::class)->names('employees');
         Route::resource('salaries', SalaryController::class)->names('salaries');
@@ -42,6 +42,12 @@ Route::prefix('v1')->group(function () {
         //Works and invoices
         Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
         Route::post('invoices/materials', [InvoiceController::class, 'addMaterials'])->name('invoices.addMaterials');
+        //Materials
+        Route::get('materials/invoices/{id}', [MaterialController::class, 'getWithInvoices'])->name('materials.getWithInvoices');
+        Route::get('materials/works/{id}', [MaterialController::class, 'getWithWorks'])->name('materials.getWithWorks');
+        Route::get('materials/prices/{id}', [MaterialController::class, 'getWithPrices'])->name('materials.getWithPrices');
+        Route::get('materials/stocks/{id}', [MaterialController::class, 'getWithStocks'])->name('materials.getWithStocks');
+
         //Add Payments
         Route::post('payments/budget', [PaymentController::class, 'addPaymentToBudget'])->name('payments.toBudget');
         Route::post('payments/invoice', [PaymentController::class, 'addPaymentToInvoice'])->name('payments.toInvoice');

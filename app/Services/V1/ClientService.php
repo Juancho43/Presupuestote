@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\V1;
 
+use App\DTOs\V1\PaymentDTO;
 use App\DTOs\V1\PersonDTO;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Repository\V1\ClientRepository;
@@ -184,5 +185,11 @@ class ClientService
                 $statusCode
             );
         }
+    }
+
+
+    public function updateBalance(int $id): void
+    {
+        $this->get($id)->updateBalance();
     }
 }

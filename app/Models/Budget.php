@@ -80,9 +80,11 @@ class Budget extends Model
 
     public function updatePrice()
     {
+
         $this->updateCost();
         $this->price = $this->calculatePrice();
         $this->save();
+        $this->client->updateBalance();
         return $this;
     }
 

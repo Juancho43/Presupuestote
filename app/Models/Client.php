@@ -30,4 +30,22 @@ class Client extends Model
     {
         return $this->hasMany(Budget::class);
     }
+
+    private function calculateBalance(): float
+    {
+        $balance = 0;
+        foreach ($this->budgets as $budget) {
+            $balance += $budget->calculateDebt();
+        }
+        return $balance;
+    }
+
+    public function updateBalance()
+    {
+        $this->balance = $this->calculateBalance();
+        $this->save();
+        return $this->balance;
+    }
+
+
 }

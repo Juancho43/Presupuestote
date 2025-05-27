@@ -183,4 +183,9 @@ class SupplierService
             );
         }
     }
+
+    public function updateBalance(int $id): void
+    {
+        $this->get($id)->updateBalance();
+    }
 }

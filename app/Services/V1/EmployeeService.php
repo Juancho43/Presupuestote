@@ -186,4 +186,8 @@ class EmployeeService
             );
         }
     }
+    public function updateBalance(int $id): void
+    {
+        $this->get($id)->updateBalance();
+    }
 }
