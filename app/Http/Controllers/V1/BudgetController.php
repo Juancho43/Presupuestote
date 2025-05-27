@@ -21,10 +21,7 @@ use OpenApi\Annotations as OA;
  *     version="1.0.0",
  *     description="API endpoints for managing budgets"
  * )
- * @OA\Server(
- *      url="/api/v1",
- *      description="API Server"
- *  )
+
  * @OA\Tag(
  *      name="Budgets",
  *      description="API Endpoints for Budget operations"
@@ -77,7 +74,7 @@ class BudgetController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/budgets",
+     *     path="/api/v1/budgets",
      *     summary="Get all budgets",
      *     tags={"Budgets"},
      *     @OA\Response(
@@ -312,8 +309,8 @@ class BudgetController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/api/v1/budgets/{id}/update-price",
+     * @OA\Get (
+     *     path="/api/v1/budgets/updatePrice/{id}",
      *     summary="Update budget price",
      *     tags={"Budgets"},
      *     @OA\Parameter(

@@ -14,9 +14,26 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Price Controller
+ * @OA\Tag(
+ *     name="Prices",
+ *     description="API Endpoints for Price operations"
+ * )
  *
- * Handles HTTP requests related to price records including CRUD operations
+ * @OA\Schema(
+ *     schema="Price",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="price", type="number", format="float"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="material_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="PriceRequest",
+ *     required={"price", "date", "material_id"},
+ *     @OA\Property(property="price", type="number", format="float"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="material_id", type="integer")
+ * )
  */
 class PriceController extends Controller
 {
@@ -38,9 +55,22 @@ class PriceController extends Controller
     }
 
     /**
-     * Get all price records
-     *
-     * @return JsonResponse Collection of price records
+     * @OA\Get(
+     *     path="/api/v1/prices",
+     *     summary="Get all prices",
+     *     tags={"Prices"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of prices retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Price")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -57,11 +87,29 @@ class PriceController extends Controller
         );
     }
 
+
     /**
-     * Get single price record by ID
-     *
-     * @param int $id Price record ID
-     * @return JsonResponse Single price resource
+     * @OA\Get(
+     *     path="/api/v1/prices/{id}",
+     *     summary="Get price by ID",
+     *     tags={"Prices"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Price ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Price found",
+     *         @OA\JsonContent(ref="#/components/schemas/Price")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Price not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -79,10 +127,20 @@ class PriceController extends Controller
     }
 
     /**
-     * Create new price record
-     *
-     * @param PriceRequest $request Validated Price data
-     * @return JsonResponse Created price resource
+     * @OA\Post(
+     *     path="/api/v1/prices",
+     *     summary="Create a new price",
+     *     tags={"Prices"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/PriceRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Price created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Price")
+     *     )
+     * )
      */
     public function store(PriceRequest $request): JsonResponse
     {
@@ -108,10 +166,26 @@ class PriceController extends Controller
     }
 
     /**
-     * Update existing price record
-     *
-     * @param PriceRequest $request Validated Price data
-     * @return JsonResponse Updated price resource
+     * @OA\Put(
+     *     path="/api/v1/prices/{id}",
+     *     summary="Update an existing price",
+     *     tags={"Prices"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/PriceRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Price updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Price")
+     *     )
+     * )
      */
     public function update(int $id,PriceRequest $request): JsonResponse
     {
@@ -135,10 +209,25 @@ class PriceController extends Controller
     }
 
     /**
-     * Delete price record
-     *
-     * @param int $id Price record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/prices/{id}",
+     *     summary="Delete a price",
+     *     tags={"Prices"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Price deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Price not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

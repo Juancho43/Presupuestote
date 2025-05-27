@@ -14,9 +14,32 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Material Controller
+ * @OA\Tag(
+ *     name="Materials",
+ *     description="API Endpoints for Material operations"
+ * )
  *
- * Handles HTTP requests related to material records including CRUD operations
+ * @OA\Schema(
+ *     schema="Material",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="brand", type="string"),
+ *     @OA\Property(property="color", type="string"),
+ *     @OA\Property(property="sub_category_id", type="integer"),
+ *     @OA\Property(property="measure_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="MaterialRequest",
+ *     required={"name", "sub_category_id", "measure_id"},
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="brand", type="string"),
+ *     @OA\Property(property="color", type="string"),
+ *     @OA\Property(property="sub_category_id", type="integer"),
+ *     @OA\Property(property="measure_id", type="integer")
+ * )
  */
 class MaterialController extends Controller
 {
@@ -38,9 +61,22 @@ class MaterialController extends Controller
     }
 
     /**
-     * Get all material records
-     *
-     * @return JsonResponse Collection of material records
+     * @OA\Get(
+     *     path="/api/v1/materials",
+     *     summary="Get all materials",
+     *     tags={"Materials"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of materials retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Material")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -58,10 +94,27 @@ class MaterialController extends Controller
     }
 
     /**
-     * Get single material record by ID
-     *
-     * @param int $id Material record ID
-     * @return JsonResponse Single material resource
+     * @OA\Get(
+     *     path="/api/v1/materials/{id}",
+     *     summary="Get material by ID",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Material ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Material found",
+     *         @OA\JsonContent(ref="#/components/schemas/Material")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Material not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -79,10 +132,20 @@ class MaterialController extends Controller
     }
 
     /**
-     * Create new material record
-     *
-     * @param MaterialRequest $request Validated Material data
-     * @return JsonResponse Created material resource
+     * @OA\Post(
+     *     path="/api/v1/materials",
+     *     summary="Create a new material",
+     *     tags={"Materials"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/MaterialRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Material created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Material")
+     *     )
+     * )
      */
     public function store(MaterialRequest $request): JsonResponse
     {
@@ -111,10 +174,26 @@ class MaterialController extends Controller
     }
 
     /**
-     * Update existing material record
-     *
-     * @param MaterialRequest $request Validated Material data
-     * @return JsonResponse Updated material resource
+     * @OA\Put(
+     *     path="/api/v1/materials/{id}",
+     *     summary="Update an existing material",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/MaterialRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Material updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Material")
+     *     )
+     * )
      */
     public function update(int $id,MaterialRequest $request): JsonResponse
     {
@@ -141,10 +220,25 @@ class MaterialController extends Controller
     }
 
     /**
-     * Delete material record
-     *
-     * @param int $id Material record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/materials/{id}",
+     *     summary="Delete a material",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Material deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Material not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

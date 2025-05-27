@@ -214,4 +214,25 @@ class WorkService
 
         return $pivotData;
     }
+
+    public function changeState(int $id, string $stateName): Work | JsonResponse
+    {
+        try {
+            $work = $this->repository->find($id);
+            if($work->state->canTransitionTo($stateName)) {
+                $work->state->transitionTo($stateName);
+                $work->save();
+            }else{
+                throw new Exception("State transition failed");
+            }
+            return $work;
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't change state",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 }

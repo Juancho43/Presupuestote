@@ -13,11 +13,36 @@ use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use function Symfony\Component\Translation\t;
 
 /**
- * Work Controller
+ * @OA\Tag(
+ *     name="Works",
+ *     description="API Endpoints for Work operations"
+ * )
  *
- * Handles HTTP requests related to work records including CRUD operations
+ * @OA\Schema(
+ *     schema="Work",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="order", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="notes", type="string", nullable=true),
+ *     @OA\Property(property="estimated_time", type="integer"),
+ *     @OA\Property(property="dead_line", type="string", format="date-time"),
+ *     @OA\Property(property="budget_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="WorkRequest",
+ *     required={"order", "name", "estimated_time", "dead_line", "budget_id"},
+ *     @OA\Property(property="order", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="notes", type="string", nullable=true),
+ *     @OA\Property(property="estimated_time", type="integer"),
+ *     @OA\Property(property="dead_line", type="string", format="date-time"),
+ *     @OA\Property(property="budget_id", type="integer")
+ * )
+ *
  */
 class WorkController extends Controller
 {
@@ -39,9 +64,22 @@ class WorkController extends Controller
     }
 
     /**
-     * Get all work records
-     *
-     * @return JsonResponse Collection of work records
+     * @OA\Get(
+     *     path="/api/v1/works",
+     *     summary="Get all works",
+     *     tags={"Works"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of works retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Work")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -58,10 +96,27 @@ class WorkController extends Controller
     }
 
     /**
-     * Get single work record by ID
-     *
-     * @param int $id Work record ID
-     * @return JsonResponse Single work resource
+     * @OA\Get(
+     *     path="/api/v1/works/{id}",
+     *     summary="Get work by ID",
+     *     tags={"Works"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Work ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Work found",
+     *         @OA\JsonContent(ref="#/components/schemas/Work")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Work not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -79,10 +134,20 @@ class WorkController extends Controller
     }
 
     /**
-     * Create new work record
-     *
-     * @param WorkRequest $request Validated Work data
-     * @return JsonResponse Created work resource
+     * @OA\Post(
+     *     path="/api/v1/works",
+     *     summary="Create a new work",
+     *     tags={"Works"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/WorkRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Work created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Work")
+     *     )
+     * )
      */
     public function store(WorkRequest $request): JsonResponse
     {
@@ -111,10 +176,26 @@ class WorkController extends Controller
     }
 
     /**
-     * Update existing work record
-     *
-     * @param WorkRequest $request Validated Work data
-     * @return JsonResponse Updated work resource
+     * @OA\Put(
+     *     path="/api/v1/works/{id}",
+     *     summary="Update an existing work",
+     *     tags={"Works"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/WorkRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Work updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Work")
+     *     )
+     * )
      */
     public function update(int $id,WorkRequest $request): JsonResponse
     {
@@ -140,10 +221,25 @@ class WorkController extends Controller
     }
 
     /**
-     * Delete work record
-     *
-     * @param int $id Work record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/works/{id}",
+     *     summary="Delete a work",
+     *     tags={"Works"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Work deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Work not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {
@@ -159,6 +255,29 @@ class WorkController extends Controller
             Response::HTTP_NO_CONTENT
         );
     }
+    /**
+     * @OA\Post(
+     *     path="/api/v1/works/materials/{id}",
+     *     summary="Add materials to a work",
+     *     tags={"Works"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Work ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/AddMaterialsRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Materials added successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Work")
+     *     )
+     * )
+     */
     public function addMaterials(AddMaterialsToWorksRequest $request) : JsonResponse
     {
         try {
@@ -168,5 +287,44 @@ class WorkController extends Controller
             return $this->errorResponse("Controller Error: adding materials to work", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+    }
+    /**
+     * @OA\Post (
+     *     path="/api/v1/works/states/{id}/{state}",
+     *     summary="Change work state",
+     *     tags={"Works"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Work ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="state",
+     *         in="path",
+     *         required=true,
+     *         description="New state",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="State changed successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Work")
+     *     )
+     * )
+     */
+    public function changeState(int $id, string $state): JsonResponse
+    {
+        try {
+            $work = $this->service->changeState($id, $state);
+            return $this->successResponse(new WorkResource($work), "State changed successfully", Response::HTTP_OK);
+        }catch (Exception $e) {
+            return $this->errorResponse(
+                "Controller Error: changing state of work",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

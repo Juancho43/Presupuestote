@@ -12,10 +12,44 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+
 /**
- * Supplier Controller
+ * @OA\Tag(
+ *     name="Suppliers",
+ *     description="API Endpoints for Supplier operations"
+ * )
  *
- * Handles HTTP requests related to supplier records including CRUD operations
+ * @OA\Schema(
+ *     schema="Supplier",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="notes", type="string", nullable=true),
+ *     @OA\Property(property="person", type="object",
+ *         @OA\Property(property="id", type="integer"),
+ *         @OA\Property(property="name", type="string"),
+ *         @OA\Property(property="last_name", type="string"),
+ *         @OA\Property(property="address", type="string"),
+ *         @OA\Property(property="phone_number", type="string"),
+ *         @OA\Property(property="mail", type="string"),
+ *         @OA\Property(property="dni", type="string"),
+ *         @OA\Property(property="cuit", type="string")
+ *     )
+ * )
+ *
+ * @OA\Schema(
+ *     schema="SupplierRequest",
+ *     required={"notes", "person_id", "person"},
+ *     @OA\Property(property="notes", type="string", nullable=true),
+ *     @OA\Property(property="person_id", type="integer"),
+ *     @OA\Property(property="person", type="object",
+ *         @OA\Property(property="name", type="string"),
+ *         @OA\Property(property="last_name", type="string"),
+ *         @OA\Property(property="address", type="string"),
+ *         @OA\Property(property="phone_number", type="string"),
+ *         @OA\Property(property="mail", type="string"),
+ *         @OA\Property(property="dni", type="string"),
+ *         @OA\Property(property="cuit", type="string")
+ *     )
+ * )
  */
 class SupplierController extends Controller
 {
@@ -36,10 +70,24 @@ class SupplierController extends Controller
         $this->service = $service->getInstance();
     }
 
+
     /**
-     * Get all supplier records
-     *
-     * @return JsonResponse Collection of supplier records
+     * @OA\Get(
+     *     path="/api/v1/suppliers",
+     *     summary="Get all suppliers",
+     *     tags={"Suppliers"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of suppliers retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Supplier")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -57,10 +105,27 @@ class SupplierController extends Controller
     }
 
     /**
-     * Get single supplier record by ID
-     *
-     * @param int $id Supplier record ID
-     * @return JsonResponse Single supplier resource
+     * @OA\Get(
+     *     path="/api/v1/suppliers/{id}",
+     *     summary="Get supplier by ID",
+     *     tags={"Suppliers"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Supplier ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Supplier found",
+     *         @OA\JsonContent(ref="#/components/schemas/Supplier")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Supplier not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -78,10 +143,20 @@ class SupplierController extends Controller
     }
 
     /**
-     * Create new supplier record
-     *
-     * @param SupplierRequest $request Validated Supplier data
-     * @return JsonResponse Created supplier resource
+     * @OA\Post(
+     *     path="/api/v1/suppliers",
+     *     summary="Create a new supplier",
+     *     tags={"Suppliers"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SupplierRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Supplier created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Supplier")
+     *     )
+     * )
      */
     public function store(SupplierRequest $request): JsonResponse
     {
@@ -116,10 +191,26 @@ class SupplierController extends Controller
     }
 
     /**
-     * Update existing supplier record
-     *
-     * @param SupplierRequest $request Validated Supplier data
-     * @return JsonResponse Updated supplier resource
+     * @OA\Put(
+     *     path="/api/v1/suppliers/{id}",
+     *     summary="Update an existing supplier",
+     *     tags={"Suppliers"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SupplierRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Supplier updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Supplier")
+     *     )
+     * )
      */
     public function update(int $id,SupplierRequest $request): JsonResponse
     {
@@ -151,10 +242,25 @@ class SupplierController extends Controller
     }
 
     /**
-     * Delete supplier record
-     *
-     * @param int $id Supplier record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/suppliers/{id}",
+     *     summary="Delete a supplier",
+     *     tags={"Suppliers"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Supplier deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Supplier not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

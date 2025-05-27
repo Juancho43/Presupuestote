@@ -13,10 +13,43 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+
 /**
- * Employee Controller
+ * @OA\Tag(
+ *     name="Employees",
+ *     description="API Endpoints for Employee operations"
+ * )
  *
- * Handles HTTP requests related to employee records including CRUD operations
+ * @OA\Schema(
+ *     schema="Employee",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="salary", type="number", format="float"),
+ *     @OA\Property(property="start_date", type="string", format="date"),
+ *     @OA\Property(property="end_date", type="string", format="date"),
+ *     @OA\Property(property="is_active", type="boolean"),
+ *     @OA\Property(property="person", ref="#/components/schemas/Person")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="EmployeeRequest",
+ *     required={"salary", "start_date", "is_active", "person"},
+ *     @OA\Property(property="salary", type="number", format="float"),
+ *     @OA\Property(property="start_date", type="string", format="date"),
+ *     @OA\Property(property="end_date", type="string", format="date", nullable=true),
+ *     @OA\Property(property="is_active", type="boolean"),
+ *     @OA\Property(
+ *         property="person",
+ *         type="object",
+ *         required={"name", "last_name"},
+ *         @OA\Property(property="name", type="string"),
+ *         @OA\Property(property="last_name", type="string"),
+ *         @OA\Property(property="address", type="string"),
+ *         @OA\Property(property="phone_number", type="string"),
+ *         @OA\Property(property="mail", type="string"),
+ *         @OA\Property(property="dni", type="string"),
+ *         @OA\Property(property="cuit", type="string")
+ *     )
+ * )
  */
 class EmployeeController extends Controller
 {
@@ -38,9 +71,22 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Get all employee records
-     *
-     * @return JsonResponse Collection of employee records
+     * @OA\Get(
+     *     path="/api/v1/employees",
+     *     summary="Get all employees",
+     *     tags={"Employees"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of employees retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Employee")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -58,10 +104,27 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Get single employee record by ID
-     *
-     * @param int $id Employee record ID
-     * @return JsonResponse Single employee resource
+     * @OA\Get(
+     *     path="/api/v1/employees/{id}",
+     *     summary="Get employee by ID",
+     *     tags={"Employees"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Employee ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Employee found",
+     *         @OA\JsonContent(ref="#/components/schemas/Employee")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Employee not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -79,10 +142,20 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Create new employee record
-     *
-     * @param EmployeeRequest $request Validated Employee data
-     * @return JsonResponse Created employee resource
+     * @OA\Post(
+     *     path="/api/v1/employees",
+     *     summary="Create a new employee",
+     *     tags={"Employees"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/EmployeeRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Employee created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Employee")
+     *     )
+     * )
      */
     public function store(EmployeeRequest $request): JsonResponse
     {
@@ -118,11 +191,28 @@ class EmployeeController extends Controller
         );
     }
 
+
     /**
-     * Update existing employee record
-     *
-     * @param EmployeeRequest $request Validated Employee data
-     * @return JsonResponse Updated employee resource
+     * @OA\Put(
+     *     path="/api/v1/employees/{id}",
+     *     summary="Update an existing employee",
+     *     tags={"Employees"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/EmployeeRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Employee updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Employee")
+     *     )
+     * )
      */
     public function update(int $id,EmployeeRequest $request): JsonResponse
     {
@@ -157,10 +247,25 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Delete employee record
-     *
-     * @param int $id Employee record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/employees/{id}",
+     *     summary="Delete an employee",
+     *     tags={"Employees"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Employee deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Employee not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {
