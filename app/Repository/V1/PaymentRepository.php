@@ -1,8 +1,11 @@
 <?php
 namespace App\Repository\V1;
 
+use App\Models\Budget;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\DTOs\V1\PaymentDTO;
+use App\Models\Salary;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -92,22 +95,22 @@ class PaymentRepository implements IRepository
     public function allClientPayments(int $clientId): Collection
     {
         return
-            Payment::whereHasMorph('payable', [Budget::class], function ($query) use ($clientId) {
-                $query->where('client_id', $clientId)->select(['id', 'description']);
-            })->with('payable:id,description')->findOrFail($clientId);
+          Payment::whereHasMorph('payable', [Budget::class], function ($query) use ($clientId) {
+              $query->where('client_id', $clientId);
+          })->with('payable:id,description')->get();
     }
     public function allSupplierPayments(int $supplierId): Collection
     {
         return
-            Payment::whereHasMorph('payable', [Invoice::class], function ($query) use ($supplierId) {
-                $query->where('supplier_id', $supplierId)->select(['id', 'description']);
-            })->with('payable:id,date')->findOrFail($supplierId);
+          Payment::whereHasMorph('payable', [Invoice::class], function ($query) use ($supplierId) {
+              $query->where('supplier_id', $supplierId);
+          })->with('payable:id,date')->get();
     }
 
     public function allEmployeePayments(int $employeeId): Collection
     {
         return Payment::whereHasMorph('payable', [Salary::class], function ($query) use ($employeeId) {
-            $query->where('employee_id', $employeeId)->select(['id', 'description']);
-        })->with('payable:id,date')->findOrFail($employeeId);
+            $query->where('employee_id', $employeeId);
+        })->with('payable:id,date')->get();
     }
 }

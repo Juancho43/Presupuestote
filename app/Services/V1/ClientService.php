@@ -149,8 +149,8 @@ class ClientService
     public function update(ClientDTO $data): Model|JsonResponse
     {
         try {
-            $updatedClient = $this->repository->update($data);
-            return $updatedClient;
+            $this->personRepository->update($data->person);
+            return $this->get($data->id);
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND

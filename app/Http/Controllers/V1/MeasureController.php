@@ -12,9 +12,24 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Measure Controller
+ * @OA\Tag(
+ *     name="Measures",
+ *     description="API Endpoints for Measure operations"
+ * )
  *
- * Handles HTTP requests related to measure records including CRUD operations
+ * @OA\Schema(
+ *     schema="Measure",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="description", type="string")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="MeasureRequest",
+ *     required={"name"},
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="description", type="string")
+ * )
  */
 class MeasureController extends Controller
 {
@@ -36,9 +51,22 @@ class MeasureController extends Controller
     }
 
     /**
-     * Get all measure records
-     *
-     * @return JsonResponse Collection of measure records
+     * @OA\Get(
+     *     path="/api/v1/measures",
+     *     summary="Get all measures",
+     *     tags={"Measures"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of measures retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Measure")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -56,10 +84,27 @@ class MeasureController extends Controller
     }
 
     /**
-     * Get single measure record by ID
-     *
-     * @param int $id Measure record ID
-     * @return JsonResponse Single measure resource
+     * @OA\Get(
+     *     path="/api/v1/measures/{id}",
+     *     summary="Get measure by ID",
+     *     tags={"Measures"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Measure ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Measure found",
+     *         @OA\JsonContent(ref="#/components/schemas/Measure")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Measure not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -77,10 +122,20 @@ class MeasureController extends Controller
     }
 
     /**
-     * Create new measure record
-     *
-     * @param MeasureRequest $request Validated Measure data
-     * @return JsonResponse Created measure resource
+     * @OA\Post(
+     *     path="/api/v1/measures",
+     *     summary="Create a new measure",
+     *     tags={"Measures"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/MeasureRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Measure created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Measure")
+     *     )
+     * )
      */
     public function store(MeasureRequest $request): JsonResponse
     {
@@ -105,10 +160,26 @@ class MeasureController extends Controller
     }
 
     /**
-     * Update existing measure record
-     *
-     * @param MeasureRequest $request Validated Measure data
-     * @return JsonResponse Updated measure resource
+     * @OA\Put(
+     *     path="/api/v1/measures/{id}",
+     *     summary="Update an existing measure",
+     *     tags={"Measures"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/MeasureRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Measure updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Measure")
+     *     )
+     * )
      */
     public function update(int $id,MeasureRequest $request): JsonResponse
     {
@@ -131,10 +202,25 @@ class MeasureController extends Controller
     }
 
     /**
-     * Delete measure record
-     *
-     * @param int $id Measure record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/measures/{id}",
+     *     summary="Delete a measure",
+     *     tags={"Measures"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Measure deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Measure not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

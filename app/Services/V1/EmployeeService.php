@@ -149,8 +149,8 @@ class EmployeeService
     public function update(EmployeeDTO $data): Model|JsonResponse
     {
         try {
-            $updatedEmployee = $this->repository->update($data);
-            return $updatedEmployee;
+            $this->personRepository->update($data->person);
+            return $this->get($data->id);
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND

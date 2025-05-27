@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Requests\V1\PersonUpdateRequest;
 use App\Services\V1\ClientService;
 use App\DTOs\V1\ClientDTO;
 use App\Http\Requests\V1\ClientRequest;
@@ -12,10 +13,47 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+
 /**
- * Client Controller
+ * @OA\Tag(
+ *     name="Clients",
+ *     description="API Endpoints for Client operations"
+ * )
  *
- * Handles HTTP requests related to client records including CRUD operations
+ * @OA\Schema(
+ *     schema="Person",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="last_name", type="string"),
+ *     @OA\Property(property="address", type="string"),
+ *     @OA\Property(property="phone_number", type="string"),
+ *     @OA\Property(property="mail", type="string"),
+ *     @OA\Property(property="dni", type="string"),
+ *     @OA\Property(property="cuit", type="string")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="Client",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="person", ref="#/components/schemas/Person")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="ClientRequest",
+ *     required={"person"},
+ *     @OA\Property(
+ *         property="person",
+ *         type="object",
+ *         required={"name", "last_name"},
+ *         @OA\Property(property="name", type="string"),
+ *         @OA\Property(property="last_name", type="string"),
+ *         @OA\Property(property="address", type="string"),
+ *         @OA\Property(property="phone_number", type="string"),
+ *         @OA\Property(property="mail", type="string"),
+ *         @OA\Property(property="dni", type="string"),
+ *         @OA\Property(property="cuit", type="string")
+ *     )
+ * )
  */
 class ClientController extends Controller
 {
@@ -36,10 +74,24 @@ class ClientController extends Controller
         $this->service = $service->getInstance();
     }
 
+
     /**
-     * Get all client records
-     *
-     * @return JsonResponse Collection of client records
+     * @OA\Get(
+     *     path="/api/v1/clients",
+     *     summary="Get all clients",
+     *     tags={"Clients"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of clients retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Client")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -57,10 +109,27 @@ class ClientController extends Controller
     }
 
     /**
-     * Get single client record by ID
-     *
-     * @param int $id Client record ID
-     * @return JsonResponse Single client resource
+     * @OA\Get(
+     *     path="/api/v1/clients/{id}",
+     *     summary="Get client by ID",
+     *     tags={"Clients"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Client ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Client found",
+     *         @OA\JsonContent(ref="#/components/schemas/Client")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Client not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -78,10 +147,20 @@ class ClientController extends Controller
     }
 
     /**
-     * Create new client record
-     *
-     * @param ClientRequest $request Validated client data
-     * @return JsonResponse Created client resource
+     * @OA\Post(
+     *     path="/api/v1/clients",
+     *     summary="Create a new client",
+     *     tags={"Clients"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ClientRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Client created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Client")
+     *     )
+     * )
      */
     public function store(ClientRequest $request): JsonResponse
     {
@@ -114,26 +193,50 @@ class ClientController extends Controller
         );
     }
 
-    /**
-     * Update existing client record
-     *
-     * @param ClientRequest $request Validated client data
-     * @return JsonResponse Updated client resource
-     */
-    public function update(int $id, ClientRequest $request): JsonResponse
+/**
+ * @OA\Put(
+ *     path="/api/v1/clients/{id}",
+ *     summary="Update an existing client",
+ *     tags={"Clients"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="name", type="string"),
+ *             @OA\Property(property="last_name", type="string"),
+ *             @OA\Property(property="address", type="string"),
+ *             @OA\Property(property="phone_number", type="string"),
+ *             @OA\Property(property="mail", type="string"),
+ *             @OA\Property(property="dni", type="string"),
+ *             @OA\Property(property="cuit", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Client updated successfully",
+ *         @OA\JsonContent(ref="#/components/schemas/Client")
+ *     )
+ * )
+ */
+public function update(int $id, PersonUpdateRequest $request): JsonResponse
     {
          $clientDTO = new ClientDTO(
             $id,
             null,
             new PersonDTO(
-                $request->input('person_id'),
-                $request->input('person.name'),
-                $request->input('person.last_name'),
-                $request->input('person.address'),
-                $request->input('person.phone_number'),
-                $request->input('person.mail'),
-                $request->input('person.dni'),
-                $request->input('person.cuit')
+                $id,
+                $request->input('name'),
+                $request->input('last_name'),
+                $request->input('address'),
+                $request->input('phone_number'),
+                $request->input('mail'),
+                $request->input('dni'),
+                $request->input('cuit')
             )
         );
         $result = $this->service->update($clientDTO);
@@ -150,10 +253,25 @@ class ClientController extends Controller
     }
 
     /**
-     * Delete client record
-     *
-     * @param int $id Client record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/clients/{id}",
+     *     summary="Delete a client",
+     *     tags={"Clients"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Client deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Client not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

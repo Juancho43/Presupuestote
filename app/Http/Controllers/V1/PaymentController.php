@@ -13,9 +13,30 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Payment Controller
+ * @OA\Tag(
+ *     name="Payments",
+ *     description="API Endpoints for Payment operations"
+ * )
  *
- * Handles HTTP requests related to payment records including CRUD operations
+ * @OA\Schema(
+ *     schema="Payment",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="amount", type="number", format="float"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="payable_type", type="string"),
+ *     @OA\Property(property="payable_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="PaymentRequest",
+ *     required={"amount", "date", "payable_type", "payable_id"},
+ *     @OA\Property(property="amount", type="number", format="float"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="payable_type", type="string"),
+ *     @OA\Property(property="payable_id", type="integer")
+ * )
  */
 class PaymentController extends Controller
 {
@@ -37,9 +58,22 @@ class PaymentController extends Controller
     }
 
     /**
-     * Get all payment records
-     *
-     * @return JsonResponse Collection of payment records
+     * @OA\Get(
+     *     path="/api/v1/payments",
+     *     summary="Get all payments",
+     *     tags={"Payments"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of payments retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Payment")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -57,10 +91,27 @@ class PaymentController extends Controller
     }
 
     /**
-     * Get single payment record by ID
-     *
-     * @param int $id Payment record ID
-     * @return JsonResponse Single payment resource
+     * @OA\Get(
+     *     path="/api/v1/payments/{id}",
+     *     summary="Get payment by ID",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Payment ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment found",
+     *         @OA\JsonContent(ref="#/components/schemas/Payment")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Payment not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -78,10 +129,20 @@ class PaymentController extends Controller
     }
 
     /**
-     * Create new payment record
-     *
-     * @param PaymentRequest $request Validated Payment data
-     * @return JsonResponse Created payment resource
+     * @OA\Post(
+     *     path="/api/v1/payments",
+     *     summary="Create a new payment",
+     *     tags={"Payments"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/PaymentRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Payment created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Payment")
+     *     )
+     * )
      */
     public function store(PaymentRequest $request): JsonResponse
     {
@@ -102,10 +163,26 @@ class PaymentController extends Controller
     }
 
     /**
-     * Update existing payment record
-     *
-     * @param PaymentRequest $request Validated Payment data
-     * @return JsonResponse Updated payment resource
+     * @OA\Put(
+     *     path="/api/v1/payments/{id}",
+     *     summary="Update an existing payment",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/PaymentRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Payment")
+     *     )
+     * )
      */
     public function update(int $id,PaymentRequest $request): JsonResponse
     {
@@ -127,10 +204,25 @@ class PaymentController extends Controller
     }
 
     /**
-     * Delete payment record
-     *
-     * @param int $id Payment record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/payments/{id}",
+     *     summary="Delete a payment",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Payment deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Payment not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {
@@ -147,7 +239,29 @@ class PaymentController extends Controller
         );
     }
 
-
+    /**
+     * @OA\Get(
+     *     path="/api/v1/payments/client/{id}",
+     *     summary="Get all payments for a client",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Client ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of client payments retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Payment")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function allClientPayments(int $id) : JsonResponse
     {
         try{
@@ -156,7 +270,29 @@ class PaymentController extends Controller
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    /**
+     * @OA\Get(
+     *     path="/api/v1/payments/employee/{id}",
+     *     summary="Get all payments for an employee",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Employee ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of employee payments retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Payment")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function allEmployeePayments(int $id) : JsonResponse
     {
         try{
@@ -166,6 +302,29 @@ class PaymentController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/payments/supplier/{id}",
+     *     summary="Get all payments for a supplier",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Supplier ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of supplier payments retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Payment")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function allSupplierPayments(int $id) : JsonResponse
     {
         try{

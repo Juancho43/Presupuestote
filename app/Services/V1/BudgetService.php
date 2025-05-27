@@ -171,4 +171,24 @@ class BudgetService
             );
         }
     }
+
+    public function changeState(int $id, string $stateName): Budget | JsonResponse
+    {
+        try {
+            $budget = $this->repository->find($id);
+            if($budget->state->canTransitionTo($stateName)) {
+                $budget->state->transitionTo($stateName);
+                $budget->save();
+            }else{
+                throw new Exception("State transition failed");
+            }
+            return $budget;
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't change state",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }

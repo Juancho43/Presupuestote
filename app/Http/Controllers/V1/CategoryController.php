@@ -12,9 +12,23 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Category Controller
+
+ * @OA\Tag(
+ *     name="Categories",
+ *     description="API Endpoints for Category operations"
+ * )
  *
- * Handles HTTP requests related to category records including CRUD operations
+ * @OA\Schema(
+ *     schema="Category",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="CategoryRequest",
+ *     required={"name"},
+ *     @OA\Property(property="name", type="string")
+ * )
  */
 class CategoryController extends Controller
 {
@@ -36,9 +50,22 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get all category records
-     *
-     * @return JsonResponse Collection of category records
+     * @OA\Get(
+     *     path="/api/v1/categories",
+     *     summary="Get all categories",
+     *     tags={"Categories"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of categories retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Category")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -56,10 +83,27 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get single category record by ID
-     *
-     * @param int $id Category record ID
-     * @return JsonResponse Single category resource
+     * @OA\Get(
+     *     path="/api/v1/categories/{id}",
+     *     summary="Get category by ID",
+     *     tags={"Categories"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Category ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category found",
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -77,10 +121,20 @@ class CategoryController extends Controller
     }
 
     /**
-     * Create new category record
-     *
-     * @param CategoryRequest $request Validated category data
-     * @return JsonResponse Created category resource
+     * @OA\Post(
+     *     path="/api/v1/categories",
+     *     summary="Create a new category",
+     *     tags={"Categories"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/CategoryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Category created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     )
+     * )
      */
 public function store(CategoryRequest $request): JsonResponse
 {
@@ -102,10 +156,26 @@ public function store(CategoryRequest $request): JsonResponse
     }
 
     /**
-     * Update existing category record
-     *
-     * @param CategoryRequest $request Validated category data
-     * @return JsonResponse Updated category resource
+     * @OA\Put(
+     *     path="/api/v1/categories/{id}",
+     *     summary="Update an existing category",
+     *     tags={"Categories"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/CategoryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Category")
+     *     )
+     * )
      */
     public function update(int $id,CategoryRequest $request): JsonResponse
     {
@@ -128,10 +198,25 @@ public function store(CategoryRequest $request): JsonResponse
     }
 
     /**
-     * Delete category record
-     *
-     * @param int $id Category record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/categories/{id}",
+     *     summary="Delete a category",
+     *     tags={"Categories"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Category deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

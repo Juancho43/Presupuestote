@@ -69,7 +69,6 @@ class PersonRepository implements IRepository
     public function update($data): Model
     {
         $model = $this->find($data->id);
-
         if (!$model->update([
             'name' => $data->name ?? $model->name,
             'last_name' => $data->last_name ?? $model->last_name,

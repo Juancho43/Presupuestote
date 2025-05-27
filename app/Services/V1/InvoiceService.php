@@ -213,7 +213,7 @@ class InvoiceService
             $invoice->updateTotal();
             return $invoice;
         }catch (Exception $e) {
-            return $this->errorResponse('Error adding works to budget', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->errorResponse('Error adding works to invoice', $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

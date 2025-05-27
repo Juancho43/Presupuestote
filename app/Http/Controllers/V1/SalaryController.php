@@ -14,9 +14,28 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Salary Controller
+ * @OA\Tag(
+ *     name="Salaries",
+ *     description="API Endpoints for Salary operations"
+ * )
  *
- * Handles HTTP requests related to salary records including CRUD operations
+ * @OA\Schema(
+ *     schema="Salary",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="amount", type="number", format="float"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="active", type="boolean"),
+ *     @OA\Property(property="employee_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="SalaryRequest",
+ *     required={"amount", "date", "employee_id", "active"},
+ *     @OA\Property(property="amount", type="number", format="float"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="active", type="boolean"),
+ *     @OA\Property(property="employee_id", type="integer")
+ * )
  */
 class SalaryController extends Controller
 {
@@ -38,9 +57,22 @@ class SalaryController extends Controller
     }
 
     /**
-     * Get all salary records
-     *
-     * @return JsonResponse Collection of salary records
+     * @OA\Get(
+     *     path="/api/v1/salaries",
+     *     summary="Get all salaries",
+     *     tags={"Salaries"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of salaries retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Salary")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -58,10 +90,27 @@ class SalaryController extends Controller
     }
 
     /**
-     * Get single salary record by ID
-     *
-     * @param int $id Salary record ID
-     * @return JsonResponse Single salary resource
+     * @OA\Get(
+     *     path="/api/v1/salaries/{id}",
+     *     summary="Get salary by ID",
+     *     tags={"Salaries"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Salary ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Salary found",
+     *         @OA\JsonContent(ref="#/components/schemas/Salary")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Salary not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -78,11 +127,22 @@ class SalaryController extends Controller
         );
     }
 
+
     /**
-     * Create new salary record
-     *
-     * @param SalaryRequest $request Validated Salary data
-     * @return JsonResponse Created salary resource
+     * @OA\Post(
+     *     path="/api/v1/salaries",
+     *     summary="Create a new salary",
+     *     tags={"Salaries"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SalaryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Salary created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Salary")
+     *     )
+     * )
      */
     public function store(SalaryRequest $request): JsonResponse
     {
@@ -110,11 +170,28 @@ class SalaryController extends Controller
         );
     }
 
+
     /**
-     * Update existing salary record
-     *
-     * @param SalaryRequest $request Validated Salary data
-     * @return JsonResponse Updated salary resource
+     * @OA\Put(
+     *     path="/api/v1/salaries/{id}",
+     *     summary="Update an existing salary",
+     *     tags={"Salaries"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SalaryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Salary updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Salary")
+     *     )
+     * )
      */
     public function update(int $id,SalaryRequest $request): JsonResponse
     {
@@ -140,10 +217,25 @@ class SalaryController extends Controller
     }
 
     /**
-     * Delete salary record
-     *
-     * @param int $id Salary record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/salaries/{id}",
+     *     summary="Delete a salary",
+     *     tags={"Salaries"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Salary deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Salary not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

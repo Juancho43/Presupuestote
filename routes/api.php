@@ -39,6 +39,9 @@ Route::prefix('v1')->group(function () {
         //Pricing
         Route::get('budgets/updatePrice/{id}', [BudgetController::class, 'updateBudgetPrice'])->name('budgets.updatePrice');
         Route::get('invoices/updateTotal/{id}', [InvoiceController::class, 'updateInvoiceTotal'])->name('invoices.updateTotal');
+        //States
+        Route::post('works/states/{id}/{state}', [WorkController::class, 'changeState'])->name('works.changeState');
+        Route::post('budgets/states/{id}/{state}', [BudgetController::class, 'changeState'])->name('budgets.changeState');
         //Works and invoices
         Route::post('works/materials', [WorkController::class, 'addMaterials'])->name('works.addMaterials');
         Route::post('invoices/materials', [InvoiceController::class, 'addMaterials'])->name('invoices.addMaterials');
@@ -47,11 +50,6 @@ Route::prefix('v1')->group(function () {
         Route::get('materials/works/{id}', [MaterialController::class, 'getWithWorks'])->name('materials.getWithWorks');
         Route::get('materials/prices/{id}', [MaterialController::class, 'getWithPrices'])->name('materials.getWithPrices');
         Route::get('materials/stocks/{id}', [MaterialController::class, 'getWithStocks'])->name('materials.getWithStocks');
-
-        //Add Payments
-        Route::post('payments/budget', [PaymentController::class, 'addPaymentToBudget'])->name('payments.toBudget');
-        Route::post('payments/invoice', [PaymentController::class, 'addPaymentToInvoice'])->name('payments.toInvoice');
-        Route::post('payments/salary', [PaymentController::class, 'addPaymentToSalary'])->name('payments.toSalary');
         //Get sorted payments
         Route::get('payments/client/{id}', [PaymentController::class, 'allClientPayments'])->name('indexClient');
         Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');

@@ -146,8 +146,8 @@ class SupplierService
     public function update(SupplierDTO $data): Model|JsonResponse
     {
         try {
-            $updatedSupplier = $this->repository->update($data);
-            return $updatedSupplier;
+            $this->personRepository->update($data->person);
+            return $this->get($data->id);
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND

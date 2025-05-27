@@ -14,9 +14,26 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Stock Controller
+ * @OA\Tag(
+ *     name="Stocks",
+ *     description="API Endpoints for Stock operations"
+ * )
  *
- * Handles HTTP requests related to stock records including CRUD operations
+ * @OA\Schema(
+ *     schema="Stock",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="stock", type="integer"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="material_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="StockRequest",
+ *     required={"stock", "date", "material_id"},
+ *     @OA\Property(property="stock", type="integer"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="material_id", type="integer")
+ * )
  */
 class StockController extends Controller
 {
@@ -38,9 +55,22 @@ class StockController extends Controller
     }
 
     /**
-     * Get all stock records
-     *
-     * @return JsonResponse Collection of stock records
+     * @OA\Get(
+     *     path="/api/v1/stocks",
+     *     summary="Get all stocks",
+     *     tags={"Stocks"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of stocks retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Stock")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -58,10 +88,27 @@ class StockController extends Controller
     }
 
     /**
-     * Get single stock record by ID
-     *
-     * @param int $id Stock record ID
-     * @return JsonResponse Single stock resource
+     * @OA\Get(
+     *     path="/api/v1/stocks/{id}",
+     *     summary="Get stock by ID",
+     *     tags={"Stocks"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Stock ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Stock found",
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -79,10 +126,20 @@ class StockController extends Controller
     }
 
     /**
-     * Create new stock record
-     *
-     * @param StockRequest $request Validated Stock data
-     * @return JsonResponse Created stock resource
+     * @OA\Post(
+     *     path="/api/v1/stocks",
+     *     summary="Create a new stock record",
+     *     tags={"Stocks"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StockRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Stock created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     )
+     * )
      */
     public function store(StockRequest $request): JsonResponse
     {
@@ -108,10 +165,26 @@ class StockController extends Controller
     }
 
     /**
-     * Update existing stock record
-     *
-     * @param StockRequest $request Validated Stock data
-     * @return JsonResponse Updated stock resource
+     * @OA\Put(
+     *     path="/api/v1/stocks/{id}",
+     *     summary="Update an existing stock record",
+     *     tags={"Stocks"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/StockRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Stock updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Stock")
+     *     )
+     * )
      */
     public function update(int $id,StockRequest $request): JsonResponse
     {
@@ -135,10 +208,25 @@ class StockController extends Controller
     }
 
     /**
-     * Delete stock record
-     *
-     * @param int $id Stock record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/stocks/{id}",
+     *     summary="Delete a stock record",
+     *     tags={"Stocks"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Stock deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Stock not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {

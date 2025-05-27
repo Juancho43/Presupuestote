@@ -13,9 +13,24 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * SubCategory Controller
+ * @OA\Tag(
+ *     name="SubCategories",
+ *     description="API Endpoints for SubCategory operations"
+ * )
  *
- * Handles HTTP requests related to subcategory records including CRUD operations
+ * @OA\Schema(
+ *     schema="SubCategory",
+ *     @OA\Property(property="id", type="integer"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="category_id", type="integer")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="SubCategoryRequest",
+ *     required={"name", "category_id"},
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="category_id", type="integer")
+ * )
  */
 class SubCategoryController extends Controller
 {
@@ -37,9 +52,22 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Get all subcategory records
-     *
-     * @return JsonResponse Collection of subcategory records
+     * @OA\Get(
+     *     path="/api/v1/subcategories",
+     *     summary="Get all subcategories",
+     *     tags={"SubCategories"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of subcategories retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/SubCategory")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -57,10 +85,27 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Get single subcategory record by ID
-     *
-     * @param int $id SubCategory record ID
-     * @return JsonResponse Single subcategory resource
+     * @OA\Get(
+     *     path="/api/v1/subcategories/{id}",
+     *     summary="Get subcategory by ID",
+     *     tags={"SubCategories"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="SubCategory ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="SubCategory found",
+     *         @OA\JsonContent(ref="#/components/schemas/SubCategory")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="SubCategory not found"
+     *     )
+     * )
      */
     public function show(int $id): JsonResponse
     {
@@ -78,10 +123,20 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Create new subcategory record
-     *
-     * @param SubCategoryRequest $request Validated SubCategory data
-     * @return JsonResponse Created subcategory resource
+     * @OA\Post(
+     *     path="/api/v1/subcategories",
+     *     summary="Create a new subcategory",
+     *     tags={"SubCategories"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SubCategoryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="SubCategory created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/SubCategory")
+     *     )
+     * )
      */
     public function store(SubCategoryRequest $request): JsonResponse
     {
@@ -106,10 +161,26 @@ class SubCategoryController extends Controller
     }
 
     /**
-     * Update existing subcategory record
-     *
-     * @param SubCategoryRequest $request Validated SubCategory data
-     * @return JsonResponse Updated subcategory resource
+     * @OA\Put(
+     *     path="/api/v1/subcategories/{id}",
+     *     summary="Update an existing subcategory",
+     *     tags={"SubCategories"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SubCategoryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="SubCategory updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/SubCategory")
+     *     )
+     * )
      */
     public function update(int $id,SubCategoryRequest $request): JsonResponse
     {
@@ -131,11 +202,27 @@ class SubCategoryController extends Controller
         );
     }
 
+
     /**
-     * Delete subcategory record
-     *
-     * @param int $id SubCategory record ID
-     * @return JsonResponse Empty response on success
+     * @OA\Delete(
+     *     path="/api/v1/subcategories/{id}",
+     *     summary="Delete a subcategory",
+     *     tags={"SubCategories"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="SubCategory deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="SubCategory not found"
+     *     )
+     * )
      */
     public function destroy(int $id): JsonResponse
     {
