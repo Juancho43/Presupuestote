@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Requests\V1\PersonUpdateRequest;
 use App\Services\V1\ClientService;
 use App\DTOs\V1\ClientDTO;
 use App\Http\Requests\V1\ClientRequest;
@@ -192,42 +193,50 @@ class ClientController extends Controller
         );
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/clients/{id}",
-     *     summary="Update an existing client",
-     *     tags={"Clients"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/ClientRequest")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Client updated successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/Client")
-     *     )
-     * )
-     */
-    public function update(int $id, ClientRequest $request): JsonResponse
+/**
+ * @OA\Put(
+ *     path="/api/v1/clients/{id}",
+ *     summary="Update an existing client",
+ *     tags={"Clients"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="name", type="string"),
+ *             @OA\Property(property="last_name", type="string"),
+ *             @OA\Property(property="address", type="string"),
+ *             @OA\Property(property="phone_number", type="string"),
+ *             @OA\Property(property="mail", type="string"),
+ *             @OA\Property(property="dni", type="string"),
+ *             @OA\Property(property="cuit", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Client updated successfully",
+ *         @OA\JsonContent(ref="#/components/schemas/Client")
+ *     )
+ * )
+ */
+public function update(int $id, PersonUpdateRequest $request): JsonResponse
     {
          $clientDTO = new ClientDTO(
             $id,
             null,
             new PersonDTO(
-                $request->input('person_id'),
-                $request->input('person.name'),
-                $request->input('person.last_name'),
-                $request->input('person.address'),
-                $request->input('person.phone_number'),
-                $request->input('person.mail'),
-                $request->input('person.dni'),
-                $request->input('person.cuit')
+                $id,
+                $request->input('name'),
+                $request->input('last_name'),
+                $request->input('address'),
+                $request->input('phone_number'),
+                $request->input('mail'),
+                $request->input('dni'),
+                $request->input('cuit')
             )
         );
         $result = $this->service->update($clientDTO);
@@ -242,7 +251,6 @@ class ClientController extends Controller
             Response::HTTP_OK
         );
     }
-
 
     /**
      * @OA\Delete(

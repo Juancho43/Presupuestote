@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Requests\V1\PersonUpdateRequest;
 use App\Services\V1\EmployeeService;
 use App\DTOs\V1\EmployeeDTO;
 use App\Http\Requests\V1\EmployeeRequest;
@@ -203,10 +204,18 @@ class EmployeeController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/EmployeeRequest")
-     *     ),
+     *    @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              @OA\Property(property="name", type="string"),
+     *              @OA\Property(property="last_name", type="string"),
+     *              @OA\Property(property="address", type="string"),
+     *              @OA\Property(property="phone_number", type="string"),
+     *              @OA\Property(property="mail", type="string"),
+     *              @OA\Property(property="dni", type="string"),
+     *              @OA\Property(property="cuit", type="string")
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="Employee updated successfully",
@@ -214,7 +223,7 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function update(int $id,EmployeeRequest $request): JsonResponse
+    public function update(int $id,PersonUpdateRequest $request): JsonResponse
     {
         $employeeDTO = new EmployeeDTO(
             $id,
@@ -223,6 +232,7 @@ class EmployeeController extends Controller
             new Carbon($request->input('end_date')),
             $request->input('is_active'),
             new PersonDTO(
+                $id,
                 $request->input('person_id'),
                 $request->input('person.name'),
                 $request->input('person.last_name'),
