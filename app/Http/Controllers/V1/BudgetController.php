@@ -370,7 +370,7 @@ class BudgetController extends Controller
             return $this->successResponse(new BudgetResource($work), "State changed successfully", Response::HTTP_OK);
         }catch (Exception $e) {
             return $this->errorResponse(
-                "Controller Error: changing state of work",
+                "Controller Error: changing state of budget",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
