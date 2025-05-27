@@ -226,6 +226,47 @@
                 }
             }
         },
+        "/api/v1/budgets/states/{id}/{state}": {
+            "post": {
+                "tags": [
+                    "Budgets"
+                ],
+                "summary": "Change budget state",
+                "operationId": "758b14970f41d334da9171245b6f31fb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Work ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "state",
+                        "in": "path",
+                        "description": "New state",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "State changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Budget"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/categories": {
             "get": {
                 "tags": [

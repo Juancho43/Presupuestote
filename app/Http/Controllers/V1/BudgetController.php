@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\ClientDTO;
+use App\Http\Resources\V1\WorkResource;
 use App\Services\V1\BudgetService;
 use App\DTOs\V1\BudgetDTO;
 use App\Http\Requests\V1\BudgetRequest;
@@ -334,5 +335,45 @@ class BudgetController extends Controller
             "Budget price updated successfully",
 
         );
+    }
+
+    /**
+     * @OA\Post (
+     *     path="/api/v1/budgets/states/{id}/{state}",
+     *     summary="Change budget state",
+     *     tags={"Budgets"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Work ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="state",
+     *         in="path",
+     *         required=true,
+     *         description="New state",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="State changed successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Budget")
+     *     )
+     * )
+     */
+    public function changeState(int $id, string $state): JsonResponse
+    {
+        try {
+            $work = $this->service->changeState($id, $state);
+            return $this->successResponse(new BudgetResource($work), "State changed successfully", Response::HTTP_OK);
+        }catch (Exception $e) {
+            return $this->errorResponse(
+                "Controller Error: changing state of work",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }
