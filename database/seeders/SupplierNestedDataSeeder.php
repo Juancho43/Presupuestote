@@ -90,6 +90,7 @@ class SupplierNestedDataSeeder extends Seeder
         $invoice = Invoice::factory()->create([
             'supplier_id' => $supplier->id,
             'date' => now(),
+            'total' => 0, // Total will be calculated based on attached materials
         ]);
 
         // Attach materials to invoice with proper pivot data including price_id and stock_id
@@ -109,7 +110,7 @@ class SupplierNestedDataSeeder extends Seeder
         Payment::factory()->create([
             'payable_type' => Invoice::class,
             'payable_id' => $invoice->id,
-            'amount' => 1500.00,
+            'amount' => 10.00,
             'date' => now(),
             'description' => 'First payment for lumber order',
         ]);
@@ -117,7 +118,7 @@ class SupplierNestedDataSeeder extends Seeder
         Payment::factory()->create([
             'payable_type' => Invoice::class,
             'payable_id' => $invoice->id,
-            'amount' => 2000.00,
+            'amount' => 1.00,
             'date' => now()->addDays(15),
             'description' => 'Final payment for lumber order',
         ]);

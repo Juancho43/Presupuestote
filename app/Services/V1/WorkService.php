@@ -177,6 +177,7 @@ class WorkService
             $work->refresh();
             $work->updateCost();
             $work->budget->updatePrice();
+
             return $work;
         } catch (Exception $e) {
             return $this->errorResponse("Service Error: adding materials to work failed", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

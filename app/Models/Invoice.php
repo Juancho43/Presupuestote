@@ -63,6 +63,7 @@ class Invoice extends Model
     {
         $this->total = $this->calculateTotal();
         $this->save();
+        $this->supplier->updateBalance();
         return $this;
     }
 }

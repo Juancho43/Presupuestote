@@ -29,4 +29,20 @@ class Supplier extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    private function calculateBalance(): float
+    {
+        $balance = 0;
+        foreach ($this->invoice as $invoice) {
+            $balance += $invoice->calculateDebt();
+        }
+
+        return $balance;
+    }
+    public function updateBalance()
+    {
+        $this->balance = $this->calculateBalance();
+        $this->save();
+        return $this->balance;
+    }
 }

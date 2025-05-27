@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\V1;
 
+use App\Events\PaymentCreated;
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Repository\V1\PaymentRepository;
 use App\DTOs\V1\PaymentDTO;
@@ -10,6 +11,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -116,7 +118,7 @@ class PaymentService
                 throw new Exception($debt['message']);
             }
             $payment = $this->repository->create($data);
-
+            Event::dispatch(new PaymentCreated($payment, $debt['model']));
             return $this->successResponse($payment,$debt['message'], Response::HTTP_OK);
         } catch (Exception $e) {
             return $this->errorResponse(
@@ -181,6 +183,7 @@ class PaymentService
         $newDebt = $currentDebt - $amount;
         $response["message"] = "Payment amount is valid current debt: ". $newDebt;
         $response['success'] = true;
+        $response['model'] = $model;
         $response['previous_debt'] = $currentDebt;
         if ($amount >$currentDebt) {
             $response['message'] = "Payment amount exceeds the remaining {$modelClass} debt: ". $newDebt;

@@ -209,7 +209,7 @@ class InvoiceService
             $invoice = $this->repository->find($data->invoice_id);
             $syncData = $this->generateInvoiceMaterialPivot($data->materials);
             $invoice->materials()->sync($syncData);
-            $invoice->refresh();
+            $invoice->save();
             $invoice->updateTotal();
             return $invoice;
         }catch (Exception $e) {
