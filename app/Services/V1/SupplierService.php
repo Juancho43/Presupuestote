@@ -146,6 +146,7 @@ class SupplierService
     public function update(SupplierDTO $data): Model|JsonResponse
     {
         try {
+            $this->repository->update($data);
             $this->personRepository->update($data->person);
             return $this->get($data->id);
         } catch (Exception $e) {

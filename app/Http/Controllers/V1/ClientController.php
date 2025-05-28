@@ -167,7 +167,7 @@ class ClientController extends Controller
 
         $clientDTO = new ClientDTO(
             null,
-            null,
+            $request->input('balance', 0),
             new PersonDTO(
                 $request->input('person_id'),
                 $request->input('person.name'),

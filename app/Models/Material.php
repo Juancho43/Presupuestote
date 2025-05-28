@@ -20,7 +20,7 @@ class Material extends Model
         'description',
         'color',
         'brand',
-        'subcategory_id',
+        'sub_category_id',
         'measure_id',
     ];
 
@@ -34,6 +34,8 @@ class Material extends Model
     public function subcategory():BelongsTo
     {
         return $this->belongsTo(SubCategory::class);
+
+
     }
 
     public function works(): BelongsToMany
@@ -72,4 +74,10 @@ class Material extends Model
     {
         return $this->hasOne(Price::class)->latest();
     }
+
+    public function latestStock() : HasOne
+    {
+        return $this->hasOne(Stock::class)->latest();
+    }
+
 }

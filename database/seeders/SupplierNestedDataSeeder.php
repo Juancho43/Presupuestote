@@ -49,7 +49,7 @@ class SupplierNestedDataSeeder extends Seeder
             'description' => 'High-grade pine lumber',
             'color' => 'Natural',
             'brand' => 'WoodCraft',
-            'subcategory_id' => $subCategory->id,
+            'sub_category_id' => $subCategory->id,
         ]);
 
         $material2 = Material::factory()->create([
@@ -57,7 +57,7 @@ class SupplierNestedDataSeeder extends Seeder
             'description' => 'Premium oak planks',
             'color' => 'Brown',
             'brand' => 'WoodCraft',
-            'subcategory_id' => $subCategory->id,
+            'sub_category_id' => $subCategory->id,
         ]);
 
         // Create prices for materials

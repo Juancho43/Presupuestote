@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Budget;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -63,7 +62,10 @@ class BudgetControllerTest extends TestCase
 
     public function test_store_creates_new_budget()
     {
-        $data = Budget::factory()->make()->toArray();
+        $data = Budget::factory()->create([
+            'made_date' => now(),
+            'dead_line' => now()->addDays(30),
+        ])->toArray();
 
         $response = $this->postJson('/api/v1/budgets', $data);
 

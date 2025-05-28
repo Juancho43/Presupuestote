@@ -14,6 +14,7 @@
         public function rules(): array
         {
             return [
+                'balance' => ['nullable', 'numeric', 'min:0'],
                 'person_id' => ['required_without:person', 'exists:people,id'],
                 'person' => ['required_without:person_id', 'array'],
                 'person.name' => ['required_with:person', 'string', 'max:255'],

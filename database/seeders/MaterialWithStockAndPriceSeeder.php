@@ -29,7 +29,7 @@ class MaterialWithStockAndPriceSeeder extends Seeder
             'description' => 'High-quality construction steel',
             'color' => 'Silver',
             'brand' => 'SteelMaster',
-            'subcategory_id' => $subCategory->id,
+            'sub_category_id' => $subCategory->id,
         ]);
 
         // Create two prices for the material
@@ -64,7 +64,7 @@ class MaterialWithStockAndPriceSeeder extends Seeder
             'description' => 'Lightweight aluminum sheets for construction',
             'color' => 'Silver',
             'brand' => 'MetalPro',
-            'subcategory_id' => $subCategory->id,
+            'sub_category_id' => $subCategory->id,
         ]);
 
         Price::factory()->create([
