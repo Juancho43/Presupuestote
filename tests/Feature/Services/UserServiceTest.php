@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Feature\Services;
 
 use PHPUnit\Framework\TestCase;
 
-class EmployeeServiceTest extends TestCase
+class UserServiceTest extends TestCase
 {
     /**
      * A basic unit test example.
