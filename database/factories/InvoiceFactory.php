@@ -18,6 +18,7 @@ class InvoiceFactory extends Factory
     {
     return [
         'date' => $this->faker->date(),
+        'total' => 0,
         'supplier_id' => \App\Models\Supplier::factory(),
     ];
     }

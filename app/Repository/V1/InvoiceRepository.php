@@ -33,7 +33,8 @@ class InvoiceRepository implements IRepository
         $model = Invoice::with([
             'materials',
             'materials.latestPrice',
-            'supplier.person'
+            'supplier.person',
+            'payments',
         ])->findOrFail($id);
         if (!$model) {
             throw new Exception("Invoice with id: {$id} not found");

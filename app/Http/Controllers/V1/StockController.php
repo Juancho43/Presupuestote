@@ -193,7 +193,7 @@ class StockController extends Controller
             $request->input('stock'),
             new Carbon($request->input('date')),
             new MaterialDTO(id: $request->input('material_id')),
-        );    $stockDTO = new StockDTO($id);
+        );
         $result = $this->service->update($stockDTO);
 
         if ($result instanceof JsonResponse) {

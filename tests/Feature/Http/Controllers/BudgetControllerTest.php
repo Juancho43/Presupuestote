@@ -54,7 +54,8 @@ class BudgetControllerTest extends TestCase
                     'profit',
                     'price',
                     'payments',
-                    'works'
+                    'works',
+                    'client'
                ]
             ]);
 
@@ -77,9 +78,14 @@ class BudgetControllerTest extends TestCase
 
     public function test_update_updates_existing_budget()
     {
-
+        $client = \App\Models\Client::factory()->create();
         $budget = Budget::factory()->create();
-        $data = Budget::factory()->make()->toArray();
+        $data = [
+            'client_id' => $client->id,
+            'description' => $this->faker->sentence,
+            'made_date' => now(),
+            'dead_line' => now()->addDays(30),
+        ];
 
         $response = $this->putJson("/api/v1/budgets/{$budget->id}", $data);
 

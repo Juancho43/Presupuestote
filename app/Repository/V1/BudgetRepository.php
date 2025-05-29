@@ -37,7 +37,8 @@ class BudgetRepository implements IRepository
                     $query->select('materials.id', 'materials.name', 'materials.description', 'materials.color', 'materials.brand', 'material_work.quantity');
                 }]);
             },
-            'payments'
+            'payments',
+            'client.person'
         ])->findOrFail($id);
         if (!$model) {
             throw new Exception("Budget with id: {$id} not found");

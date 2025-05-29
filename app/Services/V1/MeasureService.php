@@ -130,7 +130,7 @@ class MeasureService
     public function update(MeasureDTO $data): Model|JsonResponse
     {
         try {
-            $updatedMeasure = $this->repository->update();
+            $updatedMeasure = $this->repository->update($data);
             return $updatedMeasure;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")

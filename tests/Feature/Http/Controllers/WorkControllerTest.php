@@ -11,10 +11,17 @@ class WorkControllerTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+     public function test_can_change_state()
+     {
+         $response = $this->getJson('/api/v1/works/state/1/Cancelado');
 
-        $response->assertStatus(200);
-    }
+            $response->assertStatus(200)
+                ->assertJson([
+                    'message' => "State changed successfully",
+                    'data' => [
+                        'id' => 1,
+                        'state' => 'Cancelado'
+                    ]
+                ]);
+     }
 }

@@ -79,7 +79,6 @@ class MeasureController extends Controller
         return $this->successResponse(
             new MeasureResourceCollection($result),
             "Data retrieved successfully",
-            Response::HTTP_OK
         );
     }
 
@@ -143,7 +142,7 @@ class MeasureController extends Controller
     $measureDTO = new MeasureDTO(
         null,
         $request->input('name'),
-        $request->input('description'),
+        $request->input('abbreviation'),
     );
 
     $result = $this->service->create($measureDTO);
@@ -186,7 +185,7 @@ class MeasureController extends Controller
         $measureDTO = new MeasureDTO(
             $id,
             $request->input('name'),
-            $request->input('description'),
+            $request->input('abbreviation'),
         );
         $result = $this->service->update($measureDTO);
 

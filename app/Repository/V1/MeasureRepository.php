@@ -48,7 +48,7 @@ class MeasureRepository implements IRepository
     {
         return Measure::create([
             'name' => $data->name,
-            'description' => $data->description,
+            'abbreviation' => $data->abbreviation,
         ]);
     }
 
@@ -64,7 +64,7 @@ class MeasureRepository implements IRepository
         $model = $this->find($data->id);
         if (!$model->update([
             'name' => $data->name,
-            'description' => $data->description,
+            'abbreviation' => $data->abbreviation,
         ])) {
             throw new Exception("Failed to update Measure: Database update failed");
         }

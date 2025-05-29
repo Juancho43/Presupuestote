@@ -93,6 +93,7 @@ class ClientControllerTest extends TestCase
         $client = Client::factory()->create();
 
         $updateData = [
+            'id' => $client->person->id,
             'name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'address' => $this->faker->address(),
