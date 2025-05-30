@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
@@ -102,7 +103,7 @@ class CategoryControllerTest extends TestCase
         $response->assertStatus(204);
 
         $response = $this->getJson("/api/v1/categories/{$category->id}");
-        $response->assertStatus(500)
+        $response->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertJson([
                 'message' => "Service Error: can't find Category"
             ]);

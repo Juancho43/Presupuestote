@@ -45,7 +45,7 @@ class MaterialRepository implements IRepository
                         $query->select('id', 'name');
                     }]);
             }
-        ])->findOrFail($id);
+        ])->find($id);
         if (!$model) {
             throw new Exception("Material with id: {$id} not found");
         }

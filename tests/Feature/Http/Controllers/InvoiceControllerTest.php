@@ -7,6 +7,7 @@ use App\Models\Supplier;
 use App\Models\Material;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
@@ -137,7 +138,7 @@ class InvoiceControllerTest extends TestCase
         $response->assertStatus(204);
 
         $response = $this->getJson("/api/v1/invoices/{$invoice->id}");
-        $response->assertStatus(500)
+        $response->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertJson([
                 'message' => "Service Error: can't find Invoice"
             ]);

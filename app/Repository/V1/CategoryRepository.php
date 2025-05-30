@@ -31,7 +31,7 @@ class CategoryRepository implements IRepository
      */
     public function find(int $id): Model
     {
-        $model = Category::with('subcategories')->findOrFail($id);
+        $model = Category::with('subcategories')->find($id);
         if (!$model) {
             throw new Exception("Category with id: {$id} not found");
         }

@@ -6,6 +6,7 @@ use App\Models\Material;
 use App\Models\Stock;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
@@ -117,7 +118,7 @@ class StockControllerTest extends TestCase
         $response->assertStatus(204);
 
         $response = $this->getJson("/api/v1/stocks/{$stock->id}");
-        $response->assertStatus(404)
+        $response->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertJson([
                 'message' => "Service Error: can't find Stock"
             ]);

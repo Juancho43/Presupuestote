@@ -39,7 +39,7 @@ class BudgetRepository implements IRepository
             },
             'payments',
             'client.person'
-        ])->findOrFail($id);
+        ])->find($id);
         if (!$model) {
             throw new Exception("Budget with id: {$id} not found");
         }

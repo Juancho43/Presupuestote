@@ -35,7 +35,7 @@ class InvoiceRepository implements IRepository
             'materials.latestPrice',
             'supplier.person',
             'payments',
-        ])->findOrFail($id);
+        ])->find($id);
         if (!$model) {
             throw new Exception("Invoice with id: {$id} not found");
         }
