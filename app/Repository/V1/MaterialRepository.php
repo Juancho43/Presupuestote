@@ -21,12 +21,8 @@ class MaterialRepository implements IRepository
         return Material::with([
             'measure',
             'subcategory',
-            'prices' => function ($query) {
-                $query->latest('date')->limit(1);
-            },
-            'stocks' => function ($query) {
-                $query->latest('date')->limit(1);
-            }
+            'latestPrice',
+            'latestStock',
         ])->get();
     }
 
@@ -40,12 +36,6 @@ class MaterialRepository implements IRepository
     public function find(int $id): Model
     {
         $model = Material::with([
-            'prices' => function($query) {
-                $query->select('id', 'material_id', 'price', 'date');
-            },
-            'stocks' => function($query) {
-                $query->select('id', 'material_id', 'stock', 'date');
-            },
             'measure' => function($query) {
                 $query->select('id', 'name');
             },
@@ -76,7 +66,7 @@ class MaterialRepository implements IRepository
             'description' => $data->description,
             'color' => $data->color,
             'brand' => $data->brand,
-            'subcategory_id' => $data->subcategory->id,
+            'sub_category_id' => $data->subcategory->id,
             'measure_id' => $data->measure->id
         ]);
     }
@@ -96,7 +86,7 @@ class MaterialRepository implements IRepository
             'description' => $data->description ?? $model->description,
             'color' => $data->color ?? $model->color,
             'brand' => $data->brand ?? $model->brand,
-            'subcategory_id' => $data->subcategory->id ?? $model->subcategory_id,
+            'sub_category_id' => $data->subcategory->id ?? $model->subcategory_id,
             'measure_id' => $data->measure->id ?? $model->measure_id,
         ])) {
             throw new Exception("Failed to update Material: Database update failed");
@@ -116,4 +106,41 @@ class MaterialRepository implements IRepository
     {
         return $this->find($id)->delete();
     }
+
+    public function getWithInvoices(int $id): Material
+    {
+        $model = Material::with(['invoices'])->findOrFail($id);
+        if (!$model) {
+            throw new Exception("Material with id: {$id} not found");
+        }
+        return $model;
+    }
+
+    public function getWithWorks(int $id): Material
+    {
+        $model = Material::with(['works'])->findOrFail($id);
+        if (!$model) {
+            throw new Exception("Material with id: {$id} not found");
+        }
+        return $model;
+    }
+
+    public function getWithStocks(int $id): Material
+    {
+        $model = Material::with(['stocks'])->findOrFail($id);
+        if (!$model) {
+            throw new Exception("Material with id: {$id} not found");
+        }
+        return $model;
+    }
+
+    public function getWithPrices(int $id): Material
+    {
+        $model = Material::with(['prices'])->findOrFail($id);
+        if (!$model) {
+            throw new Exception("Material with id: {$id} not found");
+        }
+        return $model;
+    }
+
 }

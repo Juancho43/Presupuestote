@@ -46,7 +46,7 @@ class ClientNestedDataSeeder extends Seeder
         $material = Material::factory()->create([
             'name' => 'Pine Wood',
             'description' => 'High quality pine wood',
-            'subcategory_id' => $subCategory->id,
+            'sub_category_id' => $subCategory->id,
         ]);
 
         // Create price for material

@@ -14,9 +14,8 @@ class PersonUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $personId = $this->route('id'); // Gets the ID from the route parameter
-
         return [
+            'id' => ['required', 'integer', Rule::exists('people', 'id')],
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:255'],
@@ -25,26 +24,27 @@ class PersonUpdateRequest extends FormRequest
                 'nullable',
                 'email',
                 'max:255',
-                Rule::unique('people', 'mail')->ignore($personId)
+                Rule::unique('people', 'mail')->ignore($this->id)
             ],
             'dni' => [
                 'nullable',
                 'string',
                 'max:20',
-                Rule::unique('people', 'dni')->ignore($personId)
+                Rule::unique('people', 'dni')->ignore($this->id)
             ],
             'cuit' => [
                 'nullable',
                 'string',
                 'max:20',
-                Rule::unique('people', 'cuit')->ignore($personId)
+                Rule::unique('people', 'cuit')->ignore($this->id)
             ],
         ];
-    }
+     }
 
     public function messages(): array
     {
         return [
+            'id.required' => 'The person ID is required',
             'name.required' => 'The person name is required',
             'phone_number.required' => 'The phone number is required',
             'mail.unique' => 'This email is already registered',

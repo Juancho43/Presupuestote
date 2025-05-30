@@ -2,11 +2,11 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Resources\V1\SupplierResource;
+use App\Http\Resources\V1\SupplierResourceCollection;
 use App\Services\V1\SupplierService;
 use App\DTOs\V1\SupplierDTO;
 use App\Http\Requests\V1\SupplierRequest;
-use App\Http\Resources\V1\SupplierResource;
-use App\Http\Resources\V1\SupplierResourceCollection;
 use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -100,7 +100,6 @@ class SupplierController extends Controller
         return $this->successResponse(
             new SupplierResourceCollection($result),
             "Data retrieved successfully",
-            Response::HTTP_OK
         );
     }
 
@@ -138,7 +137,6 @@ class SupplierController extends Controller
         return $this->successResponse(
             new SupplierResource($result),
             "Data retrieved successfully",
-            Response::HTTP_OK
         );
     }
 
@@ -164,7 +162,7 @@ class SupplierController extends Controller
     $supplierDTO = new SupplierDTO(
         null,
         $request->input('notes'),
-        null,
+        $request->input('balance'),
         new PersonDTO(
             $request->input('person_id'),
             $request->input('person.name'),
@@ -225,9 +223,8 @@ class SupplierController extends Controller
         $supplierDTO = new SupplierDTO(
             $id,
             $request->input('notes'),
-            null,
+            $request->input('balance'),
             new PersonDTO(
-                $id,
                 $request->input('person_id'),
                 $request->input('person.name'),
                 $request->input('person.last_name'),
@@ -246,7 +243,6 @@ class SupplierController extends Controller
         return $this->successResponse(
             new SupplierResource($result),
             "Data updated successfully",
-            Response::HTTP_OK
         );
     }
 

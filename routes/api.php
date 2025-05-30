@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::group(['as' => 'public.'], function() {
-        // TODO: Make a updatePersonRequest and update in PersonRepostiry.
         //Crud entities routes
         Route::resource('clients', ClientController::class)->names('clients');
 //        Route::resource('people', PersonController::class)->names('people');
@@ -54,10 +53,6 @@ Route::prefix('v1')->group(function () {
         Route::get('payments/client/{id}', [PaymentController::class, 'allClientPayments'])->name('indexClient');
         Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
         Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
-
     });
-
-
-
 });
 

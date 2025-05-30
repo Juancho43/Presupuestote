@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Requests\V1\EmployeeUpdateRequest;
 use App\Http\Requests\V1\PersonUpdateRequest;
 use App\Services\V1\EmployeeService;
 use App\DTOs\V1\EmployeeDTO;
@@ -223,7 +224,7 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function update(int $id,PersonUpdateRequest $request): JsonResponse
+    public function update(int $id,EmployeeUpdateRequest $request): JsonResponse
     {
         $employeeDTO = new EmployeeDTO(
             $id,
@@ -232,15 +233,14 @@ class EmployeeController extends Controller
             new Carbon($request->input('end_date')),
             $request->input('is_active'),
             new PersonDTO(
-                $id,
-                $request->input('person_id'),
-                $request->input('person.name'),
-                $request->input('person.last_name'),
-                $request->input('person.address'),
-                $request->input('person.phone_number'),
-                $request->input('person.mail'),
-                $request->input('person.dni'),
-                $request->input('person.cuit')
+                $request->input('id'),
+                $request->input('name'),
+                $request->input('last_name'),
+                $request->input('address'),
+                $request->input('phone_number'),
+                $request->input('mail'),
+                $request->input('dni'),
+                $request->input('cuit')
             )
         );
         $result = $this->service->update($employeeDTO);

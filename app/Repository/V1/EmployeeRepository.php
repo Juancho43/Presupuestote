@@ -30,7 +30,7 @@ class EmployeeRepository implements IRepository
      */
     public function find(int $id): Model
     {
-        $model = Employee::with(['person','invoices'])->where('id', $id)->first();
+        $model = Employee::with(['person','salaries'])->where('id', $id)->first();
         if (!$model) {
             throw new Exception("Employee with id: {$id} not found");
         }

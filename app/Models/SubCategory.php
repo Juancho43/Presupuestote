@@ -12,7 +12,7 @@ class SubCategory extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $table = 'subcategories';
+    protected $table = 'sub_categories';
     protected $fillable = [
         'name',
         'category_id',

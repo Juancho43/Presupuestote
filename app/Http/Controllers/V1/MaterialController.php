@@ -154,8 +154,8 @@ class MaterialController extends Controller
             null,
             $request->input('name'),
             $request->input('description'),
-            $request->input('brand'),
             $request->input('color'),
+            $request->input('brand'),
             new SubCategoryDTO(id:$request->input('sub_category_id')),
             new MeasureDTO(id: $request->input('measure_id')),
         );
@@ -201,8 +201,8 @@ class MaterialController extends Controller
             $id,
             $request->input('name'),
             $request->input('description'),
-            $request->input('brand'),
             $request->input('color'),
+            $request->input('brand'),
             new SubCategoryDTO(id:$request->input('sub_category_id')),
             new MeasureDTO(id: $request->input('measure_id')),
         );
@@ -254,4 +254,168 @@ class MaterialController extends Controller
             Response::HTTP_NO_CONTENT
         );
     }
+    /**
+     * @OA\Get(
+     *     path="/api/v1/materials/invoices/{id}",
+     *     summary="Get material with related invoices",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Material ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Material with invoices retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Material"),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Material not found"
+     *     )
+     * )
+     */
+    public function getWithInvoices(int $id): JsonResponse
+    {
+        $result = $this->service->getWithInvoices($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data retrieved successfully",
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/v1/materials/works/{id}",
+     *     summary="Get material with related works",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Material ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Material with works retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Material"),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Material not found"
+     *     )
+     * )
+     */
+    public function getWithWorks(int $id): JsonResponse
+    {
+        $result = $this->service->getWithWorks($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data retrieved successfully",
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/v1/materials/prices/{id}",
+     *     summary="Get material with related prices",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Material ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Material with prices retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Material"),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Material not found"
+     *     )
+     * )
+     */
+    public function getWithPrices(int $id): JsonResponse
+    {
+        $result = $this->service->getWithPrices($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data retrieved successfully",
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/v1/materials/stocks/{id}",
+     *     summary="Get material with related stocks",
+     *     tags={"Materials"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Material ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Material with stocks retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Material"),
+     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
+     *             @OA\Property(property="status", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Material not found"
+     *     )
+     * )
+     */
+    public function getWithStocks(int $id): JsonResponse
+    {
+        $result = $this->service->getWithStocks($id);
+
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse(
+            new MaterialResource($result),
+            "Data retrieved successfully",
+        );
+    }
+
 }

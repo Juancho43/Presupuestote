@@ -1200,6 +1200,198 @@
                 }
             }
         },
+        "/api/v1/materials/invoices/{id}": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Get material with related invoices",
+                "operationId": "d896215c528767ffc47eb7f55b8f4171",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Material ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Material with invoices retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Material"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Material not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/materials/works/{id}": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Get material with related works",
+                "operationId": "b6e00294e2d4c0f38a73d13d57d8510a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Material ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Material with works retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Material"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Material not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/materials/prices/{id}": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Get material with related prices",
+                "operationId": "f9a9c53d26523e52a9175056fde3711f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Material ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Material with prices retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Material"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Material not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/materials/stocks/{id}": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Get material with related stocks",
+                "operationId": "a16dfdc5b1b21ee4e668bf4c70a7cb43",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Material ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Material with stocks retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Material"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Material not found"
+                    }
+                }
+            }
+        },
         "/api/v1/measures": {
             "get": {
                 "tags": [

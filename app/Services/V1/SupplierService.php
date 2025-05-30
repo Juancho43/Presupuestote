@@ -98,7 +98,7 @@ class SupplierService
             return $this->repository->all();
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't retrieve dummies",
+                "Service Error: can't retrieve suppliers",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -130,7 +130,7 @@ class SupplierService
             return $newClient;
         } catch (Exception $e) {
             return $this->errorResponse(
-                "Service Error: can't create client",
+                "Service Error: can't create supplier",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -146,6 +146,7 @@ class SupplierService
     public function update(SupplierDTO $data): Model|JsonResponse
     {
         try {
+            $this->repository->update($data);
             $this->personRepository->update($data->person);
             return $this->get($data->id);
         } catch (Exception $e) {

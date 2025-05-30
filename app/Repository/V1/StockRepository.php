@@ -30,7 +30,7 @@ class StockRepository implements IRepository
      */
     public function find(int $id): Model
     {
-        $model = Stock::where('id', $id)->first();
+        $model = Stock::with('material')->find($id);
         if (!$model) {
             throw new Exception("Stock with id: {$id} not found");
         }
@@ -64,7 +64,7 @@ class StockRepository implements IRepository
     {
         $model = $this->find($data->id);
         if (!$model->update([
-            'quantity' => $data->stock,
+            'stock' => $data->stock,
             'material_id' => $data->material->id,
             'date' => $data->date,
         ])) {

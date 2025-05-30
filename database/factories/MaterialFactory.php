@@ -22,7 +22,7 @@ class MaterialFactory extends Factory
         'color' => $this->faker->colorName(),
         'brand' => $this->faker->company(),
         'measure_id' => \App\Models\Measure::factory(),
-        'subcategory_id' => \App\Models\SubCategory::factory(),
+        'sub_category_id' => \App\Models\SubCategory::factory(),
     ];
 
     }

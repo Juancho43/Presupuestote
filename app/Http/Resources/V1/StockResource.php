@@ -18,6 +18,7 @@ class StockResource extends JsonResource
             'id' => $this->id,
             'stock' => $this->stock,
             'date' => $this->date?->toDateString(),
+            'material' => new MaterialResource($this->whenLoaded('material')),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
             'deleted_at' => $this->deleted_at?->toDateTimeString()

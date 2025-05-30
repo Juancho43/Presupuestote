@@ -149,6 +149,7 @@ class EmployeeService
     public function update(EmployeeDTO $data): Model|JsonResponse
     {
         try {
+            $this->repository->update($data);
             $this->personRepository->update($data->person);
             return $this->get($data->id);
         } catch (Exception $e) {

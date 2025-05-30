@@ -167,4 +167,24 @@ class MaterialService
             );
         }
     }
+
+    public function getWithInvoices(int $id): Material|JsonResponse
+    {
+        return $this->repository->getWithInvoices($id);
+    }
+
+    public function getWithWorks(int $id): Material|JsonResponse
+    {
+        return $this->repository->getWithWorks($id);
+    }
+
+    public function getWithStocks(int $id): Material|JsonResponse
+    {
+        return $this->repository->getWithStocks($id);
+    }
+
+    public function getWithPrices(int $id): Material|JsonResponse
+    {
+        return $this->repository->getWithPrices($id);
+    }
 }

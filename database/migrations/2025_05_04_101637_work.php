@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('notes')->nullable();
             $table->integer('estimated_time');
-            $table->date('dead_line');
-            $table->decimal('cost', 10, 2);
+            $table->date('dead_line')->nullable();
+            $table->decimal('cost', 10, 2)->default(0);
             $table->foreignId('budget_id')->constrained()->onDelete('cascade');
             $table->string('state')->default('Presupuestado');
             $table->timestamps();

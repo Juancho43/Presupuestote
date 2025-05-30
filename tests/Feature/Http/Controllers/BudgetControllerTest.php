@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Budget;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -55,7 +54,8 @@ class BudgetControllerTest extends TestCase
                     'profit',
                     'price',
                     'payments',
-                    'works'
+                    'works',
+                    'client'
                ]
             ]);
 
@@ -63,7 +63,10 @@ class BudgetControllerTest extends TestCase
 
     public function test_store_creates_new_budget()
     {
-        $data = Budget::factory()->make()->toArray();
+        $data = Budget::factory()->create([
+            'made_date' => now(),
+            'dead_line' => now()->addDays(30),
+        ])->toArray();
 
         $response = $this->postJson('/api/v1/budgets', $data);
 
@@ -75,9 +78,14 @@ class BudgetControllerTest extends TestCase
 
     public function test_update_updates_existing_budget()
     {
-
+        $client = \App\Models\Client::factory()->create();
         $budget = Budget::factory()->create();
-        $data = Budget::factory()->make()->toArray();
+        $data = [
+            'client_id' => $client->id,
+            'description' => $this->faker->sentence,
+            'made_date' => now(),
+            'dead_line' => now()->addDays(30),
+        ];
 
         $response = $this->putJson("/api/v1/budgets/{$budget->id}", $data);
 
@@ -130,6 +138,20 @@ class BudgetControllerTest extends TestCase
                 ]
             ]);
 
+    }
+    public function test_can_change_state()
+    {
+        $budgets = Budget::factory()->create();
+        $response = $this->postJson('/api/v1/budgets/states/'.$budgets->id.'/Cancelado');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => "State changed successfully",
+                'data' => [
+                    'id' => $budgets->id,
+                    'state' => 'Cancelado'
+                ]
+            ]);
     }
 
 }
