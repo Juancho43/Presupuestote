@@ -69,7 +69,7 @@ class WorkService
      * @param int $id The entity ID
      * @return Work|JsonResponse The found entity or error response
      */
-    public function get(int $id): Model|JsonResponse
+    public function get(int $id): Work|JsonResponse
     {
         try {
             return $this->repository->find($id);
@@ -110,10 +110,11 @@ class WorkService
      * @param WorkDTO $data Data transfer object containing entity information
      * @return Work|JsonResponse The created entity or error response
      */
-    public function create(WorkDTO $data): Model|JsonResponse
+    public function create(WorkDTO $data): Work|JsonResponse
     {
         try {
-            return $this->repository->create($data);
+            $work = $this->repository->create($data);
+            return $work;
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't create Work",

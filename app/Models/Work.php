@@ -34,7 +34,7 @@ class Work extends Model
         'name' => 'string',
         'notes' => 'string',
         'estimated_time' => 'integer',
-        'dead_line' => 'date',
+        'dead_line' => 'datetime',
         'cost' => 'decimal:2',
         'state' => WorkState::class,
     ];

@@ -102,7 +102,7 @@ class PaymentControllerTest extends TestCase
             'payable_id' => $invoice->id,
         ]);
         $data = [
-            'amount' => $this->faker->randomFloat(2, 10, 200),
+            'amount' => 1,
             'date' => $this->faker->date(),
             'description' => $this->faker->sentence(),
             'payable_type' => 'App\\Models\\Invoice',

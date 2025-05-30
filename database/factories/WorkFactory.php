@@ -14,17 +14,17 @@ class WorkFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
-        return [
-            'order' => $this->faker->numberBetween(1, 100),
-            'name' => $this->faker->words(3, true),
-            'notes' => $this->faker->optional()->sentence(),
-            'estimated_time' => $this->faker->numberBetween(1, 100),
-            'dead_line' => $this->faker->date(),
-            'cost' => $this->faker->randomFloat(2, 100, 10000),
-            'budget_id' => \App\Models\Budget::factory(),
-            'state' => 'Presupuestado',
-        ];
-    }
+ public function definition(): array
+ {
+     return [
+         'order' => $this->faker->numberBetween(1, 100),
+         'name' => $this->faker->words(3, true),
+         'notes' => $this->faker->optional()->sentence(),
+         'estimated_time' => $this->faker->numberBetween(1, 100),
+         'dead_line' => $this->faker->date('Y-m-d'), // Explicitly format as Y-m-d
+         'cost' => $this->faker->randomFloat(2, 100, 10000),
+         'budget_id' => \App\Models\Budget::factory(),
+         'state' => 'Presupuestado',
+     ];
+ }
 }

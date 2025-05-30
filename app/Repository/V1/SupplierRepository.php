@@ -18,7 +18,7 @@ class SupplierRepository implements IRepository
      */
     public function all(): Collection
     {
-        return Supplier::all();
+        return Supplier::with(['person'])->get();
     }
 
     /**
@@ -30,7 +30,7 @@ class SupplierRepository implements IRepository
      */
     public function find(int $id): Model
     {
-        $model = Supplier::where('id', $id)->first();
+        $model = Supplier::with(['person','invoice'])->find($id);
         if (!$model) {
             throw new Exception("Supplier with id: {$id} not found");
         }
@@ -49,6 +49,7 @@ class SupplierRepository implements IRepository
         return Supplier::create([
             'balance' => $data->balance,
             'notes' => $data->notes,
+            'person_id' => $data->person->id,
         ]);
     }
 
@@ -63,8 +64,8 @@ class SupplierRepository implements IRepository
     {
         $model = $this->find($data->id);
         if (!$model->update([
-            'balance' => $data->balance,
-            'notes' => $data->notes,
+            'balance' => $data->balance ?? $model->balance,
+            'notes' => $data->notes ?? $model->notes,
         ])) {
             throw new Exception("Failed to update Supplier: Database update failed");
         }

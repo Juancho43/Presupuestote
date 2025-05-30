@@ -139,5 +139,19 @@ class BudgetControllerTest extends TestCase
             ]);
 
     }
+    public function test_can_change_state()
+    {
+        $budgets = Budget::factory()->create();
+        $response = $this->postJson('/api/v1/budgets/states/'.$budgets->id.'/Cancelado');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => "State changed successfully",
+                'data' => [
+                    'id' => $budgets->id,
+                    'state' => 'Cancelado'
+                ]
+            ]);
+    }
 
 }
