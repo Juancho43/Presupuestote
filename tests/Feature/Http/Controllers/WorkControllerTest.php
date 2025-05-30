@@ -9,11 +9,18 @@ use App\Models\Stock;
 use App\Models\Work;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class WorkControllerTest extends TestCase
 {
-    use RefreshDatabase,  WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_works_list(): void
     {
         Work::factory()->count(3)->create();

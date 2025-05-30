@@ -6,12 +6,18 @@ use App\Models\Employee;
 use App\Models\Salary;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class SalaryControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_salary_list(): void
     {
         Salary::factory()->count(3)->create();

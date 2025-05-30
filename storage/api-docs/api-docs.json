@@ -2137,6 +2137,171 @@
                 }
             }
         },
+        "/api/v1/people": {
+            "get": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Get all people",
+                "operationId": "ddb5527176c0b110bb6fbfcacf5d9dbe",
+                "responses": {
+                    "200": {
+                        "description": "List of people retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Person"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Create a new person",
+                "operationId": "0b929468d0ba920a9952fe05139ad9fe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Person created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/people/{id}": {
+            "get": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Get person by ID",
+                "operationId": "a9d2fb633bd55cf8add5e9acf37195ef",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Person ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Person found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Person not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Update an existing person",
+                "operationId": "ee680814b85b913b74f849538f8dd4f7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Person updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Delete a person",
+                "operationId": "e0d6e681f64d993ded7dfb785dec7217",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Person deleted successfully"
+                    },
+                    "404": {
+                        "description": "Person not found"
+                    }
+                }
+            }
+        },
         "/api/v1/prices": {
             "get": {
                 "tags": [
@@ -3692,6 +3857,44 @@
                 },
                 "type": "object"
             },
+            "PersonRequest": {
+                "required": [
+                    "name",
+                    "phone_number"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "example": "555-1234"
+                    },
+                    "mail": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "dni": {
+                        "type": "string",
+                        "example": "12345678"
+                    },
+                    "cuit": {
+                        "type": "string",
+                        "example": "20-12345678-9"
+                    }
+                },
+                "type": "object"
+            },
             "Price": {
                 "properties": {
                     "id": {
@@ -4038,6 +4241,10 @@
         {
             "name": "Payments",
             "description": "API Endpoints for Payment operations"
+        },
+        {
+            "name": "People",
+            "description": "Operations about people"
         },
         {
             "name": "Prices",

@@ -6,12 +6,18 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class PaymentControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_payment_list(): void
     {
         Payment::factory()->count(3)->create();

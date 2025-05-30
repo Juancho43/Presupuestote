@@ -7,11 +7,18 @@ use App\Models\Measure;
 use App\Models\SubCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class MaterialControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
 
     public function test_index_returns_materials_list(): void
     {

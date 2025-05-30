@@ -6,12 +6,18 @@ use App\Models\Material;
 use App\Models\Price;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class PriceControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_price_list(): void
     {
         Price::factory()->count(3)->create();

@@ -6,12 +6,18 @@ use App\Models\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class SupplierControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_suppliers_list(): void
     {
         Supplier::factory()->count(3)->create();
@@ -39,7 +45,6 @@ class SupplierControllerTest extends TestCase
                 ]
             ]);
     }
-
     public function test_show_returns_supplier_information()
     {
         $supplier = Supplier::factory()->create();
@@ -124,7 +129,6 @@ class SupplierControllerTest extends TestCase
                 ]
             ]);
     }
-
     public function test_delete_should_not_return_supplier()
     {
         $supplier = Supplier::factory()->create();

@@ -5,11 +5,18 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Measure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class MeasureControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
 
     public function test_index_returns_measure_list(): void
     {

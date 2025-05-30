@@ -6,12 +6,18 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class SubCategoryControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_categories_list(): void
     {
         SubCategory::factory()->count(3)->create();
@@ -29,7 +35,6 @@ class SubCategoryControllerTest extends TestCase
                 ]
             ]);
     }
-
     public function test_show_returns_subcategory_information()
     {
         $SubCategory = SubCategory::factory()->create();
@@ -45,7 +50,6 @@ class SubCategoryControllerTest extends TestCase
                 ]
             ]);
     }
-
     public function test_store_creates_new_subcategory()
     {
         $category = Category::factory()->create();
@@ -69,7 +73,6 @@ class SubCategoryControllerTest extends TestCase
             'category_id' => $data['category_id'],
         ]);
     }
-
     public function test_update_updates_existing_subcategory()
     {
         $category = Category::factory()->create();
@@ -95,8 +98,6 @@ class SubCategoryControllerTest extends TestCase
             'category_id' => $data['category_id'],
         ]);
     }
-
-
     public function test_delete_should_not_return_subcategory()
     {
         $subcategory = SubCategory::factory()->create();

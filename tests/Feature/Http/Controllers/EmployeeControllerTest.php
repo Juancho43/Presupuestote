@@ -6,12 +6,18 @@ use App\Models\Employee;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class EmployeeControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_employees_list(): void
     {
         Employee::factory()->count(3)->create();

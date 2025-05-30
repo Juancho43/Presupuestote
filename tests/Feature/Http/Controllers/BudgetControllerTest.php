@@ -5,11 +5,18 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Budget;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class BudgetControllerTest extends TestCase
 {
-    use RefreshDatabase,  WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_budgets_list(): void
     {
         Budget::factory()->count(3)->create();

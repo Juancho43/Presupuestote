@@ -6,11 +6,18 @@ use App\Models\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class ClientControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
 
     public function test_index_returns_clients_list(): void
     {

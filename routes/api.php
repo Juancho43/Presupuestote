@@ -9,6 +9,7 @@ use App\Http\Controllers\V1\InvoiceController;
 use App\Http\Controllers\V1\MaterialController;
 use App\Http\Controllers\V1\MeasureController;
 use App\Http\Controllers\V1\PaymentController;
+use App\Http\Controllers\V1\PersonController;
 use App\Http\Controllers\V1\PriceController;
 use App\Http\Controllers\V1\SalaryController;
 use App\Http\Controllers\V1\StockController;

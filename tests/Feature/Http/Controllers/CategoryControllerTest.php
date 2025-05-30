@@ -5,12 +5,18 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Traits\WithAuthentication;
 use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, WithAuthentication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->authenticateUser();
+    }
     public function test_index_returns_categories_list(): void
     {
         Category::factory()->count(3)->create();
@@ -87,7 +93,6 @@ class CategoryControllerTest extends TestCase
             'name' => $data['name'],
         ]);
     }
-
 
     public function test_delete_should_not_return_category()
     {
