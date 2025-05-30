@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\ClientDTO;
-use App\Http\Resources\V1\WorkResource;
 use App\Services\V1\BudgetService;
 use App\DTOs\V1\BudgetDTO;
 use App\Http\Requests\V1\BudgetRequest;
@@ -13,7 +12,6 @@ use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use OpenApi\Annotations as OA;
 
 
 /**
