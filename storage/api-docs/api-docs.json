@@ -231,6 +231,76 @@
                 ]
             }
         },
+        "/api/auth/authorize": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Authorize a user (admin only)",
+                "operationId": "2278423de6e0b92756aed6f3e80e28b6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "description": "ID of the user to authorize",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User authorized successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "User": {
+                                                    "type": "object"
+                                                },
+                                                "Role": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized - Not an admin"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/budgets": {
             "get": {
                 "tags": [

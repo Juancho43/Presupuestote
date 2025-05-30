@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => 'password',
+            'role' => 'admin',
+            'verified' => true,
         ]);
 
         $this->call([ClientNestedDataSeeder::class, SupplierNestedDataSeeder::class, EmployeeNestedDataSeeder::class, MaterialWithStockAndPriceSeeder::class]);

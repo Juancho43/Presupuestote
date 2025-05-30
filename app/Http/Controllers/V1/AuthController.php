@@ -4,7 +4,9 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
@@ -55,11 +57,15 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (!auth()->attempt($credentials)) {
-            return $this->errorResponse('Unauthorized', 401);
+        if (!auth()->attempt($credentials) ) {
+            return $this->errorResponse('Unauthorized', 401, Response::HTTP_UNAUTHORIZED);
         }
 
         $user = auth()->user();
+        if (!$user->verified) {
+            return $this->errorResponse('User not verified', 403,Response::HTTP_FORBIDDEN);
+        }
+
         $token = $user->createToken('authToken')->plainTextToken;
 
         return $this->successResponse([
@@ -146,11 +152,9 @@ class AuthController extends Controller
             'password' => bcrypt(request('password')),
         ]);
 
-        $token = $user->createToken('authToken')->plainTextToken;
 
         return $this->successResponse([
             'user' => $user,
-            'token' => $token,
         ]);
     }
 
@@ -178,5 +182,53 @@ class AuthController extends Controller
     public function user()
     {
         return $this->successResponse(auth()->user());
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/authorize",
+     *     summary="Authorize a user (admin only)",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"user_id"},
+     *             @OA\Property(property="user_id", type="integer", description="ID of the user to authorize")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User authorized successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="User", type="object"),
+     *                 @OA\Property(property="Role", type="string")
+     *             ),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="status", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized - Not an admin"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function authorize(FormRequest $request){
+        if(auth()->user()->role !== 'admin'){
+            return $this->errorResponse('Unauthorized', 403);
+        }
+
+        $userId = $request->input('user_id');
+        $user = User::find($userId);
+        $user->role = 'user';
+        $user->verified = true;
+        $user->save();
+        return $this->successResponse(['User' => $user, 'Role' => $user->role],'User authorized successfully',);
     }
 }
