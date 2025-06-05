@@ -170,4 +170,44 @@ class PersonService
             );
         }
     }
+
+    public function search(string $entity, string $search): Collection|JsonResponse
+    {
+        try {
+            $people = $this->repository->search($search);
+            $results = null;
+           // Filter results based on entity type
+            if ($entity === 'client') {
+//                $results = ClientService::getInstance()->search($search);
+                $results =  $people->filter(function ($person) {
+                    return $person->client()->exists();
+                })->map(function ($person) {
+                    return $person->client()->with('person')->get()->first();
+
+                })->values();
+            } elseif ($entity === 'employee') {
+                $results =  $people->filter(function ($person) {
+                    return $person->employee()->exists();
+                })->map(function ($person) {
+                    return $person->employee()->with('person')->get()->first();
+
+                })->values();
+            } elseif ($entity === 'supplier') {
+                $results =  $people->filter(function ($person) {
+                    return $person->supplier()->exists();
+                })->map(function ($person) {
+                    return $person->supplier()->with('person')->get()->first();
+                })->values();
+
+            }
+
+            return $results;
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't search People",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }

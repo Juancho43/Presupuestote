@@ -4,13 +4,13 @@ namespace App\Http\Controllers\V1;
 use App\DTOs\V1\PersonDTO;
 use App\Http\Requests\V1\PersonRequest;
 use App\Http\Requests\V1\PersonUpdateRequest;
+use App\Http\Resources\V1\IPersonResourceCollection;
 use App\Http\Resources\V1\PersonResource;
 use App\Http\Resources\V1\PersonResourceCollection;
-use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Services\V1\PersonService;
-use Illuminate\Routing\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -251,5 +251,21 @@ class PersonController extends Controller
             "Data deleted successfully",
             Response::HTTP_NO_CONTENT
         );
+    }
+
+    public function search(string $entity, string $search): JsonResponse
+    {
+        try {
+            $result = $this->service->search($entity, $search);
+            return $this->successResponse(
+                new IPersonResourceCollection($result),
+                "Search results retrieved successfully",
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Error retrieving search results: " . $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

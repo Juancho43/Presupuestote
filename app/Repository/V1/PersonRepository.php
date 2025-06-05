@@ -95,4 +95,17 @@ class PersonRepository implements IRepository
     {
         return $this->find($id)->delete();
     }
+
+    public function search(string $query): Collection
+    {
+        return Person::where(function ($q) use ($query) {
+            $q->where('name', 'LIKE', "%{$query}%")
+                ->orWhere('last_name', 'LIKE', "%{$query}%")
+                ->orWhere('mail', 'LIKE', "%{$query}%")
+                ->orWhere('dni', 'LIKE', "%{$query}%")
+                ->orWhere('cuit', 'LIKE', "%{$query}%");
+        })
+        ->with(['employee', 'supplier', 'client'])
+        ->get();
+    }
 }

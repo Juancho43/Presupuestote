@@ -28,7 +28,7 @@ class Employee extends Model
     ];
     public function person() : BelongsTo
     {
-        return $this->belongsTo(Person::class, 'person_id');
+        return $this->belongsTo(Person::class);
     }
     public function salaries() : HasMany
     {

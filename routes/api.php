@@ -65,6 +65,6 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
     Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
 
-
+    Route::post('people/search/{entity}/{search}', [PersonController::class, 'search'])->name('people.search');
 });
 
