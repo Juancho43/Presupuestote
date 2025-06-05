@@ -99,11 +99,10 @@ class PersonRepository implements IRepository
     public function search(string $query): Collection
     {
         return Person::where(function ($q) use ($query) {
-            $q->where('name', 'LIKE', "%{$query}%")
+                $q->where('name', 'LIKE', "%{$query}%")
                 ->orWhere('last_name', 'LIKE', "%{$query}%")
-                ->orWhere('mail', 'LIKE', "%{$query}%")
-                ->orWhere('dni', 'LIKE', "%{$query}%")
-                ->orWhere('cuit', 'LIKE', "%{$query}%");
+                ->orWhere('phone_number', 'LIKE', "%{$query}%")
+                ;
         })
         ->with(['employee', 'supplier', 'client'])
         ->get();

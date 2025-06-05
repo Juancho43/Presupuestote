@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\ClientDTO;
+use App\Models\Budget;
 use App\Services\V1\BudgetService;
 use App\DTOs\V1\BudgetDTO;
 use App\Http\Requests\V1\BudgetRequest;
@@ -129,7 +130,7 @@ class BudgetController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $result = $this->service->get($id);
+        $result = $this->service->get( (int) $id);
 
         if ($result instanceof JsonResponse) {
             return $result;
@@ -372,6 +373,17 @@ class BudgetController extends Controller
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
+        }
+    }
+
+    public function getStates() : JsonResponse
+    {
+        try {
+            // Assuming Budget::getStates() returns an array of states
+            return  $this->successResponse(Budget::getStates(), "States retrieved successfully", Response::HTTP_OK);
+
+        }catch (Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
 }

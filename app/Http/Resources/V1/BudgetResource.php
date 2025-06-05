@@ -23,7 +23,7 @@
                 'payment_status' => $this->payment_status,
                 'cost' => $this->cost,
                 'profit' => $this->profit,
-                'price' => $this->price,
+                'total' => $this->price,
                 'client' => new ClientResource($this->whenLoaded('client')),
                 'payments' => PaymentResource::collection($this->whenLoaded('payments')),
                 'works' => WorkResource::collection($this->whenLoaded('works')),
