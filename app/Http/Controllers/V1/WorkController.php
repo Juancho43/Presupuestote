@@ -3,6 +3,7 @@ namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\BudgetDTO;
 use App\Http\Requests\V1\AddMaterialsToWorksRequest;
+use App\Models\Work;
 use App\Services\V1\WorkService;
 use App\DTOs\V1\WorkDTO;
 use App\Http\Requests\V1\WorkRequest;
@@ -325,6 +326,17 @@ class WorkController extends Controller
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
+        }
+    }
+
+    public function getStates() : JsonResponse
+    {
+        try {
+
+            return  $this->successResponse(Work::getStates(), "States retrieved successfully", Response::HTTP_OK);
+
+        }catch (Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
 }

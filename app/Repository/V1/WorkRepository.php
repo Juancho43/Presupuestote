@@ -30,7 +30,7 @@ class WorkRepository implements IRepository
      */
     public function find(int $id): Model
     {
-        $model = Work::with(['materials.prices','budget'])->find($id);
+        $model = Work::with(['materials','materials.measure','budget'])->find($id);
         if (!$model) {
             throw new Exception("Work with id: {$id} not found");
         }
@@ -51,7 +51,7 @@ class WorkRepository implements IRepository
             'name' => $data->name,
             'notes' => $data->notes,
             'estimated_time' => $data->estimated_time,
-            'deadline' => $data->dead_line,
+            'dead_line' => $data->dead_line,
             'status' => $data->cost ?? 0,
             'budget_id' => $data->budget->id,
         ]);
@@ -72,7 +72,7 @@ class WorkRepository implements IRepository
             'name' => $data->name,
             'notes' => $data->notes,
             'estimated_time' => $data->estimated_time,
-            'deadline' => $data->dead_line,
+            'dead_line' => $data->dead_line,
             'status' => $data->cost ?? 0,
             'budget_id' => $data->budget->id,
         ])) {

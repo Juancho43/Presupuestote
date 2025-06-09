@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'verified' => true,
         ]);
 
-        $this->call([ClientNestedDataSeeder::class, SupplierNestedDataSeeder::class, EmployeeNestedDataSeeder::class, MaterialWithStockAndPriceSeeder::class]);
+        $this->call([ClientNestedDataSeeder::class, SupplierNestedDataSeeder::class, EmployeeNestedDataSeeder::class, MaterialWithStockAndPriceSeeder::class, WorkWithMultipleMaterialsSeeder::class]);
 
     }
 

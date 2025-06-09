@@ -24,7 +24,7 @@
                 'cost' => $this->cost,
                 'profit' => $this->profit,
                 'total' => $this->price,
-                'client' => new ClientResource($this->whenLoaded('client')),
+                'owner' => new ClientResource($this->whenLoaded('client')),
                 'payments' => PaymentResource::collection($this->whenLoaded('payments')),
                 'works' => WorkResource::collection($this->whenLoaded('works')),
                 'created_at' => $this->created_at?->toDateTimeString(),
