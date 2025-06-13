@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\DTOs\V1\BudgetDTO;
 use App\Models\Budget;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -105,4 +106,8 @@ class BudgetRepository implements IRepository
         return $this->find($id)->delete();
     }
 
+    public function getAll(): Collection
+    {
+        return Budget::with('client.person')->get();
+    }
 }

@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Supplier;
 use App\DTOs\V1\SupplierDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class SupplierRepository implements IRepository
     /**
      * Get all Suppliers
      *
-     * @return Collection Collection of Supplier models
+     * @return Paginator Collection of Supplier models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Supplier::with(['person'])->get();
+        return Supplier::with(['person'])->simplePaginate(getenv('PER_PAGE'), page:$page);
     }
 
     /**
@@ -83,5 +84,10 @@ class SupplierRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Supplier::with(['person'])->get();
     }
 }

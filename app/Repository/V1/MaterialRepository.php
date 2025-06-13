@@ -146,4 +146,13 @@ class MaterialRepository implements IRepository
         return $model;
     }
 
+    public function getAll(): Collection
+    {
+        return Material::with([
+            'measure',
+            'subcategory',
+            'latestPrice',
+            'latestStock',
+        ])->get();
+    }
 }

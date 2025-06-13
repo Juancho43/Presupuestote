@@ -385,17 +385,6 @@ class BudgetController extends Controller
         }
     }
 
-    public function getPaginate()
-    {
-        $results = $this->service->paginate();
-        if ($results instanceof JsonResponse) {
-            return $results;
-        }
-        return $this->successResponse(
-            new BudgetResourceCollection($results),
-            "Data retrieved successfully",
-            Response::HTTP_OK
-        );
-    }
+
 
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use \Exception;
 
 
-class UserRepository implements IRepository
+class UserRepository
 {
     /**
      * Get all Users

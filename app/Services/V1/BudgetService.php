@@ -89,7 +89,7 @@ class BudgetService
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Collection|JsonResponse
+    public function getAll(): Paginator|JsonResponse
     {
         try {
             return $this->repository->all();
@@ -193,16 +193,4 @@ class BudgetService
         }
     }
 
-    public function paginate() : Paginator | JsonResponse
-    {
-        try {
-            return $this->repository->getAllPaginate();
-        }catch (Exception $e) {
-            return $this->errorResponse(
-                "Service Error: can't paginate Budgets",
-                $e->getMessage(),
-                Response::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
-    }
 }

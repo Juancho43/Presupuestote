@@ -332,9 +332,7 @@ class WorkController extends Controller
     public function getStates() : JsonResponse
     {
         try {
-
             return  $this->successResponse(Work::getStates(), "States retrieved successfully", Response::HTTP_OK);
-
         }catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }

@@ -5,6 +5,7 @@ namespace App\Repository\V1;
 use App\DTOs\V1\ClientDTO;
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
 
@@ -87,5 +88,10 @@ class ClientRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Client::with('person')->get();
     }
 }

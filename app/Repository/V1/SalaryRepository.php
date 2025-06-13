@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Salary;
 use App\DTOs\V1\SalaryDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class SalaryRepository implements IRepository
     /**
      * Get all Salarys
      *
-     * @return Collection Collection of Salary models
+     * @return Paginator Collection of Salary models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Salary::with('employee.person')->get();
+        return Salary::with('employee.person')->simplePaginate(getenv('PER_PAGE'),$page);
     }
 
     /**
@@ -86,5 +87,10 @@ class SalaryRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Salary::with(['employee.person', 'payments'])->get();
     }
 }

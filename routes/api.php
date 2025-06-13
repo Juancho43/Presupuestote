@@ -32,20 +32,20 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 
     //Crud entities routes
     Route::resource('clients', ClientController::class)->names('clients')->except('index');
-    Route::resource('people', PersonController::class)->names('people');
-    Route::resource('suppliers', SupplierController::class)->names('suppliers');
-    Route::resource('employees', EmployeeController::class)->names('employees');
-    Route::resource('salaries', SalaryController::class)->names('salaries');
-    Route::resource('invoices', InvoiceController::class)->names('invoices');
-    Route::resource('budgets', BudgetController::class)->names('budgets');
-    Route::resource('works', WorkController::class)->names('works');
-    Route::resource('payments', PaymentController::class)->names('payments');
-    Route::resource('materials', MaterialController::class)->names('materials');
-    Route::resource('prices', PriceController::class)->names('prices');
-    Route::resource('stocks', StockController::class)->names('stocks');
-    Route::resource('categories', CategoryController::class)->names('categories');
-    Route::resource('subcategories', SubCategoryController::class)->names('subcategories');
-    Route::resource('measures', MeasureController::class)->names('measures');
+    Route::resource('people', PersonController::class)->names('people')->except('index');
+    Route::resource('suppliers', SupplierController::class)->names('suppliers')->except('index');
+    Route::resource('employees', EmployeeController::class)->names('employees')->except('index');
+    Route::resource('salaries', SalaryController::class)->names('salaries')->except('index');
+    Route::resource('invoices', InvoiceController::class)->names('invoices')->except('index');
+    Route::resource('budgets', BudgetController::class)->names('budgets')->except('index');
+    Route::resource('works', WorkController::class)->names('works')->except('index');
+    Route::resource('payments', PaymentController::class)->names('payments')->except('index');
+    Route::resource('materials', MaterialController::class)->names('materials')->except('index');
+    Route::resource('prices', PriceController::class)->names('prices')->except('index');
+    Route::resource('stocks', StockController::class)->names('stocks')->except('index');
+    Route::resource('categories', CategoryController::class)->names('categories')->except('index');
+    Route::resource('subcategories', SubCategoryController::class)->names('subcategories')->except('index');
+    Route::resource('measures', MeasureController::class)->names('measures')->except('index');
     //Pricing
     Route::get('budgets/updatePrice/{id}', [BudgetController::class, 'updateBudgetPrice'])->name('budgets.updatePrice');
     Route::get('invoices/updateTotal/{id}', [InvoiceController::class, 'updateInvoiceTotal'])->name('invoices.updateTotal');
@@ -71,8 +71,22 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
    Route::get('works/states/get',[WorkController::class, 'getStates'])->name('works.states');
 
    //Pagination
-    Route::get('budgets/paginate/get', [BudgetController::class, 'getPaginated'])->name('budgets.paginate');
+    Route::get('people/paginate/{page}', [PersonController::class, 'index'])->name('people.index');
+    Route::get('suppliers/paginate/{page}', [SupplierController::class, 'index'])->name('suppliers.index');
+    Route::get('employees/paginate/{page}', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('salaries/paginate/{page}', [SalaryController::class, 'index'])->name('salaries.index');
+    Route::get('invoices/paginate/{page}', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('budgets/paginate/{page}', [BudgetController::class, 'index'])->name('budgets.index');
     Route::get('clients/paginate/{page}', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('works/paginate/{page}', [WorkController::class, 'index'])->name('works.index');
+    Route::get('payments/paginate/{page}', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('materials/paginate/{page}', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('prices/paginate/{page}', [PriceController::class, 'index'])->name('prices.index');
+    Route::get('stocks/paginate/{page}', [StockController::class, 'index'])->name('stocks.index');
+    Route::get('categories/paginate/{page}', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('subcategories/paginate/{page}', [SubCategoryController::class, 'index'])->name('subcategories.index');
+    Route::get('measures/paginate/{page}', [MeasureController::class, 'index'])->name('measures.index');
+
 
 });
 

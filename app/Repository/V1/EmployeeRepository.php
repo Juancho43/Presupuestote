@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\DTOs\V1\EmployeeDTO;
 use App\Models\Employee;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class EmployeeRepository implements IRepository
     /**
      * Get all Employees
      *
-     * @return Collection Collection of Employee models
+     * @return Paginator Collection of Employee models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Employee::with('person')->get();
+        return Employee::with('person')->simplePaginate(getenv('PER_PAGE'),$page);
     }
 
     /**
@@ -87,5 +88,10 @@ class EmployeeRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Employee::with('person')->get();
     }
 }

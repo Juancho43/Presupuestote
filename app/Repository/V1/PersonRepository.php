@@ -109,4 +109,9 @@ class PersonRepository implements IRepository
         ->with(['employee', 'supplier', 'client'])
         ->get();
     }
+
+    public function getAll(): Collection
+    {
+        return Person::all();
+    }
 }

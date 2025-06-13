@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Measure;
 use App\DTOs\V1\MeasureDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class MeasureRepository implements IRepository
     /**
      * Get all Measures
      *
-     * @return Collection Collection of Measure models
+     * @return Paginator Collection of Measure models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Measure::all();
+        return Measure::simplePaginate(getenv('PER_PAGE'),$page);
     }
 
     /**
@@ -82,5 +83,10 @@ class MeasureRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Measure::all();
     }
 }

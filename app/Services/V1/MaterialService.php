@@ -6,6 +6,7 @@ use App\Repository\V1\MaterialRepository;
 use App\DTOs\V1\MaterialDTO;
 use App\Models\Material;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -86,9 +87,9 @@ class MaterialService
     /**
      * Retrieve all Material entities
      *
-     * @return Collection|JsonResponse Collection of entities or error response
+     * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Collection|JsonResponse
+    public function getAll(): Paginator|JsonResponse
     {
         try {
             return $this->repository->all();

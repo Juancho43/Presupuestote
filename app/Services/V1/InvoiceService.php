@@ -12,6 +12,7 @@ use App\Repository\V1\PriceRepository;
 use App\Repository\V1\StockRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -105,9 +106,9 @@ class InvoiceService
     /**
      * Retrieve all Invoice entities
      *
-     * @return Collection|JsonResponse Collection of entities or error response
+     * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Collection|JsonResponse
+    public function getAll(): Paginator|JsonResponse
     {
         try {
             return $this->repository->all();

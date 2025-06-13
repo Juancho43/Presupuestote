@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Stock;
 use App\DTOs\V1\StockDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -16,9 +17,9 @@ class StockRepository implements IRepository
      * @return Collection Collection of Stock models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Stock::all();
+        return Stock::simplePaginate(getenv('PER_PAGE'), $page);
     }
 
     /**
@@ -84,5 +85,10 @@ class StockRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Stock::all();
     }
 }

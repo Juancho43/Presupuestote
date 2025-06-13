@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\SubCategory;
 use App\DTOs\V1\SubCategoryDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -14,12 +15,12 @@ class SubCategoryRepository implements IRepository
      *
      * Get all SubCategorys
      *
-     * @return Collection Collection of SubCategory models
+     * @return Paginator Collection of SubCategory models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return SubCategory::with('category')->get();
+        return SubCategory::with('category')->simplePaginate(getenv('PER_PAGE'), $page);
     }
 
     /**
@@ -83,5 +84,10 @@ class SubCategoryRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return SubCategory::with('category')->get();
     }
 }

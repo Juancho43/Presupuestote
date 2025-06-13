@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Price;
 use App\DTOs\V1\PriceDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class PriceRepository implements IRepository
     /**
      * Get all Prices
      *
-     * @return Collection Collection of Price models
+     * @return Paginator Collection of Price models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Price::all();
+        return Price::simplePaginator(getenv('PER_PAGE'), $page);
     }
 
     /**
@@ -87,5 +88,10 @@ class PriceRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Price::with(['material'])->get();
     }
 }

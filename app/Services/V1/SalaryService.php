@@ -6,6 +6,7 @@ use App\Repository\V1\SalaryRepository;
 use App\DTOs\V1\SalaryDTO;
 use App\Models\Salary;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -86,9 +87,9 @@ class SalaryService
     /**
      * Retrieve all Salary entities
      *
-     * @return Collection|JsonResponse Collection of entities or error response
+     * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Collection|JsonResponse
+    public function getAll(): Paginator|JsonResponse
     {
         try {
             return $this->repository->all();

@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Invoice;
 use App\DTOs\V1\InvoiceDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class InvoiceRepository implements IRepository
     /**
      * Get all Invoices
      *
-     * @return Collection Collection of Invoice models
+     * @return Paginator Collection of Invoice models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Invoice::with(['supplier.person'])->get();
+        return Invoice::with(['supplier.person'])->simplePaginate(getenv('PER_PAGE'),$page);
     }
 
     /**
@@ -89,4 +90,8 @@ class InvoiceRepository implements IRepository
         return $this->find($id)->delete();
     }
 
+    public function getAll(): Collection
+    {
+        return Invoice::with(['supplier.person'])->get();
+    }
 }

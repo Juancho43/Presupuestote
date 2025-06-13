@@ -4,6 +4,7 @@ namespace App\Repository\V1;
 
 use App\DTOs\V1\CategoryDTO;
 use App\Models\Category;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -14,12 +15,12 @@ class CategoryRepository implements IRepository
     /**
      * Get all Categorys
      *
-     * @return Collection Collection of Category models
+     * @return Paginator Collection of Category models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Category::all();
+        return Category::simplePaginate(getenv('PER_PAGE'), $page);
     }
 
     /**
@@ -80,5 +81,10 @@ class CategoryRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Category::with('subcategories')->get();
     }
 }

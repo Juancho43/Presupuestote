@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\DTOs\V1\PaymentDTO;
 use App\Models\Salary;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -19,9 +20,9 @@ class PaymentRepository implements IRepository
      * @return Collection Collection of Payment models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Payment::all();
+        return Payment::simplePaginate(getenv('PER_PAGE'),$page);
     }
 
     /**
@@ -112,5 +113,10 @@ class PaymentRepository implements IRepository
         return Payment::whereHasMorph('payable', [Salary::class], function ($query) use ($employeeId) {
             $query->where('employee_id', $employeeId);
         })->with('payable:id,date')->get();
+    }
+
+    public function getAll(): Collection
+    {
+        return Payment::all();
     }
 }

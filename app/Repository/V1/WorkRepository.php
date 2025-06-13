@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Work;
 use App\DTOs\V1\WorkDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,12 +14,12 @@ class WorkRepository implements IRepository
     /**
      * Get all Works
      *
-     * @return Collection Collection of Work models
+     * @return Paginator Collection of Work models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Work::with('budget')->get();
+        return Work::with('budget')->simplePaginate(getenv('PER_PAGE'), page:$page);
     }
 
     /**
@@ -92,5 +93,10 @@ class WorkRepository implements IRepository
     public function delete(int $id): bool
     {
         return $this->find($id)->delete();
+    }
+
+    public function getAll(): Collection
+    {
+        return Work::with('budget')->get();
     }
 }
