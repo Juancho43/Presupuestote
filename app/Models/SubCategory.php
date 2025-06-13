@@ -23,7 +23,7 @@ class SubCategory extends Model
 
     public function material() : BelongsToMany
     {
-        return $this->belongsToMany(Material::class);
+        return $this->belongsToMany(Material::class, 'material', 'sub_category_id');
     }
     public function category() : BelongsTo
     {

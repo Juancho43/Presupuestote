@@ -25,7 +25,7 @@ class MaterialResource extends JsonResource
             'latestPrice' => new PriceResource($this->latestPrice),
             'works' => WorkResource::collection($this->whenLoaded('works')),
             'invoices' => InvoiceResource::collection($this->whenLoaded('invoices')),
-            'subcategory' => new SubCategoryResource($this->whenLoaded('subcategory')),
+            'sub_category' => new SubCategoryResource($this->whenLoaded('subcategory')),
             'prices' => PriceResource::collection($this->whenLoaded('prices')),
             'stocks' => StockResource::collection($this->whenLoaded('stocks')),
             'measure' => new MeasureResource($this->whenLoaded('measure')),

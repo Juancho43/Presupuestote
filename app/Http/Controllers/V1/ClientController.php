@@ -193,7 +193,7 @@ class ClientController extends Controller
         );
     }
 
-/**
+    /**
  * @OA\Put(
  *     path="/api/v1/clients/{id}",
  *     summary="Update an existing client",
@@ -223,7 +223,7 @@ class ClientController extends Controller
  *     )
  * )
  */
-public function update(int $id, PersonUpdateRequest $request): JsonResponse
+    public function update(int $id, PersonUpdateRequest $request): JsonResponse
     {
          $clientDTO = new ClientDTO(
             $id,
