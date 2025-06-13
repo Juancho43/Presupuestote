@@ -14,11 +14,6 @@ class EmployeeNestedDataSeeder extends Seeder
     {
         // Create a person for the employee
         $person = Person::factory()->create([
-            'name' => 'James',
-            'last_name' => 'Wilson',
-            'phone_number' => '5554443322',
-            'mail' => 'james.wilson@company.com',
-            'dni' => '444555666',
         ]);
 
         // Create an employee

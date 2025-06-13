@@ -19,11 +19,6 @@ class SupplierNestedDataSeeder extends Seeder
     {
         // Create a person for the supplier
         $person = Person::factory()->create([
-            'name' => 'Robert',
-            'last_name' => 'Smith',
-            'phone_number' => '9876543210',
-            'mail' => 'robert.smith@supplier.com',
-            'dni' => '987654321',
         ]);
 
         // Create a supplier
@@ -50,6 +45,7 @@ class SupplierNestedDataSeeder extends Seeder
             'color' => 'Natural',
             'brand' => 'WoodCraft',
             'sub_category_id' => $subCategory->id,
+            'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
         ]);
 
         $material2 = Material::factory()->create([
@@ -58,6 +54,7 @@ class SupplierNestedDataSeeder extends Seeder
             'color' => 'Brown',
             'brand' => 'WoodCraft',
             'sub_category_id' => $subCategory->id,
+            'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
         ]);
 
         // Create prices for materials

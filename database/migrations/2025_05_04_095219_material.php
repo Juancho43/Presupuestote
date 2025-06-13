@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('color')->nullable();
             $table->string('brand')->nullable();
             $table->text('description')->nullable();
+            $table->decimal('unit_measure', 8, 2);
             $table->foreignId('measure_id')->constrained()->onDelete('cascade');
             $table->foreignId('sub_category_id')->constrained('sub_categories')->onDelete('cascade');
             $table->timestamps();

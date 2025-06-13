@@ -56,6 +56,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'High-quality construction cement',
                 'brand' => 'CementCo',
                 'measure_id' => 1, // kg
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 500,
                 'price' => 0.15,
                 'stock' => 1000,
@@ -65,6 +66,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'Reinforcement steel bars',
                 'brand' => 'SteelMaster',
                 'measure_id' => 2, // m
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 200,
                 'price' => 5.75,
                 'stock' => 500,
@@ -74,6 +76,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'Floor tiles 30x30cm',
                 'brand' => 'TilePro',
                 'measure_id' => 3, // m²
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 100,
                 'price' => 12.50,
                 'stock' => 250,
@@ -83,6 +86,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'Aluminum window frame 1x1.2m',
                 'brand' => 'WindowTech',
                 'measure_id' => 4, // unit
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 8,
                 'price' => 75.00,
                 'stock' => 15,
@@ -92,6 +96,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'Interior wall paint',
                 'brand' => 'ColorMax',
                 'measure_id' => 5, // l
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 50,
                 'price' => 8.25,
                 'stock' => 200,
@@ -101,6 +106,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => '20x20x40cm construction blocks',
                 'brand' => 'BlockMaster',
                 'measure_id' => 4, // unit
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 1000,
                 'price' => 2.15,
                 'stock' => 2000,
@@ -110,6 +116,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'Fine construction sand',
                 'brand' => 'Generic',
                 'measure_id' => 1, // kg
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 2000,
                 'price' => 0.05,
                 'stock' => 5000,
@@ -119,6 +126,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'description' => 'Construction gravel 20mm',
                 'brand' => 'Generic',
                 'measure_id' => 1, // kg
+                'unit_measure' => 1.00, // Assuming unit measure is in cubic meters
                 'quantity' => 1500,
                 'price' => 0.08,
                 'stock' => 4000,
@@ -133,6 +141,7 @@ class WorkWithMultipleMaterialsSeeder extends Seeder
                 'brand' => $materialData['brand'],
                 'sub_category_id' => 1, // Ensure this category exists
                 'measure_id' => $materialData['measure_id'],
+                'unit_measure' => $materialData['unit_measure'],
             ]);
 
             $price = Price::create([

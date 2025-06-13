@@ -18,6 +18,7 @@ class MaterialRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'color' => ['nullable', 'string', 'max:50'],
             'brand' => ['nullable', 'string', 'max:100'],
+            'unit_measure' => ['required', 'numeric', 'min:0'],
             'sub_category_id' => ['required', 'exists:sub_categories,id'],
             'measure_id' => ['required', 'exists:measures,id'],
         ];

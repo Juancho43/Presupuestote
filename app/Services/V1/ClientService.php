@@ -9,6 +9,7 @@ use App\DTOs\V1\ClientDTO;
 use App\Models\Client;
 use App\Repository\V1\PersonRepository;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -97,10 +98,10 @@ class ClientService
      *
      * @return Collection|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Collection|JsonResponse
+    public function getAll(int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->all();
+            return $this->repository->all($page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve dummies",

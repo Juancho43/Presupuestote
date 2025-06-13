@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
+        //for testing purposes, create an admin user
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -22,7 +22,18 @@ class DatabaseSeeder extends Seeder
             'verified' => true,
         ]);
 
-        $this->call([ClientNestedDataSeeder::class, SupplierNestedDataSeeder::class, EmployeeNestedDataSeeder::class, MaterialWithStockAndPriceSeeder::class, WorkWithMultipleMaterialsSeeder::class]);
+        for ($i = 0; $i < 2; $i++) {
+
+
+            $this->call([
+                ClientNestedDataSeeder::class,
+                SupplierNestedDataSeeder::class,
+                EmployeeNestedDataSeeder::class,
+                MaterialWithStockAndPriceSeeder::class,
+                WorkWithMultipleMaterialsSeeder::class,
+                ExtendedMaterialSeeder::class
+            ]);
+        }
 
     }
 

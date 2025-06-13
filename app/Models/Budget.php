@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\States\BudgetState\BudgetState;
 use App\States\PaymentState\PaymentState;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\ModelStates\HasStates;
 
-class Budget extends Model
+class Budget extends Model implements IOwnable
 {
     use HasFactory;
     use SoftDeletes;
@@ -88,4 +89,18 @@ class Budget extends Model
         return $this;
     }
 
+    public function getPaymentStatus(): PaymentState
+    {
+        return $this->payment_status;
+    }
+
+    public function getDate(): Carbon
+    {
+        return $this->made_date;
+    }
+
+    public function getTotal(): float
+    {
+        return $this->price;
+    }
 }

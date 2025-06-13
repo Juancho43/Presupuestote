@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\States\PaymentState\PaymentState;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\ModelStates\HasStates;
 
-class Invoice extends Model
+class Invoice extends Model implements IOwnable
 {
     use HasFactory;
     use SoftDeletes;
@@ -65,5 +66,20 @@ class Invoice extends Model
         $this->save();
         $this->supplier->updateBalance();
         return $this;
+    }
+
+    public function getPaymentStatus(): PaymentState
+    {
+        return $this->payment_status;
+    }
+
+    public function getDate(): Carbon
+    {
+        return $this->date;
+    }
+
+    public function getTotal(): float
+    {
+        return $this->total;
     }
 }

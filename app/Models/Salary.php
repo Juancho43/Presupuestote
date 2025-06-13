@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\States\PaymentState\PaymentState;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Salary extends Model
+class Salary extends Model implements IOwnable
 {
     use HasFactory;
     use SoftDeletes;
@@ -40,5 +41,20 @@ class Salary extends Model
     public function calculateDebt()
     {
         return $this->amount - $this->payments->sum('amount');
+    }
+
+    public function getPaymentStatus(): PaymentState
+    {
+        return $this->payment_status;
+    }
+
+    public function getDate(): Carbon
+    {
+        return $this->date;
+    }
+
+    public function getTotal(): float
+    {
+        return $this->amount;
     }
 }

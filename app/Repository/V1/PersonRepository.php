@@ -1,9 +1,9 @@
 <?php
-// app/Repository/V1/PersonRepository.php
 namespace App\Repository\V1;
 
 use App\DTOs\V1\PersonDTO;
 use App\Models\Person;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -14,12 +14,14 @@ class PersonRepository implements IRepository
     /**
      * Get all Persons
      *
+     * @param int $page
+     * @param int $perPage
      * @return Collection Collection of Person models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1): Paginator
     {
-        return Person::all();
+        return Person::simplePaginate(getenv('PER_PAGE'), page:$page);
     }
 
     /**

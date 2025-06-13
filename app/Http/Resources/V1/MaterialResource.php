@@ -20,6 +20,7 @@ class MaterialResource extends JsonResource
             'description' => $this->description,
             'color' => $this->color,
             'brand' => $this->brand,
+            'unit_measure' => $this->unit_measure,
             'quantity' => $this->pivot->quantity ?? null,
             'latestStock' => new StockResource($this->latestStock),
             'latestPrice' => new PriceResource($this->latestPrice),

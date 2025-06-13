@@ -3,6 +3,7 @@ namespace App\Repository\V1;
 
 use App\Models\Material;
 use App\DTOs\V1\MaterialDTO;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
@@ -13,17 +14,17 @@ class MaterialRepository implements IRepository
     /**
      * Get all Materials
      *
-     * @return Collection Collection of Material models
+     * @return Paginator Collection of Material models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
         return Material::with([
             'measure',
             'subcategory',
             'latestPrice',
             'latestStock',
-        ])->get();
+        ])->simplePaginate(getenv('PER_PAGE'),$page);
     }
 
     /**
@@ -66,6 +67,7 @@ class MaterialRepository implements IRepository
             'description' => $data->description,
             'color' => $data->color,
             'brand' => $data->brand,
+            'unit_measure' => $data->unit_measure,
             'sub_category_id' => $data->subcategory->id,
             'measure_id' => $data->measure->id
         ]);
@@ -86,6 +88,7 @@ class MaterialRepository implements IRepository
             'description' => $data->description ?? $model->description,
             'color' => $data->color ?? $model->color,
             'brand' => $data->brand ?? $model->brand,
+            'unit_measure' => $data->unit_measure ?? $model->unit_measure,
             'sub_category_id' => $data->subcategory->id ?? $model->subcategory_id,
             'measure_id' => $data->measure->id ?? $model->measure_id,
         ])) {

@@ -30,6 +30,7 @@ class MaterialWithStockAndPriceSeeder extends Seeder
             'color' => 'Silver',
             'brand' => 'SteelMaster',
             'sub_category_id' => $subCategory->id,
+            'unit_measure' => 1.00, // Assuming unit measure is in kg
         ]);
 
         // Create two prices for the material
@@ -65,6 +66,7 @@ class MaterialWithStockAndPriceSeeder extends Seeder
             'color' => 'Silver',
             'brand' => 'MetalPro',
             'sub_category_id' => $subCategory->id,
+            'unit_measure' => 1.00, // Assuming unit measure is in m²
         ]);
 
         Price::factory()->create([

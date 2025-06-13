@@ -10,6 +10,7 @@ readonly class MaterialDTO
         public string|null $description = null,
         public string|null $color = null,
         public string|null $brand = null,
+        public float|null $unit_measure = null,
         public SubCategoryDTO|null $subcategory = null,
         public MeasureDTO|null $measure = null,
         public PriceDTO|null $price = null,

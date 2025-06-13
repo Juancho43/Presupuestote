@@ -4,7 +4,7 @@ namespace App\Repository\V1;
 
 use App\DTOs\V1\ClientDTO;
 use App\Models\Client;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
 
@@ -15,12 +15,15 @@ class ClientRepository implements IRepository
     /**
      * Get all Clients
      *
-     * @return Collection Collection of Client models
+     * @param int $page
+     * @param int $perPage
+     * @return Paginator Collection of Client models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+
+    public function all(int $page = 1): Paginator
     {
-        return Client::with('person')->get();
+        return Client::with('person')->simplePaginate(getenv('PER_PAGE'), page:$page);
     }
 
     /**

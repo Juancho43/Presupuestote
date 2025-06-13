@@ -17,13 +17,9 @@ class ClientNestedDataSeeder extends Seeder
 {
     public function run(): void
     {
+        Client::factory()->count(10)->create();
         // Create a person
         $person = Person::factory()->create([
-            'name' => 'Mauro',
-            'last_name' => 'Doe',
-            'phone_number' => '1234567890',
-            'mail' => 'Mauro@example.com',
-            'dni' => '555333222',
         ]);
 
         // Create a client associated with the person

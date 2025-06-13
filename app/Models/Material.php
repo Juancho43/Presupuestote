@@ -20,6 +20,7 @@ class Material extends Model
         'description',
         'color',
         'brand',
+        'unit_measure',
         'sub_category_id',
         'measure_id',
     ];
@@ -28,6 +29,7 @@ class Material extends Model
         'name' => 'string',
         'description' => 'string',
         'color' => 'string',
+        'unit_measure' => 'float',
         'brand' => 'string',
     ];
 

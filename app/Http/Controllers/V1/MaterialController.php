@@ -156,6 +156,7 @@ class MaterialController extends Controller
             $request->input('description'),
             $request->input('color'),
             $request->input('brand'),
+            $request->input('unit_measure'),
             new SubCategoryDTO(id:$request->input('sub_category_id')),
             new MeasureDTO(id: $request->input('measure_id')),
         );
@@ -203,6 +204,7 @@ class MaterialController extends Controller
             $request->input('description'),
             $request->input('color'),
             $request->input('brand'),
+            $request->input('unit_measure'),
             new SubCategoryDTO(id:$request->input('sub_category_id')),
             new MeasureDTO(id: $request->input('measure_id')),
         );

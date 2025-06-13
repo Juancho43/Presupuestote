@@ -21,6 +21,7 @@ class MaterialFactory extends Factory
         'description' => $this->faker->sentence(),
         'color' => $this->faker->colorName(),
         'brand' => $this->faker->company(),
+        'unit_measure' => $this->faker->randomFloat(2, 0, 100),
         'measure_id' => \App\Models\Measure::factory(),
         'sub_category_id' => \App\Models\SubCategory::factory(),
     ];

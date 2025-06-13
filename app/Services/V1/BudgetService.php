@@ -6,6 +6,7 @@ use App\Repository\V1\BudgetRepository;
 use App\DTOs\V1\BudgetDTO;
 use App\Models\Budget;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -186,6 +187,19 @@ class BudgetService
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't change state",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    public function paginate() : Paginator | JsonResponse
+    {
+        try {
+            return $this->repository->getAllPaginate();
+        }catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't paginate Budgets",
                 $e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );

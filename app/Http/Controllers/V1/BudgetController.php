@@ -97,7 +97,6 @@ class BudgetController extends Controller
         if ($result instanceof JsonResponse) {
             return $result;
         }
-
         return $this->successResponse(
             new BudgetResourceCollection($result),
             "Data retrieved successfully",
@@ -130,7 +129,7 @@ class BudgetController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $result = $this->service->get( (int) $id);
+        $result = $this->service->get($id);
 
         if ($result instanceof JsonResponse) {
             return $result;
@@ -379,11 +378,24 @@ class BudgetController extends Controller
     public function getStates() : JsonResponse
     {
         try {
-            // Assuming Budget::getStates() returns an array of states
             return  $this->successResponse(Budget::getStates(), "States retrieved successfully", Response::HTTP_OK);
 
         }catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
+
+    public function getPaginate()
+    {
+        $results = $this->service->paginate();
+        if ($results instanceof JsonResponse) {
+            return $results;
+        }
+        return $this->successResponse(
+            new BudgetResourceCollection($results),
+            "Data retrieved successfully",
+            Response::HTTP_OK
+        );
+    }
+
 }

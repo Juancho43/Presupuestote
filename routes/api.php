@@ -31,7 +31,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 
     //Crud entities routes
-    Route::resource('clients', ClientController::class)->names('clients');
+    Route::resource('clients', ClientController::class)->names('clients')->except('index');
     Route::resource('people', PersonController::class)->names('people');
     Route::resource('suppliers', SupplierController::class)->names('suppliers');
     Route::resource('employees', EmployeeController::class)->names('employees');
@@ -69,6 +69,10 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     //States
    Route::get('budgets/states/get',[BudgetController::class, 'getStates'])->name('budgets.states');
    Route::get('works/states/get',[WorkController::class, 'getStates'])->name('works.states');
+
+   //Pagination
+    Route::get('budgets/paginate/get', [BudgetController::class, 'getPaginated'])->name('budgets.paginate');
+    Route::get('clients/paginate/{page}', [ClientController::class, 'index'])->name('clients.index');
 
 });
 

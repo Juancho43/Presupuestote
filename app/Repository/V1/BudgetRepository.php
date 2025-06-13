@@ -1,12 +1,11 @@
 <?php
-// app/Repository/V1/BudgetRepository.php
 namespace App\Repository\V1;
 
 use App\DTOs\V1\BudgetDTO;
 use App\Models\Budget;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 
 
 class BudgetRepository implements IRepository
@@ -14,13 +13,14 @@ class BudgetRepository implements IRepository
     /**
      * Get all Budgets
      *
-     * @return Collection Collection of Budget models
+     * @return Paginator Collection of Budget models
      * @throws Exception If database query fails
      */
-    public function all(): Collection
+    public function all(int $page = 1):Paginator
     {
-        return Budget::with('client.person')->get();
+        return Budget::with('client.person')->simplePaginate(getenv('PER_PAGE'),$page);
     }
+
 
     /**
      * Find a Budget by ID
@@ -104,4 +104,5 @@ class BudgetRepository implements IRepository
     {
         return $this->find($id)->delete();
     }
+
 }
