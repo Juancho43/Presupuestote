@@ -20,7 +20,7 @@ class SubCategoryRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return SubCategory::with('category')->simplePaginate(getenv('PER_PAGE'), $page);
+        return SubCategory::with('category')->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
     /**
@@ -89,5 +89,12 @@ class SubCategoryRepository implements IRepository
     public function getAll(): Collection
     {
         return SubCategory::with('category')->get();
+    }
+
+    public function search(string $query): Collection
+    {
+        return SubCategory::with('category')
+            ->where('name', 'like', "%{$query}%")
+            ->get();
     }
 }

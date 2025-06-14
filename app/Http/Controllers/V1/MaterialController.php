@@ -78,9 +78,9 @@ class MaterialController extends Controller
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(int $page): JsonResponse
     {
-        $result = $this->service->getAll();
+        $result = $this->service->getAll($page);
 
         if ($result instanceof JsonResponse) {
             return $result;
@@ -418,6 +418,28 @@ class MaterialController extends Controller
             new MaterialResource($result),
             "Data retrieved successfully",
         );
+    }
+
+    public function search(string $query): JsonResponse
+    {
+        try {
+            $result = $this->service->search($query);
+
+            if ($result instanceof JsonResponse) {
+                return $result;
+            }
+
+            return $this->successResponse(
+                new MaterialResourceCollection($result),
+                "Search results retrieved successfully",
+                Response::HTTP_OK
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "An error occurred while searching: " . $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
 }

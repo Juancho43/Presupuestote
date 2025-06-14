@@ -19,7 +19,7 @@ class MeasureRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Measure::simplePaginate(getenv('PER_PAGE'),$page);
+        return Measure::simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
     /**
@@ -88,5 +88,12 @@ class MeasureRepository implements IRepository
     public function getAll(): Collection
     {
         return Measure::all();
+    }
+
+    public function search(string $query): Collection
+    {
+        return Measure::where('name', 'like', "%{$query}%")
+            ->orWhere('abbreviation', 'like', "%{$query}%")
+            ->get();
     }
 }

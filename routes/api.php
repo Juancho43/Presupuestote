@@ -66,6 +66,10 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
     //Search
     Route::post('people/search/{entity}/{search}', [PersonController::class, 'search'])->name('people.search');
+    Route::post('subcategories/search/{search}', [SubCategoryController::class, 'search'])->name('subcategories.search');
+    Route::post('categories/search/{search}', [CategoryController::class, 'search'])->name('categories.search');
+    Route::post('measures/search/{search}', [MeasureController::class, 'search'])->name('measures.search');
+    Route::post('materials/search/{search}', [MaterialController::class, 'search'])->name('materials.search');
     //States
    Route::get('budgets/states/get',[BudgetController::class, 'getStates'])->name('budgets.states');
    Route::get('works/states/get',[WorkController::class, 'getStates'])->name('works.states');

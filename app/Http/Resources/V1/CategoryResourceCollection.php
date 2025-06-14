@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -16,7 +17,7 @@ class CategoryResourceCollection extends ResourceCollection
     {
         return [
             'results' => $this->collection,
-            'pagination' => [
+            'pagination' => $this->resource instanceof Paginator ? [
                 'count' => $this->resource->count(),
                 'per_page' => $this->resource->perPage(),
                 'current_page' => $this->resource->currentPage(),
@@ -25,7 +26,7 @@ class CategoryResourceCollection extends ResourceCollection
                     'next' => $this->resource->nextPageUrl(),
                 ],
                 'has_more_pages' => $this->resource->hasMorePages(),
-            ],
+            ] : null,
         ];
 
     }

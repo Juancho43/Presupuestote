@@ -19,7 +19,7 @@ class BudgetRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Budget::with('client.person')->simplePaginate(getenv('PER_PAGE'),$page);
+        return Budget::with('client.person')->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
 

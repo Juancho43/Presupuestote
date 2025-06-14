@@ -67,9 +67,9 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(int $page): JsonResponse
     {
-        $result = $this->service->getAll();
+        $result = $this->service->getAll($page);
 
         if ($result instanceof JsonResponse) {
             return $result;
@@ -231,5 +231,27 @@ public function store(CategoryRequest $request): JsonResponse
             "Data deleted successfully",
             Response::HTTP_NO_CONTENT
         );
+    }
+
+    public function search(string $query): JsonResponse
+    {
+        try {
+            $result = $this->service->search($query);
+
+            if ($result instanceof JsonResponse) {
+                return $result;
+            }
+
+            return $this->successResponse(
+                new CategoryResourceCollection($result),
+                "Search results retrieved successfully",
+                Response::HTTP_OK
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "An error occurred while searching: " . $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

@@ -89,10 +89,10 @@ class MaterialService
      *
      * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Paginator|JsonResponse
+    public function getAll(int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->all();
+            return $this->repository->all($page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve dummies",
@@ -187,5 +187,17 @@ class MaterialService
     public function getWithPrices(int $id): Material|JsonResponse
     {
         return $this->repository->getWithPrices($id);
+    }
+    public function search(string $query): Collection|JsonResponse
+    {
+        try {
+            return $this->repository->search($query);
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't search Materials",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

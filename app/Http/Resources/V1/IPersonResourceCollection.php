@@ -16,16 +16,6 @@ class IPersonResourceCollection extends ResourceCollection
     {
         return [
             'results' => $this->collection,
-            'pagination' => [
-                'count' => $this->resource->count(),
-                'per_page' => $this->resource->perPage(),
-                'current_page' => $this->resource->currentPage(),
-                'links' => [
-                    'previous' => $this->resource->previousPageUrl(),
-                    'next' => $this->resource->nextPageUrl(),
-                ],
-                'has_more_pages' => $this->resource->hasMorePages(),
-            ],
         ];
 
     }

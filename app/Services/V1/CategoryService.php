@@ -89,10 +89,10 @@ class CategoryService
      *
      * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Paginator|JsonResponse
+    public function getAll(int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->all();
+            return $this->repository->all($page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve dummies",
@@ -165,6 +165,18 @@ class CategoryService
                 "Service Error: can't delete Category",
                 $e->getMessage(),
                 $statusCode
+            );
+        }
+    }
+    public function search(string $query): Collection|JsonResponse
+    {
+        try {
+            return $this->repository->search($query);
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't search Categories",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }

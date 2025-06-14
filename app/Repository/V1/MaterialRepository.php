@@ -24,7 +24,7 @@ class MaterialRepository implements IRepository
             'subcategory',
             'latestPrice',
             'latestStock',
-        ])->simplePaginate(getenv('PER_PAGE'),$page);
+        ])->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
     /**
@@ -154,5 +154,17 @@ class MaterialRepository implements IRepository
             'latestPrice',
             'latestStock',
         ])->get();
+    }
+
+    public function search(string $query): Collection
+    {
+        return Material::with([
+            'measure',
+            'subcategory',
+            'latestPrice',
+            'latestStock',
+        ])->where('name', 'like', "%{$query}%")
+          ->orWhere('description', 'like', "%{$query}%")
+          ->get();
     }
 }
