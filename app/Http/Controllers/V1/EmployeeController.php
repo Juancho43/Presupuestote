@@ -90,9 +90,9 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(int $page): JsonResponse
     {
-        $result = $this->service->getAll();
+        $result = $this->service->getAll($page);
 
         if ($result instanceof JsonResponse) {
             return $result;
