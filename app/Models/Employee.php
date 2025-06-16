@@ -40,8 +40,8 @@ class Employee extends Model
     private function calculateBalance(): float
     {
         $balance = 0;
-        foreach ($this->budgets as $budget) {
-            $balance += $budget->calculateDebt();
+        foreach ($this->salaries as $salary) {
+            $balance += $salary->calculateDebt();
         }
         return $balance;
     }
