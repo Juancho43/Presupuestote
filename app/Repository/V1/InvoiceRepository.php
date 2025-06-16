@@ -19,11 +19,11 @@ class InvoiceRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Invoice::with(['supplier.person'])->simplePaginate(getenv('PER_PAGE'),$page);
+        return Invoice::with(['supplier.person'])->simplePaginate(getenv('PER_PAGE'),page : $page);
     }
 
     /**
-     * Find a Invoice by ID
+     * Find an Invoice by ID
      *
      * @param int $id Invoice ID to find
      * @return Invoice Found Invoice model

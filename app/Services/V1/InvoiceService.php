@@ -108,10 +108,10 @@ class InvoiceService
      *
      * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Paginator|JsonResponse
+    public function getAll(int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->all();
+            return $this->repository->all($page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve dummies",

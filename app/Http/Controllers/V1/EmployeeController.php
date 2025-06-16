@@ -233,14 +233,14 @@ class EmployeeController extends Controller
             new Carbon($request->input('end_date')),
             $request->input('is_active'),
             new PersonDTO(
-                $request->input('id'),
-                $request->input('name'),
-                $request->input('last_name'),
-                $request->input('address'),
-                $request->input('phone_number'),
-                $request->input('mail'),
-                $request->input('dni'),
-                $request->input('cuit')
+                $request->input('person.id'),
+                $request->input('person.name'),
+                $request->input('person.last_name'),
+                $request->input('person.address'),
+                $request->input('person.phone_number'),
+                $request->input('person.mail'),
+                $request->input('person.dni'),
+                $request->input('person.cuit')
             )
         );
         $result = $this->service->update($employeeDTO);

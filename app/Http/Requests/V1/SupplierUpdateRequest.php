@@ -11,7 +11,7 @@ class SupplierUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class SupplierUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'balance' => ['nullable', 'numeric', 'min:0'],
+            'notes' => ['nullable', 'string', 'max:500'],
+            'person'=>(new PersonUpdateRequest())->rules(),
         ];
     }
 }

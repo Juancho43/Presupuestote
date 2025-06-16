@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Requests\V1\ClientUpdateRequest;
 use App\Http\Requests\V1\PersonUpdateRequest;
 use App\Services\V1\ClientService;
 use App\DTOs\V1\ClientDTO;
@@ -223,20 +224,20 @@ class ClientController extends Controller
  *     )
  * )
  */
-    public function update(int $id, PersonUpdateRequest $request): JsonResponse
+    public function update(int $id, ClientUpdateRequest $request): JsonResponse
     {
          $clientDTO = new ClientDTO(
             $id,
             null,
             new PersonDTO(
-                $id,
-                $request->input('name'),
-                $request->input('last_name'),
-                $request->input('address'),
-                $request->input('phone_number'),
-                $request->input('mail'),
-                $request->input('dni'),
-                $request->input('cuit')
+                $request->input('person.id'),
+                $request->input('person.name'),
+                $request->input('person.last_name'),
+                $request->input('person.address'),
+                $request->input('person.phone_number'),
+                $request->input('person.mail'),
+                $request->input('person.dni'),
+                $request->input('person.cuit')
             )
         );
         $result = $this->service->update($clientDTO);

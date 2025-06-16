@@ -16,11 +16,11 @@ class SalaryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount' => $this->amount,
+            'total' => $this->amount,
             'date' => $this->date?->toDateString(),
             'active' => $this->active,
             'payment_status' => $this->payment_status,
-            'employee' => new EmployeeResource($this->whenLoaded('employee')),
+            'owner' => new EmployeeResource($this->whenLoaded('employee')),
             'payments' => PaymentResource::collection($this->whenLoaded('payments')),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

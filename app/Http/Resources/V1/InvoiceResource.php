@@ -21,7 +21,7 @@ class InvoiceResource extends JsonResource
             'payment_status' => $this->payment_status,
             'materials' => MaterialResource::collection($this->whenLoaded('materials')),
             'payments' => PaymentResource::collection($this->whenLoaded('payments')),
-            'supplier' => new SupplierResource($this->whenLoaded('supplier')),
+            'owner' => new SupplierResource($this->whenLoaded('supplier')),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
             'deleted_at' => $this->deleted_at?->toDateTimeString()

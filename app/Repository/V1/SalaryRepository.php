@@ -19,7 +19,7 @@ class SalaryRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Salary::with('employee.person')->simplePaginate(getenv('PER_PAGE'),$page);
+        return Salary::with('employee.person')->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
     /**

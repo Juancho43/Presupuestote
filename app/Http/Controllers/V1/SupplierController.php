@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\DTOs\V1\PersonDTO;
+use App\Http\Requests\V1\SupplierUpdateRequest;
 use App\Http\Resources\V1\SupplierResource;
 use App\Http\Resources\V1\SupplierResourceCollection;
 use App\Services\V1\SupplierService;
@@ -89,9 +90,9 @@ class SupplierController extends Controller
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(int $page): JsonResponse
     {
-        $result = $this->service->getAll();
+        $result = $this->service->getAll($page);
 
         if ($result instanceof JsonResponse) {
             return $result;
@@ -218,14 +219,14 @@ class SupplierController extends Controller
      *     )
      * )
      */
-    public function update(int $id,SupplierRequest $request): JsonResponse
+    public function update(int $id,SupplierUpdateRequest $request): JsonResponse
     {
         $supplierDTO = new SupplierDTO(
             $id,
             $request->input('notes'),
             $request->input('balance'),
             new PersonDTO(
-                $request->input('person_id'),
+                $request->input('person.id'),
                 $request->input('person.name'),
                 $request->input('person.last_name'),
                 $request->input('person.address'),
