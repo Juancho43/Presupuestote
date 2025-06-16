@@ -61,9 +61,9 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::get('materials/prices/{id}', [MaterialController::class, 'getWithPrices'])->name('materials.getWithPrices');
     Route::get('materials/stocks/{id}', [MaterialController::class, 'getWithStocks'])->name('materials.getWithStocks');
     //Get sorted payments
-    Route::get('payments/client/{id}', [PaymentController::class, 'allClientPayments'])->name('indexClient');
-    Route::get('payments/supplier/{id}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
-    Route::get('payments/employee/{id}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
+    Route::get('payments/client/{id}/{page}', [PaymentController::class, 'allClientPayments'])->name('indexClient');
+    Route::get('payments/supplier/{id}/{page}', [PaymentController::class, 'allSupplierPayments'])->name('indexSupplier');
+    Route::get('payments/employee/{id}/{page}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
     //Search
     Route::post('people/search/{entity}/{search}', [PersonController::class, 'search'])->name('people.search');
     Route::post('subcategories/search/{search}', [SubCategoryController::class, 'search'])->name('subcategories.search');

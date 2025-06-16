@@ -75,9 +75,9 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function index(): JsonResponse
+    public function index(int $page): JsonResponse
     {
-        $result = $this->service->getAll();
+        $result = $this->service->getAll($page);
 
         if ($result instanceof JsonResponse) {
             return $result;
@@ -146,7 +146,8 @@ class PaymentController extends Controller
      */
     public function store(PaymentRequest $request): JsonResponse
     {
-        $paymentDTO = new PaymentDTO(null,
+        $paymentDTO = new PaymentDTO(
+            null,
             $request->input('amount'),
             new Carbon($request->input('date')),
             $request->input('description'),
@@ -262,10 +263,10 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function allClientPayments(int $id) : JsonResponse
+    public function allClientPayments(int $id,int $page) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResourceCollection($this->service->allClientPayments($id)), null, Response::HTTP_OK);
+            return $this->successResponse(new PaymentResourceCollection($this->service->allClientPayments($id,$page)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -293,10 +294,10 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function allEmployeePayments(int $id) : JsonResponse
+    public function allEmployeePayments(int $id,int $page) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResourceCollection($this->service->allEmployeePayments($id)), null, Response::HTTP_OK);
+            return $this->successResponse(new PaymentResourceCollection($this->service->allEmployeePayments($id,$page)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -325,10 +326,10 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function allSupplierPayments(int $id) : JsonResponse
+    public function allSupplierPayments(int $id,int $page) : JsonResponse
     {
         try{
-            return $this->successResponse(new PaymentResourceCollection($this->service->allSupplierPayments($id)), null, Response::HTTP_OK);
+            return $this->successResponse(new PaymentResourceCollection($this->service->allSupplierPayments($id,$page)), null, Response::HTTP_OK);
         }catch(Exception $e){
             return $this->errorResponse("Error retrieving data",$e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
         }

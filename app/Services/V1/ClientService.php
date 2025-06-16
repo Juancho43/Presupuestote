@@ -79,7 +79,9 @@ class ClientService
     public function get(int $id): Model|JsonResponse
     {
         try {
-            return $this->repository->find($id);
+            $client = $this->repository->find($id);
+            $client->updateBalance();
+            return $client;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND

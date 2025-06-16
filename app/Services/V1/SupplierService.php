@@ -74,7 +74,9 @@ class SupplierService
     public function get(int $id): Model|JsonResponse
     {
         try {
-            return $this->repository->find($id);
+            $supplier = $this->repository->find($id);
+            $supplier->updateBalance();
+            return $supplier;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND

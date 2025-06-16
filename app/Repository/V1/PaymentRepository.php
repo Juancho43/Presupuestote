@@ -22,7 +22,7 @@ class PaymentRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Payment::simplePaginate(getenv('PER_PAGE'),$page);
+        return Payment::simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
     /**
@@ -93,26 +93,32 @@ class PaymentRepository implements IRepository
     {
         return $this->find($id)->delete();
     }
-    public function allClientPayments(int $clientId): Collection
+    public function allClientPayments(int $clientId, int $page): Paginator
     {
         return
           Payment::whereHasMorph('payable', [Budget::class], function ($query) use ($clientId) {
               $query->where('client_id', $clientId);
-          })->with('payable:id,description')->get();
+          })->with('payable:id,description')
+              ->orderBy('date', 'desc')
+              ->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
-    public function allSupplierPayments(int $supplierId): Collection
+    public function allSupplierPayments(int $supplierId , int $page): Paginator
     {
         return
           Payment::whereHasMorph('payable', [Invoice::class], function ($query) use ($supplierId) {
               $query->where('supplier_id', $supplierId);
-          })->with('payable:id,date')->get();
+          })->with('payable:id,date')
+                ->orderBy('date', 'desc')
+              ->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
-    public function allEmployeePayments(int $employeeId): Collection
+    public function allEmployeePayments(int $employeeId, int $page): Paginator
     {
         return Payment::whereHasMorph('payable', [Salary::class], function ($query) use ($employeeId) {
             $query->where('employee_id', $employeeId);
-        })->with('payable:id,date')->get();
+        })->with('payable:id,date')
+                ->orderBy('date', 'desc')
+            ->simplePaginate(getenv('PER_PAGE'),page:$page);
     }
 
     public function getAll(): Collection

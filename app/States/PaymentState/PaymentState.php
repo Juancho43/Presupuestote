@@ -12,6 +12,7 @@ abstract class PaymentState extends State
         return parent::config()
             ->default(Deuda::class)
             ->allowTransition(Deuda::class, Pago::class)
+            ->allowTransition(Pago::class, Deuda::class)
             ;
     }
 }

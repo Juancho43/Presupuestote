@@ -6,6 +6,7 @@ use App\Http\Controllers\V1\ApiResponseTrait;
 use App\Repository\V1\PaymentRepository;
 use App\DTOs\V1\PaymentDTO;
 use App\Models\Payment;
+use App\States\PaymentState\Deuda;
 use App\States\PaymentState\Pago;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -92,10 +94,10 @@ class PaymentService
      *
      * @return Paginator|JsonResponse Collection of entities or error response
      */
-    public function getAll(): Paginator|JsonResponse
+    public function getAll(int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->all();
+            return $this->repository->all($page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve dummies",
@@ -115,7 +117,7 @@ class PaymentService
     {
         try {
             $debt = $this->checkDebts($data->payable_type, $data->payable_id, $data->amount);
-            if($debt['success'] == false){
+            if(!$debt['success']){
                 throw new Exception($debt['message']);
             }
             $payment = $this->repository->create($data);
@@ -139,12 +141,23 @@ class PaymentService
     public function update(PaymentDTO $data): Model|JsonResponse
     {
         try {
-            $debt = $this->checkDebts($data->payable_type, $data->payable_id, $data->amount);
-            if($debt['success'] == false){
-                throw new Exception($debt['message']);
-            }
-            $updatedPayment = $this->repository->update($data);
-            return $this->successResponse($updatedPayment,$debt['message'], Response::HTTP_OK);
+          $updatedPayment = $this->repository->update($data);
+          $model = $data->payable_type::findOrFail($data->payable_id);
+
+          // Calculate debt after payment
+          $debt = $this->checkDebts($data->payable_type, $data->payable_id, $data->amount);
+
+          // Get the current debt amount from the model
+            $currentDebt = $model->calculateDebt();
+
+          // Always update payment status based on current debt
+          if ($currentDebt > 0) {
+              $this->updatePaymentStatus($model, Deuda::class);
+          } else {
+              $this->updatePaymentStatus($model, Pago::class);
+          }
+
+          return $this->successResponse($updatedPayment, $debt['message']);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't update Payment",
@@ -203,10 +216,10 @@ class PaymentService
         $model->save();
     }
 
-    public function allClientPayments(int $id): Collection|JsonResponse
+    public function allClientPayments(int $id, int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->allClientPayments($id);
+            return $this->repository->allClientPayments($id,$page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve client payments",
@@ -215,10 +228,10 @@ class PaymentService
             );
         }
     }
-    public function allEmployeePayments(int $id): Collection|JsonResponse
+    public function allEmployeePayments(int $id,int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->allEmployeePayments($id);
+            return $this->repository->allEmployeePayments($id,$page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve employee payments",
@@ -228,10 +241,10 @@ class PaymentService
         }
     }
 
-    public function allSupplierPayments(int $id): Collection|JsonResponse
+    public function allSupplierPayments(int $id,int $page): Paginator|JsonResponse
     {
         try {
-            return $this->repository->allSupplierPayments($id);
+            return $this->repository->allSupplierPayments($id,$page);
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Service Error: can't retrieve supplier payments",

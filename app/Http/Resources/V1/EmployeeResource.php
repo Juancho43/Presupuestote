@@ -20,6 +20,7 @@ class EmployeeResource extends JsonResource
             'start_date' => $this->start_date?->toDateTimeString(),
             'end_date' => $this->end_date?->toDateTimeString(),
             'is_active' => $this->is_active,
+            'balance' => $this->balance,
             'person' => new PersonResource($this->whenLoaded('person')),
             'salaries' => SalaryResource::collection($this->whenLoaded('salaries')),
             'created_at' => $this->created_at?->toDateTimeString(),

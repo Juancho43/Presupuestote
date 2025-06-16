@@ -75,7 +75,9 @@ class EmployeeService
     public function get(int $id): Model|JsonResponse
     {
         try {
-            return $this->repository->find($id);
+            $employee = $this->repository->find($id);
+            $employee->updateBalance();
+            return $employee;
         } catch (Exception $e) {
             $statusCode = str_contains($e->getMessage(), "not found")
                 ? Response::HTTP_NOT_FOUND
