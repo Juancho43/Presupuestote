@@ -17,6 +17,7 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
     return [
+        'description' => $this->faker->text(20),
         'date' => $this->faker->date(),
         'total' => 0,
         'supplier_id' => \App\Models\Supplier::factory(),

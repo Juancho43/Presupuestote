@@ -16,6 +16,7 @@ class InvoiceRequest extends FormRequest
         return [
             'date' => ['required', 'date'],
             'supplier_id' => ['required_without:person', 'exists:suppliers,id'],
+            'description' => ['nullable', 'string', 'max:255'],
             'person' => ['required_without:supplier_id', 'array'],
             'person.name' => ['required_with:person', 'string'],
             'person.phone_number' => ['required_with:person', 'string']

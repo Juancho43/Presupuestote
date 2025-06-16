@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
+            $table->text('description');
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->string('payment_status')->default('Deuda');

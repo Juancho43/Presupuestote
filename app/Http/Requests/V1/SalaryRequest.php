@@ -16,6 +16,7 @@ class SalaryRequest extends FormRequest
         return [
             'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0'],
             'date' => ['required', 'date'],
+            'description' => ['nullable', 'string', 'max:255'],
             'active' => ['boolean'],
             'employee_id' => ['required', 'exists:employees,id'],
         ];

@@ -14,6 +14,7 @@ readonly class SalaryDTO
         public bool|null $active = null,
         public PaymentState|null $payment_status = null,
         public EmployeeDTO|null $employee = null,
+        public string|null $description = null,
     ) {
     }
 }

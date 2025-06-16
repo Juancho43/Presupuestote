@@ -21,13 +21,15 @@ class Salary extends Model implements IOwnable
         'active',
         'payment_status',
         'employee_id',
+        'description'
     ];
 
     protected $casts = [
         'active' => 'boolean',
         'date' => 'date',
         'amount' => 'decimal:2',
-        'payment_status' => PaymentState::class
+        'payment_status' => PaymentState::class,
+        'description' => 'string',
     ];
     public function employee(): BelongsTo
     {

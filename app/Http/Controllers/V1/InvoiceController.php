@@ -161,7 +161,11 @@ class InvoiceController extends Controller
     {
 
 
-        $invoiceDTO = new InvoiceDTO(date: new Carbon($request->date), supplier: new SupplierDTO(id:$request->supplier_id));
+        $invoiceDTO = new InvoiceDTO(
+            date: new Carbon($request->date),
+            supplier: new SupplierDTO(id:$request->supplier_id),
+            description: $request->description ?? null,
+        );
 
         $result = $this->service->create($invoiceDTO);
 
@@ -201,7 +205,11 @@ class InvoiceController extends Controller
      */
     public function update(int $id,InvoiceRequest $request): JsonResponse
     {
-        $invoiceDTO = new InvoiceDTO(id: $id,date: new Carbon($request->date), supplier: new SupplierDTO(id:$request->supplier_id));
+        $invoiceDTO = new InvoiceDTO(
+            id: $id,
+            date: new Carbon($request->date),
+            supplier: new SupplierDTO(id:$request->supplier_id),
+            description: $request->description ?? null,);
         $result = $this->service->update($invoiceDTO);
 
         if ($result instanceof JsonResponse) {

@@ -18,6 +18,7 @@ class Employee extends Model
         'end_date',
         'is_active',
         'person_id',
+        'balance'
     ];
 
     protected $casts = [
@@ -25,6 +26,7 @@ class Employee extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'is_active' => 'boolean',
+        'balance' => 'decimal:2',
     ];
     public function person() : BelongsTo
     {
@@ -35,6 +37,20 @@ class Employee extends Model
         return $this->hasMany(Salary::class);
     }
 
+    private function calculateBalance(): float
+    {
+        $balance = 0;
+        foreach ($this->budgets as $budget) {
+            $balance += $budget->calculateDebt();
+        }
+        return $balance;
+    }
 
+    public function updateBalance()
+    {
+        $this->balance = $this->calculateBalance();
+        $this->save();
+        return $this->balance;
+    }
 
 }

@@ -13,6 +13,7 @@ readonly class InvoiceDTO
         public float|null  $total = null,
         public PaymentState|null  $payment_status = null,
         public SupplierDTO|null $supplier = null,
+        public string|null $description = null,
     ) {
     }
 }

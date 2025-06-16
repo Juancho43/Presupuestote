@@ -52,6 +52,7 @@ class SalaryRepository implements IRepository
             'date' => $data->date->format('Y-m-d'),
             'active' => $data->active,
             'employee_id' => $data->employee->id,
+            'description' => $data->description,
         ]);
     }
 
@@ -70,6 +71,7 @@ class SalaryRepository implements IRepository
             'date' => $data->date->format('Y-m-d'),
             'active' => $data->active,
             'employee_id' => $data->employee->id,
+            'description' => $data->description,
         ])) {
             throw new Exception("Failed to update Salary: Database update failed");
         }

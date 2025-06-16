@@ -13,6 +13,7 @@
          {
              Schema::create('employees', function (Blueprint $table) {
                  $table->id();
+                 $table->decimal('balance', 8, 2)->default(0);
                  $table->decimal('salary', 10, 2)->nullable();
                  $table->datetime('start_date')->nullable();
                  $table->datetime('end_date')->nullable();

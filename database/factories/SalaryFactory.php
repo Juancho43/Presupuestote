@@ -13,6 +13,7 @@ class SalaryFactory extends Factory
     public function definition(): array
     {
         return [
+            'description' => $this->faker->text(20),
             'amount' => fake()->randomFloat(2, 100, 10000),
             'date' => fake()->date(),
             'active' => fake()->boolean(),

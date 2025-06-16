@@ -55,6 +55,7 @@ class InvoiceRepository implements IRepository
         return Invoice::create([
             'supplier_id' => $data->supplier->id,
             'date' => $data->date,
+            'description' => $data->description ?? null,
         ]);
     }
 
@@ -71,6 +72,7 @@ class InvoiceRepository implements IRepository
         if (!$model->update([
             'supplier_id' => $data->supplier->id,
             'date' => $data->date,
+            'description' => $data->description ?? null,
         ])) {
             throw new Exception("Failed to update Invoice: Database update failed");
         }

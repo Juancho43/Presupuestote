@@ -24,7 +24,7 @@ class BudgetFactory extends Factory
         $price = $cost + $profit;
         return [
         'made_date' => $this->faker->date(),
-        'description' => $this->faker->text(),
+        'description' => $this->faker->text(20),
         'dead_line' => $this->faker->date(),
         'state' => 'Presupuestado',
         'cost' => $cost,

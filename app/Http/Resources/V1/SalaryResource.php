@@ -17,6 +17,7 @@ class SalaryResource extends JsonResource
         return [
             'id' => $this->id,
             'total' => $this->amount,
+            'description' => $this->description,
             'date' => $this->date?->toDateString(),
             'active' => $this->active,
             'payment_status' => $this->payment_status,

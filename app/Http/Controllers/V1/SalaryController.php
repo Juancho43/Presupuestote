@@ -153,6 +153,7 @@ class SalaryController extends Controller
         $request->input('active'),
         null,
         new EmployeeDTO(id: $request->input('employee_id')),
+        $request->input('description', null)
     );
 
         // Call service to create the salary record
@@ -202,6 +203,7 @@ class SalaryController extends Controller
             $request->input('active'),
             null,
             new EmployeeDTO(id: $request->input('employee_id')),
+            $request->input('description', null)
         );
         $result = $this->service->update($salaryDTO);
 
