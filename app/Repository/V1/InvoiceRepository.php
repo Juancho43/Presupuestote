@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository\V1;
 
+use App\Models\Budget;
 use App\Models\Invoice;
 use App\DTOs\V1\InvoiceDTO;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -95,5 +96,10 @@ class InvoiceRepository implements IRepository
     public function getAll(): Collection
     {
         return Invoice::with(['supplier.person'])->get();
+    }
+    public function search(string $search): Collection
+    {
+        return Invoice::where('description', 'like', "%{$search}%")
+            ->get();
     }
 }

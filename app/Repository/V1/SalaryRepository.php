@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository\V1;
 
+use App\Models\Budget;
 use App\Models\Salary;
 use App\DTOs\V1\SalaryDTO;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -94,5 +95,10 @@ class SalaryRepository implements IRepository
     public function getAll(): Collection
     {
         return Salary::with(['employee.person', 'payments'])->get();
+    }
+    public function search(string $search): Collection
+    {
+        return Salary::where('description', 'like', "%{$search}%")
+            ->get();
     }
 }

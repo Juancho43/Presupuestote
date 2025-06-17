@@ -110,4 +110,10 @@ class BudgetRepository implements IRepository
     {
         return Budget::with('client.person')->get();
     }
+
+    public function search(string $search): Collection
+    {
+        return Budget::where('description', 'like', "%{$search}%")
+            ->get();
+    }
 }

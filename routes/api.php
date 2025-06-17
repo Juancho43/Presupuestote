@@ -8,6 +8,7 @@ use App\Http\Controllers\V1\EmployeeController;
 use App\Http\Controllers\V1\InvoiceController;
 use App\Http\Controllers\V1\MaterialController;
 use App\Http\Controllers\V1\MeasureController;
+use App\Http\Controllers\V1\OwnableController;
 use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\PersonController;
 use App\Http\Controllers\V1\PriceController;
@@ -66,6 +67,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::get('payments/employee/{id}/{page}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
     //Search
     Route::post('people/search/{entity}/{search}', [PersonController::class, 'search'])->name('people.search');
+    Route::post('ownable/search/{entity}/{search}', [OwnableController::class, 'search'])->name('ownable.search');
     Route::post('subcategories/search/{search}', [SubCategoryController::class, 'search'])->name('subcategories.search');
     Route::post('categories/search/{search}', [CategoryController::class, 'search'])->name('categories.search');
     Route::post('measures/search/{search}', [MeasureController::class, 'search'])->name('measures.search');
