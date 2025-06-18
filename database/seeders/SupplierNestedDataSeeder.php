@@ -119,5 +119,8 @@ class SupplierNestedDataSeeder extends Seeder
             'date' => now()->addDays(15),
             'description' => 'Final payment for lumber order',
         ]);
+
+        // Update the invoice total
+        $invoice->updateTotal();
     }
 }

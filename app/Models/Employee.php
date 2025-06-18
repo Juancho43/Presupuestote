@@ -46,7 +46,7 @@ class Employee extends Model
         return $balance;
     }
 
-    public function updateBalance()
+    public function updateBalance() : float
     {
         $this->balance = $this->calculateBalance();
         $this->save();

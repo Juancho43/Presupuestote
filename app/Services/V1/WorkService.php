@@ -237,4 +237,17 @@ class WorkService
         }
     }
 
+    public function search(string $query): Collection | JsonResponse
+    {
+        try {
+            return $this->repository->search($query);
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                "Service Error: can't search works",
+                $e->getMessage(),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 }

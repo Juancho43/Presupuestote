@@ -99,4 +99,12 @@ class WorkRepository implements IRepository
     {
         return Work::with('budget')->get();
     }
+
+    public function search(string $query): Collection
+    {
+        return Work::with('budget')
+            ->where('name', 'like', "%{$query}%")
+            ->orWhere('notes', 'like', "%{$query}%")
+            ->get();
+    }
 }

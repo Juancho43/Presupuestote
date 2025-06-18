@@ -337,4 +337,14 @@ class WorkController extends Controller
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
+
+    public function search(string $query): JsonResponse
+    {
+        try {
+            $works = $this->service->search($query);
+            return $this->successResponse(new WorkResourceCollection($works), "Search results retrieved successfully", Response::HTTP_OK);
+        } catch (Exception $e) {
+            return $this->errorResponse("Controller Error: searching works", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

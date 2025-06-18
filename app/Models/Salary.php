@@ -59,4 +59,6 @@ class Salary extends Model implements IOwnable
     {
         return $this->amount;
     }
+
+
 }

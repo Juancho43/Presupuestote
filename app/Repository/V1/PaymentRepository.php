@@ -125,4 +125,5 @@ class PaymentRepository implements IRepository
     {
         return Payment::all();
     }
+
 }

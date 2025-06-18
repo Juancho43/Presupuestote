@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\Payment;
 use App\Models\Person;
 use App\Models\Salary;
+use App\States\PaymentState\Pago;
 use Illuminate\Database\Seeder;
 
 class EmployeeNestedDataSeeder extends Seeder
@@ -64,5 +65,11 @@ class EmployeeNestedDataSeeder extends Seeder
             'date' => now()->addDays(15),
             'description' => 'Second half of monthly salary',
         ]);
+
+        $salary1->payment_status->transitionTo(Pago::class);
+        $salary1->save();
+        $salary2->payment_status->transitionTo(Pago::class);
+        $salary2->save();
+
     }
 }

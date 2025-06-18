@@ -159,8 +159,6 @@ class InvoiceController extends Controller
      */
     public function store(InvoiceRequest $request): JsonResponse
     {
-
-
         $invoiceDTO = new InvoiceDTO(
             date: new Carbon($request->date),
             supplier: new SupplierDTO(id:$request->supplier_id),

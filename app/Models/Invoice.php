@@ -22,10 +22,14 @@ class Invoice extends Model implements IOwnable
         'date',
         'payment_status',
         'total',
+        'description',
         'supplier_id',
 
     ];
+
+
     protected $casts = [
+        'description' => 'string',
         'date' => 'date',
         'total' => 'decimal:2',
         'payment_status' => PaymentState::class
