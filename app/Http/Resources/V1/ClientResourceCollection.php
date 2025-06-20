@@ -4,7 +4,7 @@ namespace App\Http\Resources\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-
+use Illuminate\Contracts\Pagination\Paginator;
 class ClientResourceCollection extends ResourceCollection
 {
     /**
