@@ -341,8 +341,12 @@ class WorkController extends Controller
     public function search(string $query): JsonResponse
     {
         try {
-            $works = $this->service->search($query);
-            return $this->successResponse(new WorkResourceCollection($works), "Search results retrieved successfully", Response::HTTP_OK);
+            $result = $this->service->search( $query);
+            $message = !empty($query) && $result->count() > 0
+                ? "Search results retrieved successfully"
+                : "No results found for your search";
+
+            return $this->successResponse(new WorkResourceCollection($result), $message);
         } catch (Exception $e) {
             return $this->errorResponse("Controller Error: searching works", $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }

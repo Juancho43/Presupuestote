@@ -256,11 +256,15 @@ class PersonController extends Controller
     public function search(string $entity, string $search): JsonResponse
     {
         try {
-            $result = $this->service->search($entity, $search);
-            return $this->successResponse(
-                new IPersonResourceCollection($result),
-                "Search results retrieved successfully",
-            );
+          $result = $this->service->search($entity, $search);
+          $message = !empty($result) && $result->count() > 0
+              ? "Search results retrieved successfully"
+              : "No results found for your search";
+
+          return $this->successResponse(
+              new IPersonResourceCollection($result),
+              $message,
+          );
         } catch (Exception $e) {
             return $this->errorResponse(
                 "Error retrieving search results: " . $e->getMessage(),

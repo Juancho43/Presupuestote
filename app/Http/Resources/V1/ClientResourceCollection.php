@@ -14,19 +14,19 @@ class ClientResourceCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-      return [
-                'results' => $this->collection,
-                'pagination' => [
-                    'count' => $this->resource->count(),
-                    'per_page' => $this->resource->perPage(),
-                    'current_page' => $this->resource->currentPage(),
-                    'links' => [
-                        'previous' => $this->resource->previousPageUrl(),
-                        'next' => $this->resource->nextPageUrl(),
-                    ],
-                    'has_more_pages' => $this->resource->hasMorePages(),
+        return [
+            'results' => $this->collection,
+            'pagination' => $this->resource instanceof Paginator ? [
+                'count' => $this->resource->count(),
+                'per_page' => $this->resource->perPage(),
+                'current_page' => $this->resource->currentPage(),
+                'links' => [
+                    'previous' => $this->resource->previousPageUrl(),
+                    'next' => $this->resource->nextPageUrl(),
                 ],
-            ];
+                'has_more_pages' => $this->resource->hasMorePages(),
+            ] : null,
+        ];
 
     }
 }

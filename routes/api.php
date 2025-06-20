@@ -67,7 +67,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::get('payments/employee/{id}/{page}', [PaymentController::class, 'allEmployeePayments'])->name('indexEmployee');
     //Search
     Route::post('people/search/{entity}/{search}', [PersonController::class, 'search'])->name('people.search');
-    Route::post('ownable/search/{entity}', [OwnableController::class, 'searchByEntity'])->name('ownable.searchByEntity');
+    Route::post('ownable/search/{entity}', [OwnableController::class, 'search'])->name('ownable.searchByEntity');
     Route::post('ownable/search/{entity}/{search}', [OwnableController::class, 'search'])->name('ownable.search');
     Route::post('subcategories/search/{search}', [SubCategoryController::class, 'search'])->name('subcategories.search');
     Route::post('categories/search/{search}', [CategoryController::class, 'search'])->name('categories.search');

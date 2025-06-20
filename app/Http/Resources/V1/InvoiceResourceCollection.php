@@ -16,7 +16,7 @@ class InvoiceResourceCollection extends ResourceCollection
     {
         return [
             'results' => $this->collection,
-            'pagination' => [
+            'pagination' => $this->resource instanceof Paginator ? [
                 'count' => $this->resource->count(),
                 'per_page' => $this->resource->perPage(),
                 'current_page' => $this->resource->currentPage(),
@@ -25,7 +25,7 @@ class InvoiceResourceCollection extends ResourceCollection
                     'next' => $this->resource->nextPageUrl(),
                 ],
                 'has_more_pages' => $this->resource->hasMorePages(),
-            ],
+            ] : null,
         ];
 
     }
