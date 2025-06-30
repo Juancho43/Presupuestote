@@ -22,7 +22,7 @@ class PaymentRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Payment::simplePaginate(getenv('PER_PAGE'),page:$page);
+        return Payment::simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

@@ -19,7 +19,7 @@ class StockRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Stock::simplePaginate(getenv('PER_PAGE'), $page);
+        return Stock::simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

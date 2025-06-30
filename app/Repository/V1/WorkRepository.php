@@ -19,7 +19,7 @@ class WorkRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Work::with('budget')->simplePaginate(getenv('PER_PAGE'), page:$page);
+        return Work::with('budget')->simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

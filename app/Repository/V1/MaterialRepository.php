@@ -24,7 +24,7 @@ class MaterialRepository implements IRepository
             'subcategory',
             'latestPrice',
             'latestStock',
-        ])->simplePaginate(getenv('PER_PAGE'),page:$page);
+      ])->simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

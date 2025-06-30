@@ -19,7 +19,7 @@ class MeasureRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Measure::simplePaginate(getenv('PER_PAGE'),page:$page);
+        return Measure::simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

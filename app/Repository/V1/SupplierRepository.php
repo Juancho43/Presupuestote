@@ -19,7 +19,7 @@ class SupplierRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Supplier::with(['person'])->simplePaginate(getenv('PER_PAGE'), page:$page);
+        return Supplier::with(['person'])->simplePaginate(perPage: 6, page: $page);
     }
 
     /**

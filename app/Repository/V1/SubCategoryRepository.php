@@ -20,7 +20,7 @@ class SubCategoryRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return SubCategory::with('category')->simplePaginate(getenv('PER_PAGE'),page:$page);
+        return SubCategory::with('category')->simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

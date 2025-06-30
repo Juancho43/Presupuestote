@@ -20,7 +20,7 @@ class CategoryRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Category::simplePaginate(getenv('PER_PAGE'),page:$page);
+        return Category::simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repository\V1;
 
 use App\DTOs\V1\PersonDTO;
@@ -21,7 +22,7 @@ class PersonRepository implements IRepository
      */
     public function all(int $page = 1): Paginator
     {
-        return Person::simplePaginate(getenv('PER_PAGE'), page:$page);
+        return Person::simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

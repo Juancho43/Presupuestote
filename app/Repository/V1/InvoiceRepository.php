@@ -20,7 +20,7 @@ class InvoiceRepository implements IRepository
      */
     public function all(int $page = 1):Paginator
     {
-        return Invoice::with(['supplier.person'])->simplePaginate(getenv('PER_PAGE'),page : $page);
+        return Invoice::with(['supplier.person'])->simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**

@@ -24,7 +24,7 @@ class ClientRepository implements IRepository
 
     public function all(int $page = 1): Paginator
     {
-        return Client::with('person')->simplePaginate(getenv('PER_PAGE'), page:$page);
+        return Client::with('person')->simplePaginate(perPage: config('app.per_page'), page: $page);
     }
 
     /**
